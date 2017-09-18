@@ -1,0 +1,2 @@
+# MoM-Adventure-Language
+The purpose of this project is to develop an Object-Oriented language to facilitate the creation of scenarios and components for the board game Mansions of Madness Second Edition. Through the use of this language, owners will have the opportunity  of creating additional content for the game and getting a bit into the field of computer programming. Therefore, a key emphasis of the language is to make it simple and comprehensible to promote its use and to give it more utility.
