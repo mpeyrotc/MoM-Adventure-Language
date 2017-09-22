@@ -9,7 +9,7 @@ assignation		:	VARID EQUALS (construct_call | ss_exp)
                 ;
 block			:	(statute SEMI_COLON)*
                 ;
-class 			:	CLASS CLASSID IS_A (CLASSID | COMPLEX_TYPE) (OF_TYPE CLASSID)? OPEN_BRACKET property construct_def function_def CLOSE_BRACKET
+class 			:	CLASS CLASSID IS_A (CLASSID | COMPLEX_TYPE) (OF_TYPE CLASSID)? OPEN_BRACKET field construct_def function_def CLOSE_BRACKET
                 ;
 condition		:	IF OPEN_PAREN ss_exp CLOSE_PAREN OPEN_BRACKET block CLOSE_BRACKET (ELSE OPEN_BRACKET block CLOSE_BRACKET)?
                 ;
@@ -35,7 +35,7 @@ expression		:	(function_call | term) ((PLUS | MINUS | condition) (function_call 
 factor 			:	OPEN_BRACKET ss_exp CLOSE_BRACKET
                 |   (PLUS | MINUS | NOT)? constant
                 ;
-function_args	:	type VARID (COMMA type VARID)*
+function_args	:	super_type VARID (COMMA super_type VARID)*
                 ;
 function_call	:	(THIS | CLASSID) PERIOD VARID OPEN_PAREN (arguments)? CLOSE_PAREN SEMI_COLON
                 ;
@@ -47,7 +47,7 @@ operand 		:	LESS_THAN
                 |   GREATER_EQUAL 
                 |   EQUAL_EQUAL 
                 ;
-property		:	(PROP LESS_THAN type GREATER_THAN VARID SEMI_COLON)* 
+field           :	(FIELD LESS_THAN super_type GREATER_THAN VARID SEMI_COLON)* 
                 ;
 spec_function   :   (simple_type VARID OPEN_PAREN (function_args)? CLOSE_PAREN SEMI_COLON)+
                 ;
@@ -59,7 +59,7 @@ statute			:	assignation
                 ;
 term			:	factor ((STAR | SLASH) factor)* 
                 ;
-type 			:	simple_type 
+super_type 		:	simple_type 
                 |   complex_type 
                 ;
 simple_type		:	INT  
@@ -115,14 +115,14 @@ NOTHING 		:	'nothing' ;
 CLASS 			:	'class' ;
 NEW				:	'new' ;
 ENUMERATE		:	'enumerate' ;
-PROP 			:	'property' ;
+FIELD           :	'field' ;
 SPEC			:	'specification' ;
-OF 				:	'of'
+OF 				:	'of' ;
 TYPE 			:	'type' ;
 OF_TYPE			:	OF TYPE ;
 IS 				:	'is' ;
 A 				:	'a' ;
-IS_A			:	IS A
+IS_A			:	IS A ;
 fragment DIGIT	:	[0-9] ;
 fragment UPPERC	:	[A-Z] ;
 fragment LOWERC	:	[a-z] ;
