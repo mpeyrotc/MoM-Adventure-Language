@@ -17,6 +17,8 @@ grammar MoM;
   }
 }
 
+program			:	class 
+                ;
 arguments		:	//nothing
                 |   ss_exp (COMMA ss_exp)* 
                 ; 
@@ -50,21 +52,48 @@ expression		:	(function_call | term) ((PLUS | MINUS | condition) (function_call 
 factor 			:	OPEN_BRACKET ss_exp CLOSE_BRACKET
                 |   (PLUS | MINUS | NOT)? constant
                 ;
-function_args	:	//nothing 
-                |   type VARID (COMMA type VARID)*
+function_args	:	type VARID (COMMA type VARID)*
                 ;
-function_call	:	[THIS VARID] PERIOD VARID OPEN_PAREN arguments CLOSE_PAREN SEMI_COLON ;
-function_def	:	(simple_type VARID OPEN_PAREN function_args CLOSE_PAREN OPEN_BRACKET block (RETURN (VARID | expression | function_call | constant))? CLOSE_BRACKET)+ ;
-operand 		:	LESS_THAN | LESS_EQUAL | GREATER_THAN | GREATER_EQUAL | EQUAL_EQUAL ;
-program			:	class ;
-property		:	(PROP LESS_THAN type GREATER_THAN VARID SEMI_COLON)+ ;
-specification	:	SPEC CLASSID OPEN_BRACKET function_call? CLOSE_BRACKET ;
-statute			:	assignation | while_loop | condition ;
-term			:	factor ([STAR SLASH] factor)* ;
-type 			:	simple_type | complex_type ;
-simple_type		:	INT  | TEXT | FLOAT | NOTHING ;
-complex_type	:	CLASSID | SET | MAP | SIZE | ARRAY | COMPONENT | CLASS ;
-while_loop		:	WHILE OPEN_PAREN ss_exp CLOSE_PAREN OPEN_BRACKET block CLOSE_BRACKET ;
+function_call	:	(THIS | CLASSID) PERIOD VARID OPEN_PAREN (arguments)? CLOSE_PAREN SEMI_COLON
+                ;
+function_def	:	(simple_type VARID OPEN_PAREN (function_args)? CLOSE_PAREN OPEN_BRACKET block (RETURN ss_exp SEMI_COLON)? CLOSE_BRACKET)+
+                ;
+operand 		:	LESS_THAN
+                |   LESS_EQUAL 
+                |   GREATER_THAN 
+                |   GREATER_EQUAL 
+                |   EQUAL_EQUAL 
+                ;
+property		:	(PROP LESS_THAN type GREATER_THAN VARID SEMI_COLON)* 
+                ;
+spec_function   :   (simple_type VARID OPEN_PAREN (function_args)? CLOSE_PAREN SEMI_COLON)+
+                ;
+specification	:	SPEC CLASSID OPEN_BRACKET (spec_function)? CLOSE_BRACKET 
+                ;
+statute			:	assignation 
+                |   while_loop 
+                |   condition 
+                ;
+term			:	factor ((STAR | SLASH) factor)* 
+                ;
+type 			:	simple_type 
+                |   complex_type 
+                ;
+simple_type		:	INT  
+                |   TEXT 
+                |   FLOAT
+                |   NOTHING 
+                |   BOOLEAN
+                ;
+complex_type	:	CLASSID 
+                |   SET 
+                |   MAP 
+                |   SIZE 
+                |   ARRAY 
+                |   COMPONENT 
+                ;
+while_loop		:	WHILE OPEN_PAREN ss_exp CLOSE_PAREN OPEN_BRACKET block CLOSE_BRACKET 
+                ;
 
 OPEN_PAREN		:	'(' ;
 COMMA			:	',' ;
