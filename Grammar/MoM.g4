@@ -2,14 +2,13 @@ grammar MoM;
 
 program			:	class 
                 ;
-arguments		:	//nothing
-                |   ss_exp (COMMA ss_exp)* 
+arguments		:	ss_exp (COMMA ss_exp)* 
                 ; 
 assignation		:	VARID EQUALS (construct_call | ss_exp)
                 ;
 block			:	(statute SEMI_COLON)*
                 ;
-class 			:	CLASS CLASSID IS_A (CLASSID | COMPLEX_TYPE) (OF_TYPE CLASSID)? OPEN_BRACKET field construct_def function_def CLOSE_BRACKET
+class 			:	CLASS CLASSID IS_A (CLASSID | complex_type) (OF_TYPE CLASSID)? OPEN_BRACKET field construct_def function_def CLOSE_BRACKET
                 ;
 condition		:	IF OPEN_PAREN ss_exp CLOSE_PAREN OPEN_BRACKET block CLOSE_BRACKET (ELSE OPEN_BRACKET block CLOSE_BRACKET)?
                 ;
@@ -118,6 +117,8 @@ ENUMERATE		:	'enumerate' ;
 FIELD           :	'field' ;
 SPEC			:	'specification' ;
 OF 				:	'of' ;
+RETURN          :   'return' ;
+BOOLEAN         :   'boolean' ;
 TYPE 			:	'type' ;
 OF_TYPE			:	OF TYPE ;
 IS 				:	'is' ;
