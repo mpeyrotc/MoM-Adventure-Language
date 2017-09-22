@@ -17,21 +17,42 @@ grammar MoM;
   }
 }
 
-arguments		:	//nothing | ss_exp (COMMA ss_exp)* ; 
-assignation		:	VARID EQUALS (construct_call | ss_exp);
-block			:	(statute SEMI_COLON)* ;
-class 			:	CLASS CLASSID IS_A CLASSID (OF_TYPE CLASSID)? OPEN_BRACKET property construct_def function_def CLOSE_BRACKET ;
-condition		:	IF OPEN_PAREN ss_exp CLOSE_PAREN OPEN_BRACKET block CLOSE_BRACKET (ELSE OPEN_BRACKET block CLOSE_BRACKET)? ;
-constant		:	INTEGER | REAL | STRING | VARID ;
-construct_call 	:	NEW CLASSID OPEN_PAREN arguments CLOSE_PAREN SEMI_COLON ;
-construct_def	:	(CLASSID OPEN_PAREN arguments CLOSE_PAREN OPEN_BRACKET block CLOSE_BRACKET)+ ;
-enum			:	CAPITALID (COMMA CAPITALID)* SEMI_COLON ;
-enumeration		:	ENUMERATE type OPEN_BRACKET enum CLOSE_BRACKET ;
-ss_exp			:	s_exp ([AND OR] s_exp)* ;
-s_exp 			:	expression (operand expression)? ;
-expression		:	[function_call term] ([PLUS MINUS condition] [function_call term])* ;
-factor 			:	OPEN_BRACKET ss_exp CLOSE_BRACKET | [PLUS MINUS NOT]? constant ;
-function_args	:	//nothing | type VARID (COMMA type VARID)* ;
+arguments		:	//nothing
+                |   ss_exp (COMMA ss_exp)* 
+                ; 
+assignation		:	VARID EQUALS (construct_call | ss_exp)
+                ;
+block			:	(statute SEMI_COLON)*
+                ;
+class 			:	CLASS CLASSID IS_A (CLASSID | COMPLEX_TYPE) (OF_TYPE CLASSID)? OPEN_BRACKET property construct_def function_def CLOSE_BRACKET
+                ;
+condition		:	IF OPEN_PAREN ss_exp CLOSE_PAREN OPEN_BRACKET block CLOSE_BRACKET (ELSE OPEN_BRACKET block CLOSE_BRACKET)?
+                ;
+constant		:	INTEGER
+                |   REAL
+                |   STRING 
+                |   VARID
+                ;
+construct_call 	:	NEW CLASSID OPEN_PAREN (arguments)? CLOSE_PAREN
+                ;
+construct_def	:	(CLASSID OPEN_PAREN (arguments)? CLOSE_PAREN OPEN_BRACKET block CLOSE_BRACKET SEMI_COLON)+
+                ;
+enum			:	CAPITALID (COMMA CAPITALID)* SEMI_COLON
+                ;
+enumeration		:	ENUMERATE CLASSID OPEN_BRACKET enum CLOSE_BRACKET
+                ;
+ss_exp			:	s_exp ((AND | OR) s_exp)*
+                ;
+s_exp 			:	expression (operand expression)?
+                ;
+expression		:	(function_call | term) ((PLUS | MINUS | condition) (function_call | term))*
+                ;
+factor 			:	OPEN_BRACKET ss_exp CLOSE_BRACKET
+                |   (PLUS | MINUS | NOT)? constant
+                ;
+function_args	:	//nothing 
+                |   type VARID (COMMA type VARID)*
+                ;
 function_call	:	[THIS VARID] PERIOD VARID OPEN_PAREN arguments CLOSE_PAREN SEMI_COLON ;
 function_def	:	(simple_type VARID OPEN_PAREN function_args CLOSE_PAREN OPEN_BRACKET block (RETURN (VARID | expression | function_call | constant))? CLOSE_BRACKET)+ ;
 operand 		:	LESS_THAN | LESS_EQUAL | GREATER_THAN | GREATER_EQUAL | EQUAL_EQUAL ;
