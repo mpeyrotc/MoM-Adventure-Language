@@ -1,22 +1,5 @@
 grammar MoM;
 
-@parser::members
-{
-  @Override
-  public void notifyErrorListeners(Token offendingToken, String msg,
-      RecognitionException ex) {
-    throw new RuntimeException(msg);
-  }
-}
-
-@lexer::members
-{
-  @Override
-  public void recover(RecognitionException ex) {
-    throw new RuntimeException(ex.getMessage());
-  }
-}
-
 program			:	class 
                 ;
 arguments		:	//nothing
