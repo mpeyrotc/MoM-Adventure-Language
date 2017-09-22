@@ -1,6 +1,6 @@
 grammar MoM;
 
-program			:	class 
+program			:	(class_rule)+ EOF
                 ;
 arguments		:	ss_exp (COMMA ss_exp)* 
                 ; 
@@ -8,7 +8,7 @@ assignation		:	VARID EQUALS (construct_call | ss_exp)
                 ;
 block			:	(statute SEMI_COLON)*
                 ;
-class 			:	CLASS CLASSID IS_A (CLASSID | complex_type) (OF_TYPE CLASSID)? OPEN_BRACKET field construct_def function_def CLOSE_BRACKET
+class_rule 		:	CLASS CLASSID IS_A (CLASSID | complex_type) (OF_TYPE CLASSID)? OPEN_BRACKET field construct_def function_def CLOSE_BRACKET
                 ;
 condition		:	IF OPEN_PAREN ss_exp CLOSE_PAREN OPEN_BRACKET block CLOSE_BRACKET (ELSE OPEN_BRACKET block CLOSE_BRACKET)?
                 ;
