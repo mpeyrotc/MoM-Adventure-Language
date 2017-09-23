@@ -8,7 +8,7 @@ assignation		:	VARID EQUALS (construct_call | ss_exp)
                 ;
 block			:	(statute SEMI_COLON)*
                 ;
-class_rule 		:	CLASS CLASSID IS_A (CLASSID | complex_type) (OF_TYPE CLASSID)? OPEN_BRACKET field construct_def function_def CLOSE_BRACKET
+class_rule 		:	CLASS CLASSID IS_A complex_type (OF_TYPE CLASSID)? OPEN_BRACKET field construct_def function_def CLOSE_BRACKET
                 ;
 condition		:	IF OPEN_PAREN ss_exp CLOSE_PAREN OPEN_BRACKET block CLOSE_BRACKET (ELSE OPEN_BRACKET block CLOSE_BRACKET)?
                 ;
@@ -38,7 +38,7 @@ function_args	:	super_type VARID (COMMA super_type VARID)*
                 ;
 function_call	:	(THIS | CLASSID) PERIOD VARID OPEN_PAREN (arguments)? CLOSE_PAREN SEMI_COLON
                 ;
-function_def	:	(simple_type VARID OPEN_PAREN (function_args)? CLOSE_PAREN OPEN_BRACKET block (RETURN ss_exp SEMI_COLON)? CLOSE_BRACKET)+
+function_def	:	(simple_type VARID OPEN_PAREN (function_args)? CLOSE_PAREN OPEN_BRACKET block (RETURN ss_exp SEMI_COLON)? CLOSE_BRACKET SEMI_COLON)*
                 ;
 operand 		:	LESS_THAN
                 |   LESS_EQUAL 
@@ -110,20 +110,17 @@ FLOAT			:	'Real' ;
 SET 			:	'Set' ;
 MAP				:	'Map' ;
 SIZE			:	'Size' ;
-NOTHING 		:	'nothing' ;
+NOTHING 		:	'Nothing' ;
 CLASS 			:	'class' ;
 NEW				:	'new' ;
 ENUMERATE		:	'enumerate' ;
 FIELD           :	'field' ;
 SPEC			:	'specification' ;
-OF 				:	'of' ;
 RETURN          :   'return' ;
 BOOLEAN         :   'boolean' ;
 TYPE 			:	'type' ;
-OF_TYPE			:	OF TYPE ;
-IS 				:	'is' ;
-A 				:	'a' ;
-IS_A			:	IS A ;
+OF_TYPE			:	'of_type' ;
+IS_A			:	'is_a' ;
 fragment DIGIT	:	[0-9] ;
 fragment UPPERC	:	[A-Z] ;
 fragment LOWERC	:	[a-z] ;
@@ -135,3 +132,4 @@ REAL			:	DIGIT+ ([.,] DIGIT+)? ;
 WHITESPACE		:	' ' -> skip ;
 STRING			:	'\"' ( ~('\'' | '\\' | '\n' | '\r') ) + '\"' ;
 WHILE 			:	'while' ;
+WS : [ \t\n]+ -> skip;
