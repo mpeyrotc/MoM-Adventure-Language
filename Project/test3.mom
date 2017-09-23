@@ -1,0 +1,28 @@
+class Character is_a Card of_type Player {
+    field<Card> items;
+    field<Int> items;
+
+    Character(Int physicalLife, Int mentalLife) {
+        physicalLife = physicalLife;
+    };
+
+    Nothing addCommonCard(Card card) {
+        if(numberOfItems <  -1) {
+            physicalLife = physicalLife;
+        };
+    };
+
+    Text name() {
+        return "Father Mateo";
+    };
+}
+
+class Card is_a Component {
+    field<Type> cardType;
+    field<Face> front;
+    field<Face> back;
+
+    Character(Int physicalLife, Int mentalLife) {
+        physicalLife = physicalLife;
+    };
+}

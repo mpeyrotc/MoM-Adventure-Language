@@ -64,7 +64,7 @@ def serializedATN():
         buf.write(u"\2qr\3\2\2\2r\r\3\2\2\2st\t\2\2\2t\17\3\2\2\2uv\7&\2")
         buf.write(u"\2vw\7\60\2\2wy\7\3\2\2xz\5\4\3\2yx\3\2\2\2yz\3\2\2\2")
         buf.write(u"z{\3\2\2\2{|\7\5\2\2|\21\3\2\2\2}~\7\60\2\2~\u0080\7")
-        buf.write(u"\3\2\2\177\u0081\5\4\3\2\u0080\177\3\2\2\2\u0080\u0081")
+        buf.write(u"\3\2\2\177\u0081\5 \21\2\u0080\177\3\2\2\2\u0080\u0081")
         buf.write(u"\3\2\2\2\u0081\u0082\3\2\2\2\u0082\u0083\7\5\2\2\u0083")
         buf.write(u"\u0084\7\6\2\2\u0084\u0085\5\b\5\2\u0085\u0086\7\7\2")
         buf.write(u"\2\u0086\u0087\7\b\2\2\u0087\u0089\3\2\2\2\u0088}\3\2")
@@ -889,11 +889,11 @@ class MoMParser ( Parser ):
             else:
                 return self.getToken(MoMParser.SEMI_COLON, i)
 
-        def arguments(self, i=None):
+        def function_args(self, i=None):
             if i is None:
-                return self.getTypedRuleContexts(MoMParser.ArgumentsContext)
+                return self.getTypedRuleContexts(MoMParser.Function_argsContext)
             else:
-                return self.getTypedRuleContext(MoMParser.ArgumentsContext,i)
+                return self.getTypedRuleContext(MoMParser.Function_argsContext,i)
 
 
         def getRuleIndex(self):
@@ -927,9 +927,9 @@ class MoMParser ( Parser ):
                 self.match(MoMParser.OPEN_PAREN)
                 self.state = 126
                 _la = self._input.LA(1)
-                if (((_la) & ~0x3f) == 0 and ((1 << _la) & ((1 << MoMParser.OPEN_BRACKET) | (1 << MoMParser.PLUS) | (1 << MoMParser.MINUS) | (1 << MoMParser.NOT) | (1 << MoMParser.THIS) | (1 << MoMParser.CLASSID) | (1 << MoMParser.VARID) | (1 << MoMParser.INTEGER) | (1 << MoMParser.REAL) | (1 << MoMParser.STRING))) != 0):
+                if (((_la) & ~0x3f) == 0 and ((1 << _la) & ((1 << MoMParser.ARRAY) | (1 << MoMParser.COMPONENT) | (1 << MoMParser.INT) | (1 << MoMParser.TEXT) | (1 << MoMParser.FLOAT) | (1 << MoMParser.SET) | (1 << MoMParser.MAP) | (1 << MoMParser.SIZE) | (1 << MoMParser.NOTHING) | (1 << MoMParser.BOOLEAN) | (1 << MoMParser.CLASSID))) != 0):
                     self.state = 125
-                    self.arguments()
+                    self.function_args()
 
 
                 self.state = 128
@@ -2288,9 +2288,6 @@ class MoMParser ( Parser ):
             super(MoMParser.Complex_typeContext, self).__init__(parent, invokingState)
             self.parser = parser
 
-        def CLASSID(self):
-            return self.getToken(MoMParser.CLASSID, 0)
-
         def SET(self):
             return self.getToken(MoMParser.SET, 0)
 
@@ -2305,6 +2302,9 @@ class MoMParser ( Parser ):
 
         def COMPONENT(self):
             return self.getToken(MoMParser.COMPONENT, 0)
+
+        def CLASSID(self):
+            return self.getToken(MoMParser.CLASSID, 0)
 
         def getRuleIndex(self):
             return MoMParser.RULE_complex_type

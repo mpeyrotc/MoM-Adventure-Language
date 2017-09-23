@@ -1,0 +1,4 @@
+class AClass is_a Component {
+    Aclass() {};
+    Int method() {};
+}
