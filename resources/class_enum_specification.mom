@@ -1,0 +1,49 @@
+class Character is_a Card of_type Player {
+    field<Card> items;
+    field<Int> items;
+
+    Character(Int physicalLife, Int mentalLife) {
+        physicalLife = physicalLife;
+    };
+
+    Nothing addCommonCard(Card card) {
+        if(numberOfItems <  -1) {
+            physicalLife = physicalLife;
+        };
+    };
+
+    Text name() {
+        return "Father Mateo";
+    };
+};
+
+enumerate Days {
+    MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY;
+};
+
+class Card is_a Component {
+    field<Type> cardType;
+    field<Face> front;
+    field<Face> back;
+
+    Character(Int physicalLife, Int mentalLife) {
+        physicalLife = physicalLife;
+    };
+};
+
+specification ComplexNumber {
+    Int real();
+    Int imaginary();
+    Nothing convert(Int angle);
+    Real summary(Component c, Real r);
+};
+
+class Cn is_a Component of_type ComplexNumber {
+    field<Type> cardType;
+    field<Face> front;
+    field<Face> back;
+
+    Cn(Int physicalLife, Int mentalLife) {
+        physicalLife = physicalLife;
+    };
+};

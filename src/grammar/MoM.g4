@@ -4,12 +4,12 @@ program			:	(class_rule | enumeration | specification)+ EOF
                 ;
 arguments		:	ss_exp (COMMA ss_exp)* 
                 ; 
-assignation		:	VARID EQUALS (construct_call | ss_exp)
+assignation		:	((THIS | CLASSID) PERIOD)? VARID EQUALS (construct_call | ss_exp)
                 ;
 block			:	(statute SEMI_COLON)*
                 ;
 class_rule 		:	CLASS CLASSID IS_A complex_type (OF_TYPE CLASSID)? OPEN_BRACKET field construct_def
-                            function_def CLOSE_BRACKET
+                            function_def CLOSE_BRACKET SEMI_COLON
                 ;
 condition		:	IF OPEN_PAREN ss_exp CLOSE_PAREN OPEN_BRACKET block CLOSE_BRACKET
                             (ELSE OPEN_BRACKET block CLOSE_BRACKET)?
@@ -18,6 +18,9 @@ constant		:	INTEGER
                 |   REAL
                 |   STRING 
                 |   VARID
+                |   array_var
+                |   TRUE
+                |   FALSE
                 ;
 construct_call 	:	NEW CLASSID OPEN_PAREN (arguments)? CLOSE_PAREN
                 ;
@@ -25,7 +28,7 @@ construct_def	:	(CLASSID OPEN_PAREN (function_args)? CLOSE_PAREN OPEN_BRACKET bl
                 ;
 enum			:	CAPITALID (COMMA CAPITALID)* SEMI_COLON
                 ;
-enumeration		:	ENUMERATE CLASSID OPEN_BRACKET enum CLOSE_BRACKET
+enumeration		:	ENUMERATE CLASSID OPEN_BRACKET enum CLOSE_BRACKET SEMI_COLON
                 ;
 ss_exp			:	s_exp ((AND | OR) s_exp)*
                 ;
@@ -36,9 +39,9 @@ expression		:	(function_call | term) ((PLUS | MINUS | condition) (function_call 
 factor 			:	OPEN_BRACKET ss_exp CLOSE_BRACKET
                 |   (PLUS | MINUS | NOT)? constant
                 ;
-function_args	:	super_type VARID (COMMA super_type VARID)*
+function_args	:	(super_type | array_arg) VARID (COMMA (super_type | array_arg) VARID)*
                 ;
-function_call	:	(THIS | CLASSID) PERIOD VARID OPEN_PAREN (arguments)? CLOSE_PAREN SEMI_COLON
+function_call	:	((THIS | CLASSID) PERIOD)? VARID OPEN_PAREN (arguments)? CLOSE_PAREN
                 ;
 function_def	:	(simple_type VARID OPEN_PAREN (function_args)? CLOSE_PAREN OPEN_BRACKET block
                             (RETURN ss_exp SEMI_COLON)? CLOSE_BRACKET SEMI_COLON)*
@@ -49,15 +52,16 @@ operand 		:	LESS_THAN
                 |   GREATER_EQUAL 
                 |   EQUAL_EQUAL 
                 ;
-field           :	(FIELD LESS_THAN super_type GREATER_THAN VARID SEMI_COLON)* 
+field           :	(FIELD LESS_THAN (super_type | array_def) GREATER_THAN VARID SEMI_COLON)*
                 ;
 spec_function   :   (simple_type VARID OPEN_PAREN (function_args)? CLOSE_PAREN SEMI_COLON)+
                 ;
-specification	:	SPEC CLASSID OPEN_BRACKET (spec_function)? CLOSE_BRACKET 
+specification	:	SPEC CLASSID OPEN_BRACKET (spec_function)? CLOSE_BRACKET SEMI_COLON
                 ;
-statute			:	assignation 
+statute			:	function_call
+                |   assignation
                 |   while_loop 
-                |   condition 
+                |   condition
                 ;
 term			:	factor ((STAR | SLASH) factor)* 
                 ;
@@ -72,12 +76,17 @@ simple_type		:	INT
                 ;
 complex_type	:	SET
                 |   MAP 
-                |   SIZE 
-                |   ARRAY 
+                |   SIZE
                 |   COMPONENT
                 |   CLASSID
                 ;
-while_loop		:	WHILE OPEN_PAREN ss_exp CLOSE_PAREN OPEN_BRACKET block CLOSE_BRACKET 
+while_loop		:	WHILE OPEN_PAREN ss_exp CLOSE_PAREN OPEN_BRACKET block CLOSE_BRACKET
+                ;
+array_def       :   super_type OPEN_SBRACKET INTEGER CLOSE_SBRACKET
+                ;
+array_var       :   ((THIS | CLASSID) PERIOD)? VARID OPEN_SBRACKET INTEGER CLOSE_SBRACKET
+                ;
+array_arg       :   super_type OPEN_SBRACKET CLOSE_SBRACKET
                 ;
 
 OPEN_PAREN		:	'(' ;
@@ -85,6 +94,8 @@ COMMA			:	',' ;
 CLOSE_PAREN		:	')' ;
 OPEN_BRACKET	:	'{' ;
 CLOSE_BRACKET	:	'}' ;
+OPEN_SBRACKET	:	'[' ;
+CLOSE_SBRACKET	:	']' ;
 SEMI_COLON 		:	';' ;
 STAR			:	'*' ;
 SLASH			:	'/' ;
@@ -105,7 +116,6 @@ OR 				:	'||' ;
 THIS			:	'this' ;
 IF				:	'if' ; 
 ELSE			:	'else' ;
-ARRAY 			:	'Array' ;
 COMPONENT		:	'Component' ;
 INT 			:	'Int' ;
 TEXT			:	'Text' ;
@@ -120,10 +130,13 @@ ENUMERATE		:	'enumerate' ;
 FIELD           :	'field' ;
 SPEC			:	'specification' ;
 RETURN          :   'return' ;
-BOOLEAN         :   'boolean' ;
+BOOLEAN         :   'Boolean' ;
 TYPE 			:	'type' ;
 OF_TYPE			:	'of_type' ;
 IS_A			:	'is_a' ;
+WHILE 			:	'while' ;
+TRUE            :   'TRUE';
+FALSE           :   'FALSE';
 fragment DIGIT	:	[0-9] ;
 fragment UPPERC	:	[A-Z] ;
 fragment LOWERC	:	[a-z] ;
@@ -134,5 +147,4 @@ INTEGER			:	DIGIT+ ;
 REAL			:	DIGIT+ ([.,] DIGIT+)? ;
 WHITESPACE		:	' ' -> skip ;
 STRING			:	'"' ( ~('\'' | '\\' | '\n' | '\r') ) + '"' ;
-WHILE 			:	'while' ;
 WS : [ \t\n]+ -> skip;

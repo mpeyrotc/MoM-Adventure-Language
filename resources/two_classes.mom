@@ -15,7 +15,7 @@ class Character is_a Card of_type Player {
     Text name() {
         return "Father Mateo";
     };
-}
+};
 
 class Card is_a Component {
     field<Type> cardType;
@@ -25,4 +25,4 @@ class Card is_a Component {
     Character(Int physicalLife, Int mentalLife) {
         physicalLife = physicalLife;
     };
-}
+};

@@ -1,4 +1,4 @@
-# Generated from Grammar/MoM.g4 by ANTLR 4.7
+# Generated from src/grammar/MoM.g4 by ANTLR 4.7
 from antlr4 import *
 if __name__ is not None and "." in __name__:
     from .MoMParser import MoMParser
@@ -257,6 +257,33 @@ class MoMListener(ParseTreeListener):
 
     # Exit a parse tree produced by MoMParser#while_loop.
     def exitWhile_loop(self, ctx:MoMParser.While_loopContext):
+        pass
+
+
+    # Enter a parse tree produced by MoMParser#array_def.
+    def enterArray_def(self, ctx:MoMParser.Array_defContext):
+        pass
+
+    # Exit a parse tree produced by MoMParser#array_def.
+    def exitArray_def(self, ctx:MoMParser.Array_defContext):
+        pass
+
+
+    # Enter a parse tree produced by MoMParser#array_var.
+    def enterArray_var(self, ctx:MoMParser.Array_varContext):
+        pass
+
+    # Exit a parse tree produced by MoMParser#array_var.
+    def exitArray_var(self, ctx:MoMParser.Array_varContext):
+        pass
+
+
+    # Enter a parse tree produced by MoMParser#array_arg.
+    def enterArray_arg(self, ctx:MoMParser.Array_argContext):
+        pass
+
+    # Exit a parse tree produced by MoMParser#array_arg.
+    def exitArray_arg(self, ctx:MoMParser.Array_argContext):
         pass
 
 

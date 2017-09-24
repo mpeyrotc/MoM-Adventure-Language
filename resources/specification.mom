@@ -1,0 +1,6 @@
+specification ComplexNumber {
+    Int real();
+    Int imaginary();
+    Nothing convert(Int angle);
+    Real summary(Component c, Real r);
+};

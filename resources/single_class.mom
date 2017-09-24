@@ -7,6 +7,6 @@ class Character is_a Card of_type Player {
     };
 
     Nothing addCommonCard() {
-    }
-}
+    };
+};
 
