@@ -1,6 +1,6 @@
 grammar MoM;
 
-program			:	(class_rule)+ EOF
+program			:	(class_rule | enumeration | specification)+ EOF
                 ;
 arguments		:	ss_exp (COMMA ss_exp)* 
                 ; 
@@ -8,9 +8,11 @@ assignation		:	VARID EQUALS (construct_call | ss_exp)
                 ;
 block			:	(statute SEMI_COLON)*
                 ;
-class_rule 		:	CLASS CLASSID IS_A complex_type (OF_TYPE CLASSID)? OPEN_BRACKET field construct_def function_def CLOSE_BRACKET
+class_rule 		:	CLASS CLASSID IS_A complex_type (OF_TYPE CLASSID)? OPEN_BRACKET field construct_def
+                            function_def CLOSE_BRACKET
                 ;
-condition		:	IF OPEN_PAREN ss_exp CLOSE_PAREN OPEN_BRACKET block CLOSE_BRACKET (ELSE OPEN_BRACKET block CLOSE_BRACKET)?
+condition		:	IF OPEN_PAREN ss_exp CLOSE_PAREN OPEN_BRACKET block CLOSE_BRACKET
+                            (ELSE OPEN_BRACKET block CLOSE_BRACKET)?
                 ;
 constant		:	INTEGER
                 |   REAL
@@ -38,7 +40,8 @@ function_args	:	super_type VARID (COMMA super_type VARID)*
                 ;
 function_call	:	(THIS | CLASSID) PERIOD VARID OPEN_PAREN (arguments)? CLOSE_PAREN SEMI_COLON
                 ;
-function_def	:	(simple_type VARID OPEN_PAREN (function_args)? CLOSE_PAREN OPEN_BRACKET block (RETURN ss_exp SEMI_COLON)? CLOSE_BRACKET SEMI_COLON)*
+function_def	:	(simple_type VARID OPEN_PAREN (function_args)? CLOSE_PAREN OPEN_BRACKET block
+                            (RETURN ss_exp SEMI_COLON)? CLOSE_BRACKET SEMI_COLON)*
                 ;
 operand 		:	LESS_THAN
                 |   LESS_EQUAL 
@@ -130,6 +133,6 @@ VARID			:	LOWERC (UPPERC | LOWERC | DIGIT | UNDERSCORE)* ;
 INTEGER			:	DIGIT+ ;
 REAL			:	DIGIT+ ([.,] DIGIT+)? ;
 WHITESPACE		:	' ' -> skip ;
-STRING			:	'\"' ( ~('\'' | '\\' | '\n' | '\r') ) + '\"' ;
+STRING			:	'"' ( ~('\'' | '\\' | '\n' | '\r') ) + '"' ;
 WHILE 			:	'while' ;
 WS : [ \t\n]+ -> skip;
