@@ -105,8 +105,8 @@ def serializedATN():
         buf.write("\2\u00ca\u00c8\3\2\2\2\u00ca\u00c9\3\2\2\2\u00cb\u00cd")
         buf.write("\3\2\2\2\u00cc\u00c6\3\2\2\2\u00cd\u00d0\3\2\2\2\u00ce")
         buf.write("\u00cc\3\2\2\2\u00ce\u00cf\3\2\2\2\u00cf\35\3\2\2\2\u00d0")
-        buf.write("\u00ce\3\2\2\2\u00d1\u00d2\7\6\2\2\u00d2\u00d3\5\30\r")
-        buf.write("\2\u00d3\u00d4\7\7\2\2\u00d4\u00da\3\2\2\2\u00d5\u00d7")
+        buf.write("\u00ce\3\2\2\2\u00d1\u00d2\7\3\2\2\u00d2\u00d3\5\30\r")
+        buf.write("\2\u00d3\u00d4\7\5\2\2\u00d4\u00da\3\2\2\2\u00d5\u00d7")
         buf.write("\t\4\2\2\u00d6\u00d5\3\2\2\2\u00d6\u00d7\3\2\2\2\u00d7")
         buf.write("\u00d8\3\2\2\2\u00d8\u00da\5\16\b\2\u00d9\u00d1\3\2\2")
         buf.write("\2\u00d9\u00d6\3\2\2\2\u00da\37\3\2\2\2\u00db\u00de\5")
@@ -540,7 +540,7 @@ class MoMParser ( Parser ):
                 self.state = 85
                 self.construct_call()
                 pass
-            elif token in [MoMParser.OPEN_BRACKET, MoMParser.PLUS, MoMParser.MINUS, MoMParser.NOT, MoMParser.THIS, MoMParser.TRUE, MoMParser.FALSE, MoMParser.CLASSID, MoMParser.VARID, MoMParser.INTEGER, MoMParser.REAL, MoMParser.STRING]:
+            elif token in [MoMParser.OPEN_PAREN, MoMParser.PLUS, MoMParser.MINUS, MoMParser.NOT, MoMParser.THIS, MoMParser.TRUE, MoMParser.FALSE, MoMParser.CLASSID, MoMParser.VARID, MoMParser.INTEGER, MoMParser.REAL, MoMParser.STRING]:
                 self.state = 86
                 self.ss_exp()
                 pass
@@ -971,7 +971,7 @@ class MoMParser ( Parser ):
             self.state = 139
             self._errHandler.sync(self)
             _la = self._input.LA(1)
-            if (((_la) & ~0x3f) == 0 and ((1 << _la) & ((1 << MoMParser.OPEN_BRACKET) | (1 << MoMParser.PLUS) | (1 << MoMParser.MINUS) | (1 << MoMParser.NOT) | (1 << MoMParser.THIS) | (1 << MoMParser.TRUE) | (1 << MoMParser.FALSE) | (1 << MoMParser.CLASSID) | (1 << MoMParser.VARID) | (1 << MoMParser.INTEGER) | (1 << MoMParser.REAL) | (1 << MoMParser.STRING))) != 0):
+            if (((_la) & ~0x3f) == 0 and ((1 << _la) & ((1 << MoMParser.OPEN_PAREN) | (1 << MoMParser.PLUS) | (1 << MoMParser.MINUS) | (1 << MoMParser.NOT) | (1 << MoMParser.THIS) | (1 << MoMParser.TRUE) | (1 << MoMParser.FALSE) | (1 << MoMParser.CLASSID) | (1 << MoMParser.VARID) | (1 << MoMParser.INTEGER) | (1 << MoMParser.REAL) | (1 << MoMParser.STRING))) != 0):
                 self.state = 138
                 self.arguments()
 
@@ -1493,15 +1493,15 @@ class MoMParser ( Parser ):
             super().__init__(parent, invokingState)
             self.parser = parser
 
-        def OPEN_BRACKET(self):
-            return self.getToken(MoMParser.OPEN_BRACKET, 0)
+        def OPEN_PAREN(self):
+            return self.getToken(MoMParser.OPEN_PAREN, 0)
 
         def ss_exp(self):
             return self.getTypedRuleContext(MoMParser.Ss_expContext,0)
 
 
-        def CLOSE_BRACKET(self):
-            return self.getToken(MoMParser.CLOSE_BRACKET, 0)
+        def CLOSE_PAREN(self):
+            return self.getToken(MoMParser.CLOSE_PAREN, 0)
 
         def constant(self):
             return self.getTypedRuleContext(MoMParser.ConstantContext,0)
@@ -1539,14 +1539,14 @@ class MoMParser ( Parser ):
             self.state = 215
             self._errHandler.sync(self)
             token = self._input.LA(1)
-            if token in [MoMParser.OPEN_BRACKET]:
+            if token in [MoMParser.OPEN_PAREN]:
                 self.enterOuterAlt(localctx, 1)
                 self.state = 207
-                self.match(MoMParser.OPEN_BRACKET)
+                self.match(MoMParser.OPEN_PAREN)
                 self.state = 208
                 self.ss_exp()
                 self.state = 209
-                self.match(MoMParser.CLOSE_BRACKET)
+                self.match(MoMParser.CLOSE_PAREN)
                 pass
             elif token in [MoMParser.PLUS, MoMParser.MINUS, MoMParser.NOT, MoMParser.THIS, MoMParser.TRUE, MoMParser.FALSE, MoMParser.CLASSID, MoMParser.VARID, MoMParser.INTEGER, MoMParser.REAL, MoMParser.STRING]:
                 self.enterOuterAlt(localctx, 2)
@@ -1751,7 +1751,7 @@ class MoMParser ( Parser ):
             self.state = 241
             self._errHandler.sync(self)
             _la = self._input.LA(1)
-            if (((_la) & ~0x3f) == 0 and ((1 << _la) & ((1 << MoMParser.OPEN_BRACKET) | (1 << MoMParser.PLUS) | (1 << MoMParser.MINUS) | (1 << MoMParser.NOT) | (1 << MoMParser.THIS) | (1 << MoMParser.TRUE) | (1 << MoMParser.FALSE) | (1 << MoMParser.CLASSID) | (1 << MoMParser.VARID) | (1 << MoMParser.INTEGER) | (1 << MoMParser.REAL) | (1 << MoMParser.STRING))) != 0):
+            if (((_la) & ~0x3f) == 0 and ((1 << _la) & ((1 << MoMParser.OPEN_PAREN) | (1 << MoMParser.PLUS) | (1 << MoMParser.MINUS) | (1 << MoMParser.NOT) | (1 << MoMParser.THIS) | (1 << MoMParser.TRUE) | (1 << MoMParser.FALSE) | (1 << MoMParser.CLASSID) | (1 << MoMParser.VARID) | (1 << MoMParser.INTEGER) | (1 << MoMParser.REAL) | (1 << MoMParser.STRING))) != 0):
                 self.state = 240
                 self.arguments()
 

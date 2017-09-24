@@ -36,7 +36,7 @@ s_exp 			:	expression (operand expression)?
                 ;
 expression		:	(function_call | term) ((PLUS | MINUS | condition) (function_call | term))*
                 ;
-factor 			:	OPEN_BRACKET ss_exp CLOSE_BRACKET
+factor 			:	OPEN_PAREN ss_exp CLOSE_PAREN
                 |   (PLUS | MINUS | NOT)? constant
                 ;
 function_args	:	(super_type | array_arg) VARID (COMMA (super_type | array_arg) VARID)*
