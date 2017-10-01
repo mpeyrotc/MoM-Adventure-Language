@@ -42,3 +42,6 @@ class TestGrammar(object):
     def test_complex_class(self):
         assert general_function("resources/complex_class.mom")
 
+    def test_types(self):
+        assert general_function("resources/type_test.mom")
+

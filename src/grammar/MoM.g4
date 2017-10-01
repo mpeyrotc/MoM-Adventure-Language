@@ -1,10 +1,13 @@
 grammar MoM;
 
-program			:	(class_rule | enumeration | specification)+ EOF
+program			@init {print("RULE")}
+                :	(class_rule {print("Entered Class")}
+                |   enumeration {print("Entered Enum")}
+                |   specification {print("Entered Specification")} ) + EOF
                 ;
 arguments		:	ss_exp (COMMA ss_exp)* 
                 ; 
-assignation		:	((THIS | CLASSID) PERIOD)? VARID EQUALS (construct_call | ss_exp)
+assignation		:	((THIS | VARID) PERIOD)? VARID EQUALS (construct_call | ss_exp)
                 ;
 block			:	(statute SEMI_COLON)*
                 ;
@@ -58,8 +61,11 @@ spec_function   :   (simple_type VARID OPEN_PAREN (function_args)? CLOSE_PAREN S
                 ;
 specification	:	SPEC CLASSID OPEN_BRACKET (spec_function)? CLOSE_BRACKET SEMI_COLON
                 ;
+assignation_def :   super_type VARID EQUALS (construct_call | ss_exp)
+                ;
 statute			:	function_call
                 |   assignation
+                |   assignation_def
                 |   while_loop 
                 |   condition
                 ;

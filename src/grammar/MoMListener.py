@@ -1,4 +1,4 @@
-# Generated from src/grammar/MoM.g4 by ANTLR 4.7
+# Generated from MoM.g4 by ANTLR 4.7
 from antlr4 import *
 if __name__ is not None and "." in __name__:
     from .MoMParser import MoMParser
@@ -203,6 +203,15 @@ class MoMListener(ParseTreeListener):
 
     # Exit a parse tree produced by MoMParser#specification.
     def exitSpecification(self, ctx:MoMParser.SpecificationContext):
+        pass
+
+
+    # Enter a parse tree produced by MoMParser#assignation_def.
+    def enterAssignation_def(self, ctx:MoMParser.Assignation_defContext):
+        pass
+
+    # Exit a parse tree produced by MoMParser#assignation_def.
+    def exitAssignation_def(self, ctx:MoMParser.Assignation_defContext):
         pass
 
 

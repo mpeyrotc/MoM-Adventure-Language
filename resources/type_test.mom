@@ -1,0 +1,8 @@
+class Character is_a Card of_type Player {
+
+    Character() {
+        this.var = 2;
+        character.var = 2;
+        Int var = 2;
+    };
+};

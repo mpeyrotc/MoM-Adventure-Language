@@ -6,6 +6,7 @@ class Character is_a Card of_type Player {
         parent();
         physicalLife = physicalLife;
         this.mentalLife = init(mentalLife);
+        ha = new Object();
     };
 
     Int addCommonCard(Card card) {
