@@ -1,8 +1,9 @@
 from antlr4 import *
-from .context import src
+
 from src.ErrorListener import MoMErrorListener
 from src.grammar import MoMLexer
 from src.grammar import MoMParser
+from src.grammar.MoMListener import MoMListener
 
 
 def general_function(file):
@@ -15,7 +16,10 @@ def general_function(file):
         stream = CommonTokenStream(lexer)
         parser = MoMParser.MoMParser(stream)
         parser._listeners = [MoMErrorListener()]
-        parser.program()
+        tree = parser.program()
+
+        walker = ParseTreeWalker()
+        walker.walk(MoMListener(), tree)
         return True
     except Exception as e:
         print(e)

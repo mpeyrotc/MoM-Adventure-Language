@@ -1,12 +1,18 @@
 # Generated from MoM.g4 by ANTLR 4.7
 from antlr4 import *
+
+from src.structures.EnumerationClass import Enumeration
+from src.structures.MasterTables import enumerations
+
 if __name__ is not None and "." in __name__:
     from .MoMParser import MoMParser
 else:
     from MoMParser import MoMParser
 
+
 # This class defines a complete listener for a parse tree produced by MoMParser.
 class MoMListener(ParseTreeListener):
+    current_enumeration = ""
 
     # Enter a parse tree produced by MoMParser#program.
     def enterProgram(self, ctx:MoMParser.ProgramContext):
@@ -88,19 +94,30 @@ class MoMListener(ParseTreeListener):
     def exitConstruct_def(self, ctx:MoMParser.Construct_defContext):
         pass
 
+    def enterEnum(self, ctx: MoMParser.EnumContext):
+        """Takes each value defined in the enumeration and assigns it to its
+        corresponding enumeration.
 
-    # Enter a parse tree produced by MoMParser#enum.
-    def enterEnum(self, ctx:MoMParser.EnumContext):
-        pass
+        :param ctx: the parser context for this enumeration, holds the values of the enumeration.
+        :return: None.
+        """
+        for value in ctx.CAPITALID():
+            enumerations[MoMListener.current_enumeration].add_value(value.getText())
 
     # Exit a parse tree produced by MoMParser#enum.
-    def exitEnum(self, ctx:MoMParser.EnumContext):
+    def exitEnum(self, ctx: MoMParser.EnumContext):
         pass
 
+    def enterEnumeration(self, ctx: MoMParser.EnumerationContext):
+        """Enumeration listener, creates a new instance and saves it in the registry.
 
-    # Enter a parse tree produced by MoMParser#enumeration.
-    def enterEnumeration(self, ctx:MoMParser.EnumerationContext):
-        pass
+        :param ctx: the parser context for this enumeration, holds the enumeration name.
+        :return: None.
+        """
+        name = ctx.CLASSID().getText()
+        new_enumeration = Enumeration(name)
+        enumerations[name] = new_enumeration
+        MoMListener.current_enumeration = name
 
     # Exit a parse tree produced by MoMParser#enumeration.
     def exitEnumeration(self, ctx:MoMParser.EnumerationContext):

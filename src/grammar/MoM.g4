@@ -1,9 +1,8 @@
 grammar MoM;
 
-program			@init {print("RULE")}
-                :	(class_rule {print("Entered Class")}
-                |   enumeration {print("Entered Enum")}
-                |   specification {print("Entered Specification")} ) + EOF
+program			:	(class_rule
+                |   enumeration
+                |   specification) + EOF
                 ;
 arguments		:	ss_exp (COMMA ss_exp)* 
                 ; 
