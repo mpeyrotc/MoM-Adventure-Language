@@ -22,6 +22,7 @@ class Type(IntEnum):
     REAL = auto()
     BOOLEAN = auto()
     OTHER = auto()
+    NOTHING = auto()
 
 
 @unique
@@ -102,6 +103,26 @@ for i in range(num_types + 1):
         for k in range(num_operators + 1):
             if semantic_table[i][j][k] == 0:
                 semantic_table[i][j][k] = Type.OTHER
+
+
+def get_type(name: str) -> Type:
+    """Returns a simple type instance depending on the name of the type.
+
+    :param name: the name of the type as found in the compiled program verbatim.
+    :raises TypeError if the type is not part of the simple types.
+    :return: the type object corresponding to the type name.
+    """
+    if name == 'Boolean':
+        return Type.BOOLEAN
+    if name == 'Text':
+        return Type.TEXT
+    if name == 'Int':
+        return Type.INT
+    if name == 'Nothing':
+        return Type.NOTHING
+
+    raise TypeError(name + " type is not a simple type.")
+
 
 __author__ = "Marco A. Peyrot (mpeyrotc)"
 __license__ = "MIT"
