@@ -26,7 +26,7 @@ constant		:	INTEGER
                 ;
 construct_call 	:	NEW CLASSID OPEN_PAREN (arguments)? CLOSE_PAREN
                 ;
-construct_def	:	(CLASSID OPEN_PAREN (function_args)? CLOSE_PAREN OPEN_BRACKET block CLOSE_BRACKET SEMI_COLON)+
+construct_def	:	CLASSID OPEN_PAREN (function_args)? CLOSE_PAREN OPEN_BRACKET block CLOSE_BRACKET SEMI_COLON
                 ;
 enum			:	CAPITALID (COMMA CAPITALID)* SEMI_COLON
                 ;
