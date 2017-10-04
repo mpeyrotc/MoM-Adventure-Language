@@ -2,7 +2,7 @@ class Character is_a Card of_type Player {
     field<Card> items;
     field<Int> items;
 
-    Character(Int physicalLife, Int mentalLife) {
+    Character(Int[] physicalLife, Real[] mentalLife) {
         physicalLife = physicalLife;
     };
 

@@ -3,10 +3,11 @@ class Character is_a Card of_type Player {
     Character() {
     };
 
-    Text name() {
+    Text name(Int a_number) {
     };
 
     Nothing addCommonCard() {
     };
 };
+
 

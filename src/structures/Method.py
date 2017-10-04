@@ -18,9 +18,10 @@ class Method:
         self._return_type = return_type
         self._variables = {}
 
-    def add_argument(self, arg_name: str, arg_type) -> None:
+    def add_argument(self, arg_name: str, arg_type, is_array: bool) -> None:
         """Add argument to variable dictionary along with its type.
 
+        :param is_array: a boolean argument that specifies if the argument is an array.
         :param arg_type: the type of the argument, may be simple or complex (a.k.a a super type in the grammar).
         :param arg_name: the name of the argument, must be unique among the rest of the arguments and
             the local variables of the method.
@@ -29,7 +30,8 @@ class Method:
         if arg_name in self._variables:
             raise NameError("Method name already defined within scope.")
 
-        self._variables[arg_name] = arg_type
+        self._variables[arg_name] = {'type': arg_type,
+                                     'is_array': is_array}
 
     @property
     def name(self):
