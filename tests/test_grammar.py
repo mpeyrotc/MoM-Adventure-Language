@@ -4,9 +4,14 @@ from src.ErrorListener import MoMErrorListener
 from src.grammar import MoMLexer
 from src.grammar import MoMParser
 from src.grammar.MoMListener import MoMListener
+import src.MasterTables as master_tables
 
 
 def general_function(file):
+    master_tables.classes = {}
+    master_tables.specifications = {}
+    master_tables.enumerations = {}
+
     try:
         file_stream = FileStream(file)
         input_stream = InputStream(str(file_stream))

@@ -22,7 +22,7 @@ class Card is_a Component {
     field<Face> front;
     field<Face> back;
 
-    Character(Int physicalLife, Int mentalLife) {
+    Card(Int physicalLife, Int mentalLife) {
         physicalLife = physicalLife;
     };
 };

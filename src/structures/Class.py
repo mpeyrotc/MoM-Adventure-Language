@@ -9,7 +9,6 @@ class Class:
         self._methods = {}
 
     def add_method(self, method: Method):
-        # TODO: check for uniqueness within the class scope
         self._methods[method.name] = method
 
     @property
@@ -22,8 +21,8 @@ class Class:
 
     @property
     def specifications(self):
-        return set(self._class_specifications)
+        return self._class_specifications
 
     @property
     def methods(self):
-        return self._methods.copy()
+        return self._methods

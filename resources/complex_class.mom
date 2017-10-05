@@ -9,7 +9,7 @@ class Character is_a Card of_type Player {
         ha = new Object();
     };
 
-    Int addCommonCard(Card card) {
+    Int setCommonCard(Card card) {
         i = card[0];
 
         if(!numberOfItems <  (-1) || ((-34 >= card[5]) && func(a, b[2]))) {

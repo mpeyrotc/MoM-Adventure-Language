@@ -1,12 +1,11 @@
 import sys
-from antlr4 import *
 
 import ErrorListener
+from antlr4 import *
 from grammar import MoMLexer
 from grammar import MoMParser
 
 from src.grammar.MoMListener import MoMListener
-from src.structures.MasterTables import enumerations, classes
 
 if __name__ == "__main__":
     try:

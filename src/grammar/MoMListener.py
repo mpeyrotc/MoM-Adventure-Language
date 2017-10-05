@@ -3,9 +3,9 @@ from enum import IntEnum, auto, unique
 
 from antlr4 import *
 
+import src.MasterTables as master_tables
 from src.structures.Class import Class
 from src.structures.Enumeration import Enumeration
-from src.structures.MasterTables import enumerations, classes, specifications
 from src.structures.Method import Method
 from src.structures.SemanticTable import get_type
 from src.structures.Specification import Specification
@@ -42,6 +42,9 @@ class MoMListener(ParseTreeListener):
     in_signature = False
 
     current_structure = StructureType.CLASS
+
+    def clear_tables(self):
+        pass
 
     # Enter a parse tree produced by MoMParser#program.
     def enterProgram(self, ctx:MoMParser.ProgramContext):
@@ -96,16 +99,18 @@ class MoMListener(ParseTreeListener):
         for i in range(1, len(ctx.CLASSID())):
             class_specifications.add(ctx.CLASSID()[i].getText())
 
-        # TODO: determine uniqueness of class name
         self.current_class = class_name
         self.current_structure = StructureType.CLASS
+
+        if class_name in master_tables.classes:
+            raise NameError("Redefinition of class '" + class_name + "' found. This is not supported by the language.")
 
         # TODO: determine if need to check existence of parent or will be done in second stage
         # get the parent of this class
         self.enterComplex_type(ctx.complex_type())
         class_parent = self.current_type
 
-        classes[class_name] = Class(class_name, class_parent, class_specifications)
+        master_tables.classes[class_name] = Class(class_name, class_parent, class_specifications)
 
     # Exit a parse tree produced by MoMParser#class_rule.
     def exitClass_rule(self, ctx:MoMParser.Class_ruleContext):
@@ -143,7 +148,7 @@ class MoMListener(ParseTreeListener):
         self.current_method = method_name
 
         new_method = Method(method_name, method_name)
-        classes[self.current_class].add_method(new_method)
+        master_tables.classes[self.current_class].add_method(new_method)
 
     # Exit a parse tree produced by MoMParser#construct_def.
     def exitConstruct_def(self, ctx:MoMParser.Construct_defContext):
@@ -157,7 +162,7 @@ class MoMListener(ParseTreeListener):
         :return: None.
         """
         for value in ctx.CAPITALID():
-            enumerations[self.current_enumeration].add_value(value.getText())
+            master_tables.enumerations[self.current_enumeration].add_value(value.getText())
 
     # Exit a parse tree produced by MoMParser#enum.
     def exitEnum(self, ctx:MoMParser.EnumContext):
@@ -171,7 +176,7 @@ class MoMListener(ParseTreeListener):
         """
         name = ctx.CLASSID().getText()
         new_enumeration = Enumeration(name)
-        enumerations[name] = new_enumeration
+        master_tables.enumerations[name] = new_enumeration
         self.current_enumeration = name
         self.current_structure = StructureType.ENUMERATION
 
@@ -230,7 +235,7 @@ class MoMListener(ParseTreeListener):
             # print(name + var.var_type + " &&&&& " + self.current_class + " %%%%%% " + self.current_method)
 
             if self.current_structure == StructureType.CLASS:
-                classes[self.current_class].methods[self.current_method].add_argument(name, var.var_type, var.is_array)
+                master_tables.classes[self.current_class].methods[self.current_method].add_argument(name, var.var_type, var.is_array)
 
     # Enter a parse tree produced by MoMParser#function_call.
     def enterFunction_call(self, ctx:MoMParser.Function_callContext):
@@ -257,7 +262,12 @@ class MoMListener(ParseTreeListener):
             self.current_method = method_name
 
             new_method = Method(method_name, get_type(self.current_type))
-            classes[self.current_class].add_method(new_method)
+
+            if method_name in master_tables.classes[self.current_class].methods:
+                raise NameError("Method '" + method_name + "' redefined in class '"
+                                + self.current_class + "', this is not supported at language level.")
+
+            master_tables.classes[self.current_class].add_method(new_method)
 
     # Exit a parse tree produced by MoMParser#function_def.
     def exitFunction_def(self, ctx:MoMParser.Function_defContext):
@@ -286,8 +296,11 @@ class MoMListener(ParseTreeListener):
             method = Method(name.getText(), return_type.getText())
             self.current_method = method.name
 
-            # TODO: check for method uniqueness
-            specifications[self.current_specification].add_method(method)
+            if method.name in master_tables.specifications[self.current_specification].methods:
+                raise NameError("Method '" + method.name + "' redefined in specification '" +
+                                self.current_specification + "', this is not supported at language level.")
+
+            master_tables.specifications[self.current_specification].add_method(method)
 
     # Exit a parse tree produced by MoMParser#spec_function.
     def exitSpec_function(self, ctx:MoMParser.Spec_functionContext):
@@ -302,8 +315,11 @@ class MoMListener(ParseTreeListener):
         """
         spec_name = ctx.CLASSID().getText()
 
-        # TODO: check for uniqueness
-        specifications[spec_name] = Specification(spec_name)
+        if spec_name in master_tables.specifications:
+            raise NameError("Specification '" + spec_name + "' is already defined. Redefinition of specifications"
+                                                            " is not supported at language level.")
+
+        master_tables.specifications[spec_name] = Specification(spec_name)
         self.current_specification = spec_name
         self.current_structure = StructureType.SPECIFICATION
 
