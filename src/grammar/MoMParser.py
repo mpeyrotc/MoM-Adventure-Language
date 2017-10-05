@@ -17,45 +17,45 @@ def serializedATN():
         buf.write("\3\2\3\2\3\3\3\3\3\3\7\3O\n\3\f\3\16\3R\13\3\3\4\3\4\5")
         buf.write("\4V\n\4\3\4\3\4\3\4\3\4\5\4\\\n\4\3\5\3\5\3\5\7\5a\n\5")
         buf.write("\f\5\16\5d\13\5\3\6\3\6\3\6\3\6\3\6\3\6\5\6l\n\6\3\6\3")
-        buf.write("\6\3\6\3\6\3\6\3\6\3\6\3\7\3\7\3\7\3\7\3\7\3\7\3\7\3\7")
-        buf.write("\3\7\3\7\3\7\3\7\5\7\u0081\n\7\3\b\3\b\3\b\3\b\3\b\3\b")
-        buf.write("\3\b\5\b\u008a\n\b\3\t\3\t\3\t\3\t\5\t\u0090\n\t\3\t\3")
-        buf.write("\t\3\n\3\n\3\n\5\n\u0097\n\n\3\n\3\n\3\n\3\n\3\n\3\n\3")
-        buf.write("\13\3\13\3\13\7\13\u00a2\n\13\f\13\16\13\u00a5\13\13\3")
-        buf.write("\13\3\13\3\f\3\f\3\f\3\f\3\f\3\f\3\f\3\r\3\r\3\r\7\r\u00b3")
-        buf.write("\n\r\f\r\16\r\u00b6\13\r\3\16\3\16\3\16\3\16\5\16\u00bc")
-        buf.write("\n\16\3\17\3\17\5\17\u00c0\n\17\3\17\3\17\3\17\5\17\u00c5")
-        buf.write("\n\17\3\17\3\17\5\17\u00c9\n\17\7\17\u00cb\n\17\f\17\16")
-        buf.write("\17\u00ce\13\17\3\20\3\20\3\20\3\20\3\20\5\20\u00d5\n")
-        buf.write("\20\3\20\5\20\u00d8\n\20\3\21\3\21\5\21\u00dc\n\21\3\21")
-        buf.write("\3\21\3\21\3\21\5\21\u00e2\n\21\3\21\3\21\7\21\u00e6\n")
-        buf.write("\21\f\21\16\21\u00e9\13\21\3\22\3\22\5\22\u00ed\n\22\3")
-        buf.write("\22\3\22\3\22\5\22\u00f2\n\22\3\22\3\22\3\23\3\23\3\23")
-        buf.write("\3\23\5\23\u00fa\n\23\3\23\3\23\3\23\3\23\3\23\3\23\3")
-        buf.write("\23\5\23\u0103\n\23\3\23\3\23\3\23\7\23\u0108\n\23\f\23")
-        buf.write("\16\23\u010b\13\23\3\24\3\24\3\25\3\25\3\25\3\25\5\25")
-        buf.write("\u0113\n\25\3\25\3\25\3\25\3\25\7\25\u0119\n\25\f\25\16")
-        buf.write("\25\u011c\13\25\3\26\3\26\3\26\3\26\5\26\u0122\n\26\3")
-        buf.write("\26\3\26\3\26\6\26\u0127\n\26\r\26\16\26\u0128\3\27\3")
-        buf.write("\27\3\27\3\27\5\27\u012f\n\27\3\27\3\27\3\27\3\30\3\30")
-        buf.write("\3\30\3\30\3\30\5\30\u0139\n\30\3\31\3\31\3\31\3\31\3")
-        buf.write("\31\5\31\u0140\n\31\3\32\3\32\3\32\7\32\u0145\n\32\f\32")
-        buf.write("\16\32\u0148\13\32\3\33\3\33\5\33\u014c\n\33\3\34\3\34")
-        buf.write("\3\35\3\35\3\36\3\36\3\36\3\36\3\36\3\36\3\36\3\36\3\37")
-        buf.write("\3\37\3\37\3\37\3\37\3 \3 \5 \u0161\n \3 \3 \3 \3 \3 ")
-        buf.write("\3!\3!\3!\3!\3!\2\2\"\2\4\6\b\n\f\16\20\22\24\26\30\32")
-        buf.write("\34\36 \"$&(*,.\60\62\64\668:<>@\2\n\4\2\33\33\65\65\3")
-        buf.write("\2\31\32\4\2\r\16\22\22\4\2\33\33\64\64\3\2\24\30\3\2")
-        buf.write("\13\f\5\2\37!%%,,\5\2\36\36\"$\64\64\2\u017b\2E\3\2\2")
-        buf.write("\2\4K\3\2\2\2\6U\3\2\2\2\bb\3\2\2\2\ne\3\2\2\2\ft\3\2")
-        buf.write("\2\2\16\u0089\3\2\2\2\20\u008b\3\2\2\2\22\u0093\3\2\2")
-        buf.write("\2\24\u009e\3\2\2\2\26\u00a8\3\2\2\2\30\u00af\3\2\2\2")
-        buf.write("\32\u00b7\3\2\2\2\34\u00bf\3\2\2\2\36\u00d7\3\2\2\2 \u00db")
-        buf.write("\3\2\2\2\"\u00ec\3\2\2\2$\u0109\3\2\2\2&\u010c\3\2\2\2")
-        buf.write("(\u011a\3\2\2\2*\u0126\3\2\2\2,\u012a\3\2\2\2.\u0133\3")
-        buf.write("\2\2\2\60\u013f\3\2\2\2\62\u0141\3\2\2\2\64\u014b\3\2")
-        buf.write("\2\2\66\u014d\3\2\2\28\u014f\3\2\2\2:\u0151\3\2\2\2<\u0159")
-        buf.write("\3\2\2\2>\u0160\3\2\2\2@\u0167\3\2\2\2BF\5\n\6\2CF\5\26")
+        buf.write("\6\3\6\3\6\7\6r\n\6\f\6\16\6u\13\6\3\6\3\6\3\6\3\7\3\7")
+        buf.write("\3\7\3\7\3\7\3\7\3\7\3\7\3\7\3\7\3\7\3\7\5\7\u0086\n\7")
+        buf.write("\3\b\3\b\3\b\3\b\3\b\3\b\3\b\5\b\u008f\n\b\3\t\3\t\3\t")
+        buf.write("\3\t\5\t\u0095\n\t\3\t\3\t\3\n\3\n\3\n\5\n\u009c\n\n\3")
+        buf.write("\n\3\n\3\n\3\n\3\n\3\n\3\13\3\13\3\13\7\13\u00a7\n\13")
+        buf.write("\f\13\16\13\u00aa\13\13\3\13\3\13\3\f\3\f\3\f\3\f\3\f")
+        buf.write("\3\f\3\f\3\r\3\r\3\r\7\r\u00b8\n\r\f\r\16\r\u00bb\13\r")
+        buf.write("\3\16\3\16\3\16\3\16\5\16\u00c1\n\16\3\17\3\17\5\17\u00c5")
+        buf.write("\n\17\3\17\3\17\3\17\5\17\u00ca\n\17\3\17\3\17\5\17\u00ce")
+        buf.write("\n\17\7\17\u00d0\n\17\f\17\16\17\u00d3\13\17\3\20\3\20")
+        buf.write("\3\20\3\20\3\20\5\20\u00da\n\20\3\20\5\20\u00dd\n\20\3")
+        buf.write("\21\3\21\5\21\u00e1\n\21\3\21\3\21\3\21\3\21\5\21\u00e7")
+        buf.write("\n\21\3\21\3\21\7\21\u00eb\n\21\f\21\16\21\u00ee\13\21")
+        buf.write("\3\22\3\22\5\22\u00f2\n\22\3\22\3\22\3\22\5\22\u00f7\n")
+        buf.write("\22\3\22\3\22\3\23\3\23\3\23\3\23\5\23\u00ff\n\23\3\23")
+        buf.write("\3\23\3\23\3\23\3\23\3\23\3\23\5\23\u0108\n\23\3\23\3")
+        buf.write("\23\3\23\3\24\3\24\3\25\3\25\3\25\3\25\5\25\u0113\n\25")
+        buf.write("\3\25\3\25\3\25\3\25\7\25\u0119\n\25\f\25\16\25\u011c")
+        buf.write("\13\25\3\26\3\26\3\26\3\26\5\26\u0122\n\26\3\26\3\26\3")
+        buf.write("\26\6\26\u0127\n\26\r\26\16\26\u0128\3\27\3\27\3\27\3")
+        buf.write("\27\5\27\u012f\n\27\3\27\3\27\3\27\3\30\3\30\3\30\3\30")
+        buf.write("\3\30\5\30\u0139\n\30\3\31\3\31\3\31\3\31\3\31\5\31\u0140")
+        buf.write("\n\31\3\32\3\32\3\32\7\32\u0145\n\32\f\32\16\32\u0148")
+        buf.write("\13\32\3\33\3\33\5\33\u014c\n\33\3\34\3\34\3\35\3\35\3")
+        buf.write("\36\3\36\3\36\3\36\3\36\3\36\3\36\3\36\3\37\3\37\3\37")
+        buf.write("\3\37\3\37\3 \3 \5 \u0161\n \3 \3 \3 \3 \3 \3!\3!\3!\3")
+        buf.write("!\3!\2\2\"\2\4\6\b\n\f\16\20\22\24\26\30\32\34\36 \"$")
+        buf.write("&(*,.\60\62\64\668:<>@\2\n\4\2\33\33\65\65\3\2\31\32\4")
+        buf.write("\2\r\16\22\22\4\2\33\33\64\64\3\2\24\30\3\2\13\f\5\2\37")
+        buf.write("!%%,,\5\2\36\36\"$\64\64\2\u017b\2E\3\2\2\2\4K\3\2\2\2")
+        buf.write("\6U\3\2\2\2\bb\3\2\2\2\ne\3\2\2\2\fy\3\2\2\2\16\u008e")
+        buf.write("\3\2\2\2\20\u0090\3\2\2\2\22\u0098\3\2\2\2\24\u00a3\3")
+        buf.write("\2\2\2\26\u00ad\3\2\2\2\30\u00b4\3\2\2\2\32\u00bc\3\2")
+        buf.write("\2\2\34\u00c4\3\2\2\2\36\u00dc\3\2\2\2 \u00e0\3\2\2\2")
+        buf.write("\"\u00f1\3\2\2\2$\u00fa\3\2\2\2&\u010c\3\2\2\2(\u011a")
+        buf.write("\3\2\2\2*\u0126\3\2\2\2,\u012a\3\2\2\2.\u0133\3\2\2\2")
+        buf.write("\60\u013f\3\2\2\2\62\u0141\3\2\2\2\64\u014b\3\2\2\2\66")
+        buf.write("\u014d\3\2\2\28\u014f\3\2\2\2:\u0151\3\2\2\2<\u0159\3")
+        buf.write("\2\2\2>\u0160\3\2\2\2@\u0167\3\2\2\2BF\5\n\6\2CF\5\26")
         buf.write("\f\2DF\5,\27\2EB\3\2\2\2EC\3\2\2\2ED\3\2\2\2FG\3\2\2\2")
         buf.write("GE\3\2\2\2GH\3\2\2\2HI\3\2\2\2IJ\7\2\2\3J\3\3\2\2\2KP")
         buf.write("\5\30\r\2LM\7\4\2\2MO\5\30\r\2NL\3\2\2\2OR\3\2\2\2PN\3")
@@ -65,73 +65,73 @@ def serializedATN():
         buf.write("\2\2]^\5\60\31\2^_\7\n\2\2_a\3\2\2\2`]\3\2\2\2ad\3\2\2")
         buf.write("\2b`\3\2\2\2bc\3\2\2\2c\t\3\2\2\2db\3\2\2\2ef\7&\2\2f")
         buf.write("g\7\64\2\2gh\7/\2\2hk\58\35\2ij\7.\2\2jl\7\64\2\2ki\3")
-        buf.write("\2\2\2kl\3\2\2\2lm\3\2\2\2mn\7\6\2\2no\5(\25\2op\5\22")
-        buf.write("\n\2pq\5$\23\2qr\7\7\2\2rs\7\n\2\2s\13\3\2\2\2tu\7\34")
-        buf.write("\2\2uv\7\3\2\2vw\5\30\r\2wx\7\5\2\2xy\7\6\2\2yz\5\b\5")
-        buf.write("\2z\u0080\7\7\2\2{|\7\35\2\2|}\7\6\2\2}~\5\b\5\2~\177")
-        buf.write("\7\7\2\2\177\u0081\3\2\2\2\u0080{\3\2\2\2\u0080\u0081")
-        buf.write("\3\2\2\2\u0081\r\3\2\2\2\u0082\u008a\7\66\2\2\u0083\u008a")
-        buf.write("\7\67\2\2\u0084\u008a\79\2\2\u0085\u008a\7\65\2\2\u0086")
-        buf.write("\u008a\5> \2\u0087\u008a\7\61\2\2\u0088\u008a\7\62\2\2")
-        buf.write("\u0089\u0082\3\2\2\2\u0089\u0083\3\2\2\2\u0089\u0084\3")
-        buf.write("\2\2\2\u0089\u0085\3\2\2\2\u0089\u0086\3\2\2\2\u0089\u0087")
-        buf.write("\3\2\2\2\u0089\u0088\3\2\2\2\u008a\17\3\2\2\2\u008b\u008c")
-        buf.write("\7\'\2\2\u008c\u008d\7\64\2\2\u008d\u008f\7\3\2\2\u008e")
-        buf.write("\u0090\5\4\3\2\u008f\u008e\3\2\2\2\u008f\u0090\3\2\2\2")
-        buf.write("\u0090\u0091\3\2\2\2\u0091\u0092\7\5\2\2\u0092\21\3\2")
-        buf.write("\2\2\u0093\u0094\7\64\2\2\u0094\u0096\7\3\2\2\u0095\u0097")
-        buf.write("\5 \21\2\u0096\u0095\3\2\2\2\u0096\u0097\3\2\2\2\u0097")
-        buf.write("\u0098\3\2\2\2\u0098\u0099\7\5\2\2\u0099\u009a\7\6\2\2")
-        buf.write("\u009a\u009b\5\b\5\2\u009b\u009c\7\7\2\2\u009c\u009d\7")
-        buf.write("\n\2\2\u009d\23\3\2\2\2\u009e\u00a3\7\63\2\2\u009f\u00a0")
-        buf.write("\7\4\2\2\u00a0\u00a2\7\63\2\2\u00a1\u009f\3\2\2\2\u00a2")
-        buf.write("\u00a5\3\2\2\2\u00a3\u00a1\3\2\2\2\u00a3\u00a4\3\2\2\2")
-        buf.write("\u00a4\u00a6\3\2\2\2\u00a5\u00a3\3\2\2\2\u00a6\u00a7\7")
-        buf.write("\n\2\2\u00a7\25\3\2\2\2\u00a8\u00a9\7(\2\2\u00a9\u00aa")
-        buf.write("\7\64\2\2\u00aa\u00ab\7\6\2\2\u00ab\u00ac\5\24\13\2\u00ac")
-        buf.write("\u00ad\7\7\2\2\u00ad\u00ae\7\n\2\2\u00ae\27\3\2\2\2\u00af")
-        buf.write("\u00b4\5\32\16\2\u00b0\u00b1\t\3\2\2\u00b1\u00b3\5\32")
-        buf.write("\16\2\u00b2\u00b0\3\2\2\2\u00b3\u00b6\3\2\2\2\u00b4\u00b2")
-        buf.write("\3\2\2\2\u00b4\u00b5\3\2\2\2\u00b5\31\3\2\2\2\u00b6\u00b4")
-        buf.write("\3\2\2\2\u00b7\u00bb\5\34\17\2\u00b8\u00b9\5&\24\2\u00b9")
-        buf.write("\u00ba\5\34\17\2\u00ba\u00bc\3\2\2\2\u00bb\u00b8\3\2\2")
-        buf.write("\2\u00bb\u00bc\3\2\2\2\u00bc\33\3\2\2\2\u00bd\u00c0\5")
-        buf.write("\"\22\2\u00be\u00c0\5\62\32\2\u00bf\u00bd\3\2\2\2\u00bf")
-        buf.write("\u00be\3\2\2\2\u00c0\u00cc\3\2\2\2\u00c1\u00c5\7\r\2\2")
-        buf.write("\u00c2\u00c5\7\16\2\2\u00c3\u00c5\5\f\7\2\u00c4\u00c1")
-        buf.write("\3\2\2\2\u00c4\u00c2\3\2\2\2\u00c4\u00c3\3\2\2\2\u00c5")
-        buf.write("\u00c8\3\2\2\2\u00c6\u00c9\5\"\22\2\u00c7\u00c9\5\62\32")
-        buf.write("\2\u00c8\u00c6\3\2\2\2\u00c8\u00c7\3\2\2\2\u00c9\u00cb")
-        buf.write("\3\2\2\2\u00ca\u00c4\3\2\2\2\u00cb\u00ce\3\2\2\2\u00cc")
-        buf.write("\u00ca\3\2\2\2\u00cc\u00cd\3\2\2\2\u00cd\35\3\2\2\2\u00ce")
-        buf.write("\u00cc\3\2\2\2\u00cf\u00d0\7\3\2\2\u00d0\u00d1\5\30\r")
-        buf.write("\2\u00d1\u00d2\7\5\2\2\u00d2\u00d8\3\2\2\2\u00d3\u00d5")
-        buf.write("\t\4\2\2\u00d4\u00d3\3\2\2\2\u00d4\u00d5\3\2\2\2\u00d5")
-        buf.write("\u00d6\3\2\2\2\u00d6\u00d8\5\16\b\2\u00d7\u00cf\3\2\2")
-        buf.write("\2\u00d7\u00d4\3\2\2\2\u00d8\37\3\2\2\2\u00d9\u00dc\5")
-        buf.write("\64\33\2\u00da\u00dc\5@!\2\u00db\u00d9\3\2\2\2\u00db\u00da")
-        buf.write("\3\2\2\2\u00dc\u00dd\3\2\2\2\u00dd\u00e7\7\65\2\2\u00de")
-        buf.write("\u00e1\7\4\2\2\u00df\u00e2\5\64\33\2\u00e0\u00e2\5@!\2")
-        buf.write("\u00e1\u00df\3\2\2\2\u00e1\u00e0\3\2\2\2\u00e2\u00e3\3")
-        buf.write("\2\2\2\u00e3\u00e4\7\65\2\2\u00e4\u00e6\3\2\2\2\u00e5")
-        buf.write("\u00de\3\2\2\2\u00e6\u00e9\3\2\2\2\u00e7\u00e5\3\2\2\2")
-        buf.write("\u00e7\u00e8\3\2\2\2\u00e8!\3\2\2\2\u00e9\u00e7\3\2\2")
-        buf.write("\2\u00ea\u00eb\t\5\2\2\u00eb\u00ed\7\21\2\2\u00ec\u00ea")
-        buf.write("\3\2\2\2\u00ec\u00ed\3\2\2\2\u00ed\u00ee\3\2\2\2\u00ee")
-        buf.write("\u00ef\7\65\2\2\u00ef\u00f1\7\3\2\2\u00f0\u00f2\5\4\3")
-        buf.write("\2\u00f1\u00f0\3\2\2\2\u00f1\u00f2\3\2\2\2\u00f2\u00f3")
-        buf.write("\3\2\2\2\u00f3\u00f4\7\5\2\2\u00f4#\3\2\2\2\u00f5\u00f6")
-        buf.write("\5\66\34\2\u00f6\u00f7\7\65\2\2\u00f7\u00f9\7\3\2\2\u00f8")
-        buf.write("\u00fa\5 \21\2\u00f9\u00f8\3\2\2\2\u00f9\u00fa\3\2\2\2")
-        buf.write("\u00fa\u00fb\3\2\2\2\u00fb\u00fc\7\5\2\2\u00fc\u00fd\7")
-        buf.write("\6\2\2\u00fd\u0102\5\b\5\2\u00fe\u00ff\7+\2\2\u00ff\u0100")
-        buf.write("\5\30\r\2\u0100\u0101\7\n\2\2\u0101\u0103\3\2\2\2\u0102")
-        buf.write("\u00fe\3\2\2\2\u0102\u0103\3\2\2\2\u0103\u0104\3\2\2\2")
-        buf.write("\u0104\u0105\7\7\2\2\u0105\u0106\7\n\2\2\u0106\u0108\3")
-        buf.write("\2\2\2\u0107\u00f5\3\2\2\2\u0108\u010b\3\2\2\2\u0109\u0107")
-        buf.write("\3\2\2\2\u0109\u010a\3\2\2\2\u010a%\3\2\2\2\u010b\u0109")
-        buf.write("\3\2\2\2\u010c\u010d\t\6\2\2\u010d\'\3\2\2\2\u010e\u010f")
-        buf.write("\7)\2\2\u010f\u0112\7\24\2\2\u0110\u0113\5\64\33\2\u0111")
+        buf.write("\2\2\2kl\3\2\2\2lm\3\2\2\2mn\7\6\2\2no\5(\25\2os\5\22")
+        buf.write("\n\2pr\5$\23\2qp\3\2\2\2ru\3\2\2\2sq\3\2\2\2st\3\2\2\2")
+        buf.write("tv\3\2\2\2us\3\2\2\2vw\7\7\2\2wx\7\n\2\2x\13\3\2\2\2y")
+        buf.write("z\7\34\2\2z{\7\3\2\2{|\5\30\r\2|}\7\5\2\2}~\7\6\2\2~\177")
+        buf.write("\5\b\5\2\177\u0085\7\7\2\2\u0080\u0081\7\35\2\2\u0081")
+        buf.write("\u0082\7\6\2\2\u0082\u0083\5\b\5\2\u0083\u0084\7\7\2\2")
+        buf.write("\u0084\u0086\3\2\2\2\u0085\u0080\3\2\2\2\u0085\u0086\3")
+        buf.write("\2\2\2\u0086\r\3\2\2\2\u0087\u008f\7\66\2\2\u0088\u008f")
+        buf.write("\7\67\2\2\u0089\u008f\79\2\2\u008a\u008f\7\65\2\2\u008b")
+        buf.write("\u008f\5> \2\u008c\u008f\7\61\2\2\u008d\u008f\7\62\2\2")
+        buf.write("\u008e\u0087\3\2\2\2\u008e\u0088\3\2\2\2\u008e\u0089\3")
+        buf.write("\2\2\2\u008e\u008a\3\2\2\2\u008e\u008b\3\2\2\2\u008e\u008c")
+        buf.write("\3\2\2\2\u008e\u008d\3\2\2\2\u008f\17\3\2\2\2\u0090\u0091")
+        buf.write("\7\'\2\2\u0091\u0092\7\64\2\2\u0092\u0094\7\3\2\2\u0093")
+        buf.write("\u0095\5\4\3\2\u0094\u0093\3\2\2\2\u0094\u0095\3\2\2\2")
+        buf.write("\u0095\u0096\3\2\2\2\u0096\u0097\7\5\2\2\u0097\21\3\2")
+        buf.write("\2\2\u0098\u0099\7\64\2\2\u0099\u009b\7\3\2\2\u009a\u009c")
+        buf.write("\5 \21\2\u009b\u009a\3\2\2\2\u009b\u009c\3\2\2\2\u009c")
+        buf.write("\u009d\3\2\2\2\u009d\u009e\7\5\2\2\u009e\u009f\7\6\2\2")
+        buf.write("\u009f\u00a0\5\b\5\2\u00a0\u00a1\7\7\2\2\u00a1\u00a2\7")
+        buf.write("\n\2\2\u00a2\23\3\2\2\2\u00a3\u00a8\7\63\2\2\u00a4\u00a5")
+        buf.write("\7\4\2\2\u00a5\u00a7\7\63\2\2\u00a6\u00a4\3\2\2\2\u00a7")
+        buf.write("\u00aa\3\2\2\2\u00a8\u00a6\3\2\2\2\u00a8\u00a9\3\2\2\2")
+        buf.write("\u00a9\u00ab\3\2\2\2\u00aa\u00a8\3\2\2\2\u00ab\u00ac\7")
+        buf.write("\n\2\2\u00ac\25\3\2\2\2\u00ad\u00ae\7(\2\2\u00ae\u00af")
+        buf.write("\7\64\2\2\u00af\u00b0\7\6\2\2\u00b0\u00b1\5\24\13\2\u00b1")
+        buf.write("\u00b2\7\7\2\2\u00b2\u00b3\7\n\2\2\u00b3\27\3\2\2\2\u00b4")
+        buf.write("\u00b9\5\32\16\2\u00b5\u00b6\t\3\2\2\u00b6\u00b8\5\32")
+        buf.write("\16\2\u00b7\u00b5\3\2\2\2\u00b8\u00bb\3\2\2\2\u00b9\u00b7")
+        buf.write("\3\2\2\2\u00b9\u00ba\3\2\2\2\u00ba\31\3\2\2\2\u00bb\u00b9")
+        buf.write("\3\2\2\2\u00bc\u00c0\5\34\17\2\u00bd\u00be\5&\24\2\u00be")
+        buf.write("\u00bf\5\34\17\2\u00bf\u00c1\3\2\2\2\u00c0\u00bd\3\2\2")
+        buf.write("\2\u00c0\u00c1\3\2\2\2\u00c1\33\3\2\2\2\u00c2\u00c5\5")
+        buf.write("\"\22\2\u00c3\u00c5\5\62\32\2\u00c4\u00c2\3\2\2\2\u00c4")
+        buf.write("\u00c3\3\2\2\2\u00c5\u00d1\3\2\2\2\u00c6\u00ca\7\r\2\2")
+        buf.write("\u00c7\u00ca\7\16\2\2\u00c8\u00ca\5\f\7\2\u00c9\u00c6")
+        buf.write("\3\2\2\2\u00c9\u00c7\3\2\2\2\u00c9\u00c8\3\2\2\2\u00ca")
+        buf.write("\u00cd\3\2\2\2\u00cb\u00ce\5\"\22\2\u00cc\u00ce\5\62\32")
+        buf.write("\2\u00cd\u00cb\3\2\2\2\u00cd\u00cc\3\2\2\2\u00ce\u00d0")
+        buf.write("\3\2\2\2\u00cf\u00c9\3\2\2\2\u00d0\u00d3\3\2\2\2\u00d1")
+        buf.write("\u00cf\3\2\2\2\u00d1\u00d2\3\2\2\2\u00d2\35\3\2\2\2\u00d3")
+        buf.write("\u00d1\3\2\2\2\u00d4\u00d5\7\3\2\2\u00d5\u00d6\5\30\r")
+        buf.write("\2\u00d6\u00d7\7\5\2\2\u00d7\u00dd\3\2\2\2\u00d8\u00da")
+        buf.write("\t\4\2\2\u00d9\u00d8\3\2\2\2\u00d9\u00da\3\2\2\2\u00da")
+        buf.write("\u00db\3\2\2\2\u00db\u00dd\5\16\b\2\u00dc\u00d4\3\2\2")
+        buf.write("\2\u00dc\u00d9\3\2\2\2\u00dd\37\3\2\2\2\u00de\u00e1\5")
+        buf.write("\64\33\2\u00df\u00e1\5@!\2\u00e0\u00de\3\2\2\2\u00e0\u00df")
+        buf.write("\3\2\2\2\u00e1\u00e2\3\2\2\2\u00e2\u00ec\7\65\2\2\u00e3")
+        buf.write("\u00e6\7\4\2\2\u00e4\u00e7\5\64\33\2\u00e5\u00e7\5@!\2")
+        buf.write("\u00e6\u00e4\3\2\2\2\u00e6\u00e5\3\2\2\2\u00e7\u00e8\3")
+        buf.write("\2\2\2\u00e8\u00e9\7\65\2\2\u00e9\u00eb\3\2\2\2\u00ea")
+        buf.write("\u00e3\3\2\2\2\u00eb\u00ee\3\2\2\2\u00ec\u00ea\3\2\2\2")
+        buf.write("\u00ec\u00ed\3\2\2\2\u00ed!\3\2\2\2\u00ee\u00ec\3\2\2")
+        buf.write("\2\u00ef\u00f0\t\5\2\2\u00f0\u00f2\7\21\2\2\u00f1\u00ef")
+        buf.write("\3\2\2\2\u00f1\u00f2\3\2\2\2\u00f2\u00f3\3\2\2\2\u00f3")
+        buf.write("\u00f4\7\65\2\2\u00f4\u00f6\7\3\2\2\u00f5\u00f7\5\4\3")
+        buf.write("\2\u00f6\u00f5\3\2\2\2\u00f6\u00f7\3\2\2\2\u00f7\u00f8")
+        buf.write("\3\2\2\2\u00f8\u00f9\7\5\2\2\u00f9#\3\2\2\2\u00fa\u00fb")
+        buf.write("\5\66\34\2\u00fb\u00fc\7\65\2\2\u00fc\u00fe\7\3\2\2\u00fd")
+        buf.write("\u00ff\5 \21\2\u00fe\u00fd\3\2\2\2\u00fe\u00ff\3\2\2\2")
+        buf.write("\u00ff\u0100\3\2\2\2\u0100\u0101\7\5\2\2\u0101\u0102\7")
+        buf.write("\6\2\2\u0102\u0107\5\b\5\2\u0103\u0104\7+\2\2\u0104\u0105")
+        buf.write("\5\30\r\2\u0105\u0106\7\n\2\2\u0106\u0108\3\2\2\2\u0107")
+        buf.write("\u0103\3\2\2\2\u0107\u0108\3\2\2\2\u0108\u0109\3\2\2\2")
+        buf.write("\u0109\u010a\7\7\2\2\u010a\u010b\7\n\2\2\u010b%\3\2\2")
+        buf.write("\2\u010c\u010d\t\6\2\2\u010d\'\3\2\2\2\u010e\u010f\7)")
+        buf.write("\2\2\u010f\u0112\7\24\2\2\u0110\u0113\5\64\33\2\u0111")
         buf.write("\u0113\5<\37\2\u0112\u0110\3\2\2\2\u0112\u0111\3\2\2\2")
         buf.write("\u0113\u0114\3\2\2\2\u0114\u0115\7\26\2\2\u0115\u0116")
         buf.write("\7\65\2\2\u0116\u0117\7\n\2\2\u0117\u0119\3\2\2\2\u0118")
@@ -168,11 +168,11 @@ def serializedATN():
         buf.write("\u0161\3\2\2\2\u0161\u0162\3\2\2\2\u0162\u0163\7\65\2")
         buf.write("\2\u0163\u0164\7\b\2\2\u0164\u0165\7\66\2\2\u0165\u0166")
         buf.write("\7\t\2\2\u0166?\3\2\2\2\u0167\u0168\5\64\33\2\u0168\u0169")
-        buf.write("\7\b\2\2\u0169\u016a\7\t\2\2\u016aA\3\2\2\2(EGPU[bk\u0080")
-        buf.write("\u0089\u008f\u0096\u00a3\u00b4\u00bb\u00bf\u00c4\u00c8")
-        buf.write("\u00cc\u00d4\u00d7\u00db\u00e1\u00e7\u00ec\u00f1\u00f9")
-        buf.write("\u0102\u0109\u0112\u011a\u0121\u0128\u012e\u0138\u013f")
-        buf.write("\u0146\u014b\u0160")
+        buf.write("\7\b\2\2\u0169\u016a\7\t\2\2\u016aA\3\2\2\2(EGPU[bks\u0085")
+        buf.write("\u008e\u0094\u009b\u00a8\u00b9\u00c0\u00c4\u00c9\u00cd")
+        buf.write("\u00d1\u00d9\u00dc\u00e0\u00e6\u00ec\u00f1\u00f6\u00fe")
+        buf.write("\u0107\u0112\u011a\u0121\u0128\u012e\u0138\u013f\u0146")
+        buf.write("\u014b\u0160")
         return buf.getvalue()
 
 
@@ -653,10 +653,6 @@ class MoMParser ( Parser ):
             return self.getTypedRuleContext(MoMParser.Construct_defContext,0)
 
 
-        def function_def(self):
-            return self.getTypedRuleContext(MoMParser.Function_defContext,0)
-
-
         def CLOSE_BRACKET(self):
             return self.getToken(MoMParser.CLOSE_BRACKET, 0)
 
@@ -665,6 +661,13 @@ class MoMParser ( Parser ):
 
         def OF_TYPE(self):
             return self.getToken(MoMParser.OF_TYPE, 0)
+
+        def function_def(self, i:int=None):
+            if i is None:
+                return self.getTypedRuleContexts(MoMParser.Function_defContext)
+            else:
+                return self.getTypedRuleContext(MoMParser.Function_defContext,i)
+
 
         def getRuleIndex(self):
             return MoMParser.RULE_class_rule
@@ -711,11 +714,19 @@ class MoMParser ( Parser ):
             self.field()
             self.state = 109
             self.construct_def()
-            self.state = 110
-            self.function_def()
-            self.state = 111
+            self.state = 113
+            self._errHandler.sync(self)
+            _la = self._input.LA(1)
+            while (((_la) & ~0x3f) == 0 and ((1 << _la) & ((1 << MoMParser.INT) | (1 << MoMParser.TEXT) | (1 << MoMParser.FLOAT) | (1 << MoMParser.NOTHING) | (1 << MoMParser.BOOLEAN))) != 0):
+                self.state = 110
+                self.function_def()
+                self.state = 115
+                self._errHandler.sync(self)
+                _la = self._input.LA(1)
+
+            self.state = 116
             self.match(MoMParser.CLOSE_BRACKET)
-            self.state = 112
+            self.state = 117
             self.match(MoMParser.SEMI_COLON)
         except RecognitionException as re:
             localctx.exception = re
@@ -787,31 +798,31 @@ class MoMParser ( Parser ):
         self._la = 0 # Token type
         try:
             self.enterOuterAlt(localctx, 1)
-            self.state = 114
-            self.match(MoMParser.IF)
-            self.state = 115
-            self.match(MoMParser.OPEN_PAREN)
-            self.state = 116
-            self.ss_exp()
-            self.state = 117
-            self.match(MoMParser.CLOSE_PAREN)
-            self.state = 118
-            self.match(MoMParser.OPEN_BRACKET)
             self.state = 119
-            self.block()
+            self.match(MoMParser.IF)
             self.state = 120
+            self.match(MoMParser.OPEN_PAREN)
+            self.state = 121
+            self.ss_exp()
+            self.state = 122
+            self.match(MoMParser.CLOSE_PAREN)
+            self.state = 123
+            self.match(MoMParser.OPEN_BRACKET)
+            self.state = 124
+            self.block()
+            self.state = 125
             self.match(MoMParser.CLOSE_BRACKET)
-            self.state = 126
+            self.state = 131
             self._errHandler.sync(self)
             _la = self._input.LA(1)
             if _la==MoMParser.ELSE:
-                self.state = 121
+                self.state = 126
                 self.match(MoMParser.ELSE)
-                self.state = 122
+                self.state = 127
                 self.match(MoMParser.OPEN_BRACKET)
-                self.state = 123
+                self.state = 128
                 self.block()
-                self.state = 124
+                self.state = 129
                 self.match(MoMParser.CLOSE_BRACKET)
 
 
@@ -870,48 +881,48 @@ class MoMParser ( Parser ):
         localctx = MoMParser.ConstantContext(self, self._ctx, self.state)
         self.enterRule(localctx, 12, self.RULE_constant)
         try:
-            self.state = 135
+            self.state = 140
             self._errHandler.sync(self)
-            la_ = self._interp.adaptivePredict(self._input,8,self._ctx)
+            la_ = self._interp.adaptivePredict(self._input,9,self._ctx)
             if la_ == 1:
                 self.enterOuterAlt(localctx, 1)
-                self.state = 128
+                self.state = 133
                 self.match(MoMParser.INTEGER)
                 pass
 
             elif la_ == 2:
                 self.enterOuterAlt(localctx, 2)
-                self.state = 129
+                self.state = 134
                 self.match(MoMParser.REAL)
                 pass
 
             elif la_ == 3:
                 self.enterOuterAlt(localctx, 3)
-                self.state = 130
+                self.state = 135
                 self.match(MoMParser.STRING)
                 pass
 
             elif la_ == 4:
                 self.enterOuterAlt(localctx, 4)
-                self.state = 131
+                self.state = 136
                 self.match(MoMParser.VARID)
                 pass
 
             elif la_ == 5:
                 self.enterOuterAlt(localctx, 5)
-                self.state = 132
+                self.state = 137
                 self.array_var()
                 pass
 
             elif la_ == 6:
                 self.enterOuterAlt(localctx, 6)
-                self.state = 133
+                self.state = 138
                 self.match(MoMParser.TRUE)
                 pass
 
             elif la_ == 7:
                 self.enterOuterAlt(localctx, 7)
-                self.state = 134
+                self.state = 139
                 self.match(MoMParser.FALSE)
                 pass
 
@@ -967,21 +978,21 @@ class MoMParser ( Parser ):
         self._la = 0 # Token type
         try:
             self.enterOuterAlt(localctx, 1)
-            self.state = 137
+            self.state = 142
             self.match(MoMParser.NEW)
-            self.state = 138
+            self.state = 143
             self.match(MoMParser.CLASSID)
-            self.state = 139
+            self.state = 144
             self.match(MoMParser.OPEN_PAREN)
-            self.state = 141
+            self.state = 146
             self._errHandler.sync(self)
             _la = self._input.LA(1)
             if (((_la) & ~0x3f) == 0 and ((1 << _la) & ((1 << MoMParser.OPEN_PAREN) | (1 << MoMParser.PLUS) | (1 << MoMParser.MINUS) | (1 << MoMParser.NOT) | (1 << MoMParser.THIS) | (1 << MoMParser.TRUE) | (1 << MoMParser.FALSE) | (1 << MoMParser.CLASSID) | (1 << MoMParser.VARID) | (1 << MoMParser.INTEGER) | (1 << MoMParser.REAL) | (1 << MoMParser.STRING))) != 0):
-                self.state = 140
+                self.state = 145
                 self.arguments()
 
 
-            self.state = 143
+            self.state = 148
             self.match(MoMParser.CLOSE_PAREN)
         except RecognitionException as re:
             localctx.exception = re
@@ -1044,27 +1055,27 @@ class MoMParser ( Parser ):
         self._la = 0 # Token type
         try:
             self.enterOuterAlt(localctx, 1)
-            self.state = 145
+            self.state = 150
             self.match(MoMParser.CLASSID)
-            self.state = 146
+            self.state = 151
             self.match(MoMParser.OPEN_PAREN)
-            self.state = 148
+            self.state = 153
             self._errHandler.sync(self)
             _la = self._input.LA(1)
             if (((_la) & ~0x3f) == 0 and ((1 << _la) & ((1 << MoMParser.COMPONENT) | (1 << MoMParser.INT) | (1 << MoMParser.TEXT) | (1 << MoMParser.FLOAT) | (1 << MoMParser.SET) | (1 << MoMParser.MAP) | (1 << MoMParser.SIZE) | (1 << MoMParser.NOTHING) | (1 << MoMParser.BOOLEAN) | (1 << MoMParser.CLASSID))) != 0):
-                self.state = 147
+                self.state = 152
                 self.function_args()
 
 
-            self.state = 150
+            self.state = 155
             self.match(MoMParser.CLOSE_PAREN)
-            self.state = 151
+            self.state = 156
             self.match(MoMParser.OPEN_BRACKET)
-            self.state = 152
+            self.state = 157
             self.block()
-            self.state = 153
+            self.state = 158
             self.match(MoMParser.CLOSE_BRACKET)
-            self.state = 154
+            self.state = 159
             self.match(MoMParser.SEMI_COLON)
         except RecognitionException as re:
             localctx.exception = re
@@ -1116,21 +1127,21 @@ class MoMParser ( Parser ):
         self._la = 0 # Token type
         try:
             self.enterOuterAlt(localctx, 1)
-            self.state = 156
-            self.match(MoMParser.CAPITALID)
             self.state = 161
+            self.match(MoMParser.CAPITALID)
+            self.state = 166
             self._errHandler.sync(self)
             _la = self._input.LA(1)
             while _la==MoMParser.COMMA:
-                self.state = 157
+                self.state = 162
                 self.match(MoMParser.COMMA)
-                self.state = 158
-                self.match(MoMParser.CAPITALID)
                 self.state = 163
+                self.match(MoMParser.CAPITALID)
+                self.state = 168
                 self._errHandler.sync(self)
                 _la = self._input.LA(1)
 
-            self.state = 164
+            self.state = 169
             self.match(MoMParser.SEMI_COLON)
         except RecognitionException as re:
             localctx.exception = re
@@ -1185,17 +1196,17 @@ class MoMParser ( Parser ):
         self.enterRule(localctx, 20, self.RULE_enumeration)
         try:
             self.enterOuterAlt(localctx, 1)
-            self.state = 166
-            self.match(MoMParser.ENUMERATE)
-            self.state = 167
-            self.match(MoMParser.CLASSID)
-            self.state = 168
-            self.match(MoMParser.OPEN_BRACKET)
-            self.state = 169
-            self.enum()
-            self.state = 170
-            self.match(MoMParser.CLOSE_BRACKET)
             self.state = 171
+            self.match(MoMParser.ENUMERATE)
+            self.state = 172
+            self.match(MoMParser.CLASSID)
+            self.state = 173
+            self.match(MoMParser.OPEN_BRACKET)
+            self.state = 174
+            self.enum()
+            self.state = 175
+            self.match(MoMParser.CLOSE_BRACKET)
+            self.state = 176
             self.match(MoMParser.SEMI_COLON)
         except RecognitionException as re:
             localctx.exception = re
@@ -1251,22 +1262,22 @@ class MoMParser ( Parser ):
         self._la = 0 # Token type
         try:
             self.enterOuterAlt(localctx, 1)
-            self.state = 173
-            self.s_exp()
             self.state = 178
+            self.s_exp()
+            self.state = 183
             self._errHandler.sync(self)
             _la = self._input.LA(1)
             while _la==MoMParser.AND or _la==MoMParser.OR:
-                self.state = 174
+                self.state = 179
                 _la = self._input.LA(1)
                 if not(_la==MoMParser.AND or _la==MoMParser.OR):
                     self._errHandler.recoverInline(self)
                 else:
                     self._errHandler.reportMatch(self)
                     self.consume()
-                self.state = 175
-                self.s_exp()
                 self.state = 180
+                self.s_exp()
+                self.state = 185
                 self._errHandler.sync(self)
                 _la = self._input.LA(1)
 
@@ -1316,15 +1327,15 @@ class MoMParser ( Parser ):
         self._la = 0 # Token type
         try:
             self.enterOuterAlt(localctx, 1)
-            self.state = 181
+            self.state = 186
             self.expression()
-            self.state = 185
+            self.state = 190
             self._errHandler.sync(self)
             _la = self._input.LA(1)
             if (((_la) & ~0x3f) == 0 and ((1 << _la) & ((1 << MoMParser.LESS_THAN) | (1 << MoMParser.LESS_EQUAL) | (1 << MoMParser.GREATER_THAN) | (1 << MoMParser.GREATER_EQUAL) | (1 << MoMParser.EQUAL_EQUAL))) != 0):
-                self.state = 182
+                self.state = 187
                 self.operand()
-                self.state = 183
+                self.state = 188
                 self.expression()
 
 
@@ -1396,57 +1407,57 @@ class MoMParser ( Parser ):
         self._la = 0 # Token type
         try:
             self.enterOuterAlt(localctx, 1)
-            self.state = 189
+            self.state = 194
             self._errHandler.sync(self)
-            la_ = self._interp.adaptivePredict(self._input,14,self._ctx)
+            la_ = self._interp.adaptivePredict(self._input,15,self._ctx)
             if la_ == 1:
-                self.state = 187
+                self.state = 192
                 self.function_call()
                 pass
 
             elif la_ == 2:
-                self.state = 188
+                self.state = 193
                 self.term()
                 pass
 
 
-            self.state = 202
+            self.state = 207
             self._errHandler.sync(self)
             _la = self._input.LA(1)
             while (((_la) & ~0x3f) == 0 and ((1 << _la) & ((1 << MoMParser.PLUS) | (1 << MoMParser.MINUS) | (1 << MoMParser.IF))) != 0):
-                self.state = 194
+                self.state = 199
                 self._errHandler.sync(self)
                 token = self._input.LA(1)
                 if token in [MoMParser.PLUS]:
-                    self.state = 191
+                    self.state = 196
                     self.match(MoMParser.PLUS)
                     pass
                 elif token in [MoMParser.MINUS]:
-                    self.state = 192
+                    self.state = 197
                     self.match(MoMParser.MINUS)
                     pass
                 elif token in [MoMParser.IF]:
-                    self.state = 193
+                    self.state = 198
                     self.condition()
                     pass
                 else:
                     raise NoViableAltException(self)
 
-                self.state = 198
+                self.state = 203
                 self._errHandler.sync(self)
-                la_ = self._interp.adaptivePredict(self._input,16,self._ctx)
+                la_ = self._interp.adaptivePredict(self._input,17,self._ctx)
                 if la_ == 1:
-                    self.state = 196
+                    self.state = 201
                     self.function_call()
                     pass
 
                 elif la_ == 2:
-                    self.state = 197
+                    self.state = 202
                     self.term()
                     pass
 
 
-                self.state = 204
+                self.state = 209
                 self._errHandler.sync(self)
                 _la = self._input.LA(1)
 
@@ -1507,25 +1518,25 @@ class MoMParser ( Parser ):
         self.enterRule(localctx, 28, self.RULE_factor)
         self._la = 0 # Token type
         try:
-            self.state = 213
+            self.state = 218
             self._errHandler.sync(self)
             token = self._input.LA(1)
             if token in [MoMParser.OPEN_PAREN]:
                 self.enterOuterAlt(localctx, 1)
-                self.state = 205
+                self.state = 210
                 self.match(MoMParser.OPEN_PAREN)
-                self.state = 206
+                self.state = 211
                 self.ss_exp()
-                self.state = 207
+                self.state = 212
                 self.match(MoMParser.CLOSE_PAREN)
                 pass
             elif token in [MoMParser.PLUS, MoMParser.MINUS, MoMParser.NOT, MoMParser.THIS, MoMParser.TRUE, MoMParser.FALSE, MoMParser.CLASSID, MoMParser.VARID, MoMParser.INTEGER, MoMParser.REAL, MoMParser.STRING]:
                 self.enterOuterAlt(localctx, 2)
-                self.state = 210
+                self.state = 215
                 self._errHandler.sync(self)
                 _la = self._input.LA(1)
                 if (((_la) & ~0x3f) == 0 and ((1 << _la) & ((1 << MoMParser.PLUS) | (1 << MoMParser.MINUS) | (1 << MoMParser.NOT))) != 0):
-                    self.state = 209
+                    self.state = 214
                     _la = self._input.LA(1)
                     if not((((_la) & ~0x3f) == 0 and ((1 << _la) & ((1 << MoMParser.PLUS) | (1 << MoMParser.MINUS) | (1 << MoMParser.NOT))) != 0)):
                         self._errHandler.recoverInline(self)
@@ -1534,7 +1545,7 @@ class MoMParser ( Parser ):
                         self.consume()
 
 
-                self.state = 212
+                self.state = 217
                 self.constant()
                 pass
             else:
@@ -1601,45 +1612,45 @@ class MoMParser ( Parser ):
         self._la = 0 # Token type
         try:
             self.enterOuterAlt(localctx, 1)
-            self.state = 217
+            self.state = 222
             self._errHandler.sync(self)
-            la_ = self._interp.adaptivePredict(self._input,20,self._ctx)
+            la_ = self._interp.adaptivePredict(self._input,21,self._ctx)
             if la_ == 1:
-                self.state = 215
+                self.state = 220
                 self.super_type()
                 pass
 
             elif la_ == 2:
-                self.state = 216
+                self.state = 221
                 self.array_arg()
                 pass
 
 
-            self.state = 219
+            self.state = 224
             self.match(MoMParser.VARID)
-            self.state = 229
+            self.state = 234
             self._errHandler.sync(self)
             _la = self._input.LA(1)
             while _la==MoMParser.COMMA:
-                self.state = 220
+                self.state = 225
                 self.match(MoMParser.COMMA)
-                self.state = 223
+                self.state = 228
                 self._errHandler.sync(self)
-                la_ = self._interp.adaptivePredict(self._input,21,self._ctx)
+                la_ = self._interp.adaptivePredict(self._input,22,self._ctx)
                 if la_ == 1:
-                    self.state = 221
+                    self.state = 226
                     self.super_type()
                     pass
 
                 elif la_ == 2:
-                    self.state = 222
+                    self.state = 227
                     self.array_arg()
                     pass
 
 
-                self.state = 225
+                self.state = 230
                 self.match(MoMParser.VARID)
-                self.state = 231
+                self.state = 236
                 self._errHandler.sync(self)
                 _la = self._input.LA(1)
 
@@ -1700,34 +1711,34 @@ class MoMParser ( Parser ):
         self._la = 0 # Token type
         try:
             self.enterOuterAlt(localctx, 1)
-            self.state = 234
+            self.state = 239
             self._errHandler.sync(self)
             _la = self._input.LA(1)
             if _la==MoMParser.THIS or _la==MoMParser.CLASSID:
-                self.state = 232
+                self.state = 237
                 _la = self._input.LA(1)
                 if not(_la==MoMParser.THIS or _la==MoMParser.CLASSID):
                     self._errHandler.recoverInline(self)
                 else:
                     self._errHandler.reportMatch(self)
                     self.consume()
-                self.state = 233
+                self.state = 238
                 self.match(MoMParser.PERIOD)
 
 
-            self.state = 236
+            self.state = 241
             self.match(MoMParser.VARID)
-            self.state = 237
+            self.state = 242
             self.match(MoMParser.OPEN_PAREN)
-            self.state = 239
+            self.state = 244
             self._errHandler.sync(self)
             _la = self._input.LA(1)
             if (((_la) & ~0x3f) == 0 and ((1 << _la) & ((1 << MoMParser.OPEN_PAREN) | (1 << MoMParser.PLUS) | (1 << MoMParser.MINUS) | (1 << MoMParser.NOT) | (1 << MoMParser.THIS) | (1 << MoMParser.TRUE) | (1 << MoMParser.FALSE) | (1 << MoMParser.CLASSID) | (1 << MoMParser.VARID) | (1 << MoMParser.INTEGER) | (1 << MoMParser.REAL) | (1 << MoMParser.STRING))) != 0):
-                self.state = 238
+                self.state = 243
                 self.arguments()
 
 
-            self.state = 241
+            self.state = 246
             self.match(MoMParser.CLOSE_PAREN)
         except RecognitionException as re:
             localctx.exception = re
@@ -1743,49 +1754,28 @@ class MoMParser ( Parser ):
             super().__init__(parent, invokingState)
             self.parser = parser
 
-        def simple_type(self, i:int=None):
-            if i is None:
-                return self.getTypedRuleContexts(MoMParser.Simple_typeContext)
-            else:
-                return self.getTypedRuleContext(MoMParser.Simple_typeContext,i)
+        def simple_type(self):
+            return self.getTypedRuleContext(MoMParser.Simple_typeContext,0)
 
 
-        def VARID(self, i:int=None):
-            if i is None:
-                return self.getTokens(MoMParser.VARID)
-            else:
-                return self.getToken(MoMParser.VARID, i)
+        def VARID(self):
+            return self.getToken(MoMParser.VARID, 0)
 
-        def OPEN_PAREN(self, i:int=None):
-            if i is None:
-                return self.getTokens(MoMParser.OPEN_PAREN)
-            else:
-                return self.getToken(MoMParser.OPEN_PAREN, i)
+        def OPEN_PAREN(self):
+            return self.getToken(MoMParser.OPEN_PAREN, 0)
 
-        def CLOSE_PAREN(self, i:int=None):
-            if i is None:
-                return self.getTokens(MoMParser.CLOSE_PAREN)
-            else:
-                return self.getToken(MoMParser.CLOSE_PAREN, i)
+        def CLOSE_PAREN(self):
+            return self.getToken(MoMParser.CLOSE_PAREN, 0)
 
-        def OPEN_BRACKET(self, i:int=None):
-            if i is None:
-                return self.getTokens(MoMParser.OPEN_BRACKET)
-            else:
-                return self.getToken(MoMParser.OPEN_BRACKET, i)
+        def OPEN_BRACKET(self):
+            return self.getToken(MoMParser.OPEN_BRACKET, 0)
 
-        def block(self, i:int=None):
-            if i is None:
-                return self.getTypedRuleContexts(MoMParser.BlockContext)
-            else:
-                return self.getTypedRuleContext(MoMParser.BlockContext,i)
+        def block(self):
+            return self.getTypedRuleContext(MoMParser.BlockContext,0)
 
 
-        def CLOSE_BRACKET(self, i:int=None):
-            if i is None:
-                return self.getTokens(MoMParser.CLOSE_BRACKET)
-            else:
-                return self.getToken(MoMParser.CLOSE_BRACKET, i)
+        def CLOSE_BRACKET(self):
+            return self.getToken(MoMParser.CLOSE_BRACKET, 0)
 
         def SEMI_COLON(self, i:int=None):
             if i is None:
@@ -1793,24 +1783,15 @@ class MoMParser ( Parser ):
             else:
                 return self.getToken(MoMParser.SEMI_COLON, i)
 
-        def function_args(self, i:int=None):
-            if i is None:
-                return self.getTypedRuleContexts(MoMParser.Function_argsContext)
-            else:
-                return self.getTypedRuleContext(MoMParser.Function_argsContext,i)
+        def function_args(self):
+            return self.getTypedRuleContext(MoMParser.Function_argsContext,0)
 
 
-        def RETURN(self, i:int=None):
-            if i is None:
-                return self.getTokens(MoMParser.RETURN)
-            else:
-                return self.getToken(MoMParser.RETURN, i)
+        def RETURN(self):
+            return self.getToken(MoMParser.RETURN, 0)
 
-        def ss_exp(self, i:int=None):
-            if i is None:
-                return self.getTypedRuleContexts(MoMParser.Ss_expContext)
-            else:
-                return self.getTypedRuleContext(MoMParser.Ss_expContext,i)
+        def ss_exp(self):
+            return self.getTypedRuleContext(MoMParser.Ss_expContext,0)
 
 
         def getRuleIndex(self):
@@ -1834,50 +1815,42 @@ class MoMParser ( Parser ):
         self._la = 0 # Token type
         try:
             self.enterOuterAlt(localctx, 1)
-            self.state = 263
+            self.state = 248
+            self.simple_type()
+            self.state = 249
+            self.match(MoMParser.VARID)
+            self.state = 250
+            self.match(MoMParser.OPEN_PAREN)
+            self.state = 252
             self._errHandler.sync(self)
             _la = self._input.LA(1)
-            while (((_la) & ~0x3f) == 0 and ((1 << _la) & ((1 << MoMParser.INT) | (1 << MoMParser.TEXT) | (1 << MoMParser.FLOAT) | (1 << MoMParser.NOTHING) | (1 << MoMParser.BOOLEAN))) != 0):
-                self.state = 243
-                self.simple_type()
-                self.state = 244
-                self.match(MoMParser.VARID)
-                self.state = 245
-                self.match(MoMParser.OPEN_PAREN)
-                self.state = 247
-                self._errHandler.sync(self)
-                _la = self._input.LA(1)
-                if (((_la) & ~0x3f) == 0 and ((1 << _la) & ((1 << MoMParser.COMPONENT) | (1 << MoMParser.INT) | (1 << MoMParser.TEXT) | (1 << MoMParser.FLOAT) | (1 << MoMParser.SET) | (1 << MoMParser.MAP) | (1 << MoMParser.SIZE) | (1 << MoMParser.NOTHING) | (1 << MoMParser.BOOLEAN) | (1 << MoMParser.CLASSID))) != 0):
-                    self.state = 246
-                    self.function_args()
-
-
-                self.state = 249
-                self.match(MoMParser.CLOSE_PAREN)
-                self.state = 250
-                self.match(MoMParser.OPEN_BRACKET)
+            if (((_la) & ~0x3f) == 0 and ((1 << _la) & ((1 << MoMParser.COMPONENT) | (1 << MoMParser.INT) | (1 << MoMParser.TEXT) | (1 << MoMParser.FLOAT) | (1 << MoMParser.SET) | (1 << MoMParser.MAP) | (1 << MoMParser.SIZE) | (1 << MoMParser.NOTHING) | (1 << MoMParser.BOOLEAN) | (1 << MoMParser.CLASSID))) != 0):
                 self.state = 251
-                self.block()
-                self.state = 256
-                self._errHandler.sync(self)
-                _la = self._input.LA(1)
-                if _la==MoMParser.RETURN:
-                    self.state = 252
-                    self.match(MoMParser.RETURN)
-                    self.state = 253
-                    self.ss_exp()
-                    self.state = 254
-                    self.match(MoMParser.SEMI_COLON)
+                self.function_args()
 
 
+            self.state = 254
+            self.match(MoMParser.CLOSE_PAREN)
+            self.state = 255
+            self.match(MoMParser.OPEN_BRACKET)
+            self.state = 256
+            self.block()
+            self.state = 261
+            self._errHandler.sync(self)
+            _la = self._input.LA(1)
+            if _la==MoMParser.RETURN:
+                self.state = 257
+                self.match(MoMParser.RETURN)
                 self.state = 258
-                self.match(MoMParser.CLOSE_BRACKET)
+                self.ss_exp()
                 self.state = 259
                 self.match(MoMParser.SEMI_COLON)
-                self.state = 265
-                self._errHandler.sync(self)
-                _la = self._input.LA(1)
 
+
+            self.state = 263
+            self.match(MoMParser.CLOSE_BRACKET)
+            self.state = 264
+            self.match(MoMParser.SEMI_COLON)
         except RecognitionException as re:
             localctx.exception = re
             self._errHandler.reportError(self, re)

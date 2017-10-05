@@ -5,6 +5,7 @@ from src.grammar import MoMLexer
 from src.grammar import MoMParser
 from src.grammar.MoMListener import MoMListener
 import src.MasterTables as master_tables
+from src.structures.SemanticTable import Type
 
 
 def general_function(file):
@@ -34,7 +35,29 @@ def general_function(file):
 
 class TestGrammar(object):
     def test_single_class(self):
-        assert general_function("resources/single_class.mom")
+        assert general_function("resources/single_class.mom"), "Parsing errors"
+        classes = master_tables.classes
+
+        assert len(classes) == 1, "more classes than expected."
+        assert classes["Character"].name == "Character"
+        assert classes["Character"].parent == "Card"
+        assert len(classes["Character"].specifications) == 1
+        assert "Player" in classes["Character"].specifications
+        assert len(classes["Character"].methods) == 3
+
+        for method in classes["Character"].methods:
+            methods = classes["Character"].methods
+            if method == "Character":
+                assert str(methods[method].return_type) == "Character"
+                assert len(methods[method].variables) == 0
+            elif method == "name":
+                assert methods[method].return_type == Type.TEXT
+                assert len(methods[method].variables) == 1, "HAHAHA: " + str(methods[method].variables)
+            elif method == "addCommonCard":
+                assert methods[method].return_type == Type.NOTHING
+                assert len(methods[method].variables) == 0
+            else:
+                assert False
 
     def test_single_specification(self):
         assert general_function("resources/specification.mom")

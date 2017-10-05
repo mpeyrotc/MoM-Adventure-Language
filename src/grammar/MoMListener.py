@@ -43,9 +43,6 @@ class MoMListener(ParseTreeListener):
 
     current_structure = StructureType.CLASS
 
-    def clear_tables(self):
-        pass
-
     # Enter a parse tree produced by MoMParser#program.
     def enterProgram(self, ctx:MoMParser.ProgramContext):
         pass
@@ -144,15 +141,15 @@ class MoMListener(ParseTreeListener):
         pass
 
     def enterConstruct_def(self, ctx: MoMParser.Construct_defContext) -> None:
+        print("Entered constructor")
         method_name = ctx.CLASSID().getText()
         self.current_method = method_name
 
         new_method = Method(method_name, method_name)
         master_tables.classes[self.current_class].add_method(new_method)
 
-    # Exit a parse tree produced by MoMParser#construct_def.
-    def exitConstruct_def(self, ctx:MoMParser.Construct_defContext):
-        pass
+    def exitConstruct_def(self, ctx: MoMParser.Construct_defContext):
+        print("Exited constructor")
 
     def enterEnum(self, ctx: MoMParser.EnumContext) -> None:
         """Takes each value defined in the enumeration and assigns it to its
@@ -225,17 +222,22 @@ class MoMListener(ParseTreeListener):
         self.arguments = []
         self.argument_names = []
 
+        print("Enter args for " + self.current_method)
+
         for var_name in ctx.VARID():
             self.argument_names.append(var_name.getText())
 
     def exitFunction_args(self, ctx: MoMParser.Function_argsContext) -> None:
         self.in_signature = False
 
-        for name, var in zip(self.argument_names, self.arguments):
-            # print(name + var.var_type + " &&&&& " + self.current_class + " %%%%%% " + self.current_method)
+        print("Exit args for " + self.current_method)
 
+        for name, var in zip(self.argument_names, self.arguments):
             if self.current_structure == StructureType.CLASS:
-                master_tables.classes[self.current_class].methods[self.current_method].add_argument(name, var.var_type, var.is_array)
+                print(name + " " + var.var_type + " &&&&& " + self.current_class + " %%%%%% " + self.current_method)
+                master_tables.classes[self.current_class].methods[self.current_method].add_argument(name, var.var_type,
+                                                                                                    var.is_array)
+                # print(master_tables.classes[self.current_class].methods[self.current_method].variables)
 
     # Enter a parse tree produced by MoMParser#function_call.
     def enterFunction_call(self, ctx:MoMParser.Function_callContext):
@@ -255,19 +257,24 @@ class MoMListener(ParseTreeListener):
             type contexts.
         :return: None.
         """
-        for return_type, method_name in zip(ctx.simple_type(), ctx.VARID()):
-            # refresh simple type to take it into account when creating the new method
-            self.enterSimple_type(return_type)
-            method_name = method_name.getText()
-            self.current_method = method_name
+        return_type, method_name = ctx.simple_type(), ctx.VARID()
+        # refresh simple type to take it into account when creating the new method
+        self.enterSimple_type(return_type)
+        method_name = method_name.getText()
+        self.current_method = method_name
+        print("Current self.Method: " + self.current_method + ", current method in f: " + method_name)
 
-            new_method = Method(method_name, get_type(self.current_type))
+        new_method = Method(method_name, get_type(self.current_type))
 
-            if method_name in master_tables.classes[self.current_class].methods:
-                raise NameError("Method '" + method_name + "' redefined in class '"
-                                + self.current_class + "', this is not supported at language level.")
+        if method_name in master_tables.classes[self.current_class].methods:
+            raise NameError("Method '" + method_name + "' redefined in class '"
+                            + self.current_class + "', this is not supported at language level.")
 
-            master_tables.classes[self.current_class].add_method(new_method)
+        master_tables.classes[self.current_class].add_method(new_method)
+
+        # for call in ctx.function_args():
+        #     self.enterFunction_args(call)
+        #     self.exitFunction_args(call)
 
     # Exit a parse tree produced by MoMParser#function_def.
     def exitFunction_def(self, ctx:MoMParser.Function_defContext):
@@ -427,3 +434,6 @@ class MoMListener(ParseTreeListener):
     def exitArray_arg(self, ctx: MoMParser.Array_argContext) -> None:
         if self.in_signature:
             self.arguments[-1].is_array = True
+
+
+

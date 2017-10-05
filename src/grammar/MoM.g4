@@ -11,7 +11,7 @@ assignation		:	((THIS | VARID) PERIOD)? VARID EQUALS (construct_call | ss_exp)
 block			:	(statute SEMI_COLON)*
                 ;
 class_rule 		:	CLASS CLASSID IS_A complex_type (OF_TYPE CLASSID)? OPEN_BRACKET field construct_def
-                            function_def CLOSE_BRACKET SEMI_COLON
+                            function_def* CLOSE_BRACKET SEMI_COLON
                 ;
 condition		:	IF OPEN_PAREN ss_exp CLOSE_PAREN OPEN_BRACKET block CLOSE_BRACKET
                             (ELSE OPEN_BRACKET block CLOSE_BRACKET)?
@@ -45,8 +45,8 @@ function_args	:	(super_type | array_arg) VARID (COMMA (super_type | array_arg) V
                 ;
 function_call	:	((THIS | CLASSID) PERIOD)? VARID OPEN_PAREN (arguments)? CLOSE_PAREN
                 ;
-function_def	:	(simple_type VARID OPEN_PAREN (function_args)? CLOSE_PAREN OPEN_BRACKET block
-                            (RETURN ss_exp SEMI_COLON)? CLOSE_BRACKET SEMI_COLON)*
+function_def	:	simple_type VARID OPEN_PAREN (function_args)? CLOSE_PAREN OPEN_BRACKET block
+                            (RETURN ss_exp SEMI_COLON)? CLOSE_BRACKET SEMI_COLON
                 ;
 operand 		:	LESS_THAN
                 |   LESS_EQUAL 
