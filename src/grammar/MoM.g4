@@ -152,4 +152,4 @@ INTEGER			:	DIGIT+ ;
 REAL			:	DIGIT+ ([.,] DIGIT+)? ;
 WHITESPACE		:	' ' -> skip ;
 STRING			:	'"' ( ~('\'' | '\\' | '\n' | '\r') ) + '"' ;
-WS : [ \t\n]+ -> skip;
+WS : [ \t\n\r]+ -> skip;

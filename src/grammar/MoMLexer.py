@@ -1,13 +1,11 @@
-# Generated from src/grammar/MoM.g4 by ANTLR 4.7
+# Generated from MoM.g4 by ANTLR 4.6
 from antlr4 import *
 from io import StringIO
-from typing.io import TextIO
-import sys
 
 
 def serializedATN():
     with StringIO() as buf:
-        buf.write("\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\2:")
+        buf.write("\3\u0430\ud6d1\u8206\uad2d\u4417\uaef1\u8d80\uaadd\2:")
         buf.write("\u0187\b\1\4\2\t\2\4\3\t\3\4\4\t\4\4\5\t\5\4\6\t\6\4\7")
         buf.write("\t\7\4\b\t\b\4\t\t\t\4\n\t\n\4\13\t\13\4\f\t\f\4\r\t\r")
         buf.write("\4\16\t\16\4\17\t\17\4\20\t\20\4\21\t\21\4\22\t\22\4\23")
@@ -44,24 +42,24 @@ def serializedATN():
         buf.write("\32\63\33\65\34\67\359\36;\37= ?!A\"C#E$G%I&K\'M(O)Q*")
         buf.write("S+U,W-Y.[/]\60_\61a\62c\2e\2g\2i\63k\64m\65o\66q\67s8")
         buf.write("u9w:\3\2\b\3\2\62;\3\2C\\\3\2c|\4\2..\60\60\6\2\f\f\17")
-        buf.write("\17))^^\4\2\13\f\"\"\2\u0192\2\3\3\2\2\2\2\5\3\2\2\2\2")
-        buf.write("\7\3\2\2\2\2\t\3\2\2\2\2\13\3\2\2\2\2\r\3\2\2\2\2\17\3")
-        buf.write("\2\2\2\2\21\3\2\2\2\2\23\3\2\2\2\2\25\3\2\2\2\2\27\3\2")
-        buf.write("\2\2\2\31\3\2\2\2\2\33\3\2\2\2\2\35\3\2\2\2\2\37\3\2\2")
-        buf.write("\2\2!\3\2\2\2\2#\3\2\2\2\2%\3\2\2\2\2\'\3\2\2\2\2)\3\2")
-        buf.write("\2\2\2+\3\2\2\2\2-\3\2\2\2\2/\3\2\2\2\2\61\3\2\2\2\2\63")
-        buf.write("\3\2\2\2\2\65\3\2\2\2\2\67\3\2\2\2\29\3\2\2\2\2;\3\2\2")
-        buf.write("\2\2=\3\2\2\2\2?\3\2\2\2\2A\3\2\2\2\2C\3\2\2\2\2E\3\2")
-        buf.write("\2\2\2G\3\2\2\2\2I\3\2\2\2\2K\3\2\2\2\2M\3\2\2\2\2O\3")
-        buf.write("\2\2\2\2Q\3\2\2\2\2S\3\2\2\2\2U\3\2\2\2\2W\3\2\2\2\2Y")
-        buf.write("\3\2\2\2\2[\3\2\2\2\2]\3\2\2\2\2_\3\2\2\2\2a\3\2\2\2\2")
-        buf.write("i\3\2\2\2\2k\3\2\2\2\2m\3\2\2\2\2o\3\2\2\2\2q\3\2\2\2")
-        buf.write("\2s\3\2\2\2\2u\3\2\2\2\2w\3\2\2\2\3y\3\2\2\2\5{\3\2\2")
-        buf.write("\2\7}\3\2\2\2\t\177\3\2\2\2\13\u0081\3\2\2\2\r\u0083\3")
-        buf.write("\2\2\2\17\u0085\3\2\2\2\21\u0087\3\2\2\2\23\u0089\3\2")
-        buf.write("\2\2\25\u008b\3\2\2\2\27\u008d\3\2\2\2\31\u008f\3\2\2")
-        buf.write("\2\33\u0091\3\2\2\2\35\u0093\3\2\2\2\37\u0095\3\2\2\2")
-        buf.write("!\u0097\3\2\2\2#\u0099\3\2\2\2%\u009c\3\2\2\2\'\u009e")
+        buf.write("\17))^^\5\2\13\f\17\17\"\"\u0192\2\3\3\2\2\2\2\5\3\2\2")
+        buf.write("\2\2\7\3\2\2\2\2\t\3\2\2\2\2\13\3\2\2\2\2\r\3\2\2\2\2")
+        buf.write("\17\3\2\2\2\2\21\3\2\2\2\2\23\3\2\2\2\2\25\3\2\2\2\2\27")
+        buf.write("\3\2\2\2\2\31\3\2\2\2\2\33\3\2\2\2\2\35\3\2\2\2\2\37\3")
+        buf.write("\2\2\2\2!\3\2\2\2\2#\3\2\2\2\2%\3\2\2\2\2\'\3\2\2\2\2")
+        buf.write(")\3\2\2\2\2+\3\2\2\2\2-\3\2\2\2\2/\3\2\2\2\2\61\3\2\2")
+        buf.write("\2\2\63\3\2\2\2\2\65\3\2\2\2\2\67\3\2\2\2\29\3\2\2\2\2")
+        buf.write(";\3\2\2\2\2=\3\2\2\2\2?\3\2\2\2\2A\3\2\2\2\2C\3\2\2\2")
+        buf.write("\2E\3\2\2\2\2G\3\2\2\2\2I\3\2\2\2\2K\3\2\2\2\2M\3\2\2")
+        buf.write("\2\2O\3\2\2\2\2Q\3\2\2\2\2S\3\2\2\2\2U\3\2\2\2\2W\3\2")
+        buf.write("\2\2\2Y\3\2\2\2\2[\3\2\2\2\2]\3\2\2\2\2_\3\2\2\2\2a\3")
+        buf.write("\2\2\2\2i\3\2\2\2\2k\3\2\2\2\2m\3\2\2\2\2o\3\2\2\2\2q")
+        buf.write("\3\2\2\2\2s\3\2\2\2\2u\3\2\2\2\2w\3\2\2\2\3y\3\2\2\2\5")
+        buf.write("{\3\2\2\2\7}\3\2\2\2\t\177\3\2\2\2\13\u0081\3\2\2\2\r")
+        buf.write("\u0083\3\2\2\2\17\u0085\3\2\2\2\21\u0087\3\2\2\2\23\u0089")
+        buf.write("\3\2\2\2\25\u008b\3\2\2\2\27\u008d\3\2\2\2\31\u008f\3")
+        buf.write("\2\2\2\33\u0091\3\2\2\2\35\u0093\3\2\2\2\37\u0095\3\2")
+        buf.write("\2\2!\u0097\3\2\2\2#\u0099\3\2\2\2%\u009c\3\2\2\2\'\u009e")
         buf.write("\3\2\2\2)\u00a1\3\2\2\2+\u00a3\3\2\2\2-\u00a6\3\2\2\2")
         buf.write("/\u00a9\3\2\2\2\61\u00ac\3\2\2\2\63\u00af\3\2\2\2\65\u00b4")
         buf.write("\3\2\2\2\67\u00b7\3\2\2\29\u00bc\3\2\2\2;\u00c6\3\2\2")
@@ -180,6 +178,7 @@ class MoMLexer(Lexer):
 
     decisionsToDFA = [ DFA(ds, i) for i, ds in enumerate(atn.decisionToState) ]
 
+
     OPEN_PAREN = 1
     COMMA = 2
     CLOSE_PAREN = 3
@@ -237,8 +236,6 @@ class MoMLexer(Lexer):
     STRING = 55
     WS = 56
 
-    channelNames = [ u"DEFAULT_TOKEN_CHANNEL", u"HIDDEN" ]
-
     modeNames = [ "DEFAULT_MODE" ]
 
     literalNames = [ "<INVALID>",
@@ -275,9 +272,9 @@ class MoMLexer(Lexer):
 
     grammarFileName = "MoM.g4"
 
-    def __init__(self, input=None, output:TextIO = sys.stdout):
-        super().__init__(input, output)
-        self.checkVersion("4.7")
+    def __init__(self, input=None):
+        super().__init__(input)
+        self.checkVersion("4.6")
         self._interp = LexerATNSimulator(self, self.atn, self.decisionsToDFA, PredictionContextCache())
         self._actions = None
         self._predicates = None
