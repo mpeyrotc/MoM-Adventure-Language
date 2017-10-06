@@ -4,21 +4,21 @@ program			:	(class_rule
                 |   enumeration
                 |   specification) + EOF
                 ;
-arguments		:	ss_exp (COMMA ss_exp)* 
-                ; 
+arguments		:	ss_exp (COMMA ss_exp)*
+                ;
 assignation		:	((THIS | VARID) PERIOD)? VARID EQUALS (construct_call | ss_exp)
                 ;
-block			:	(statute SEMI_COLON)*
+block			:	statute SEMI_COLON
                 ;
-class_rule 		:	CLASS CLASSID IS_A complex_type (OF_TYPE CLASSID)? OPEN_BRACKET field construct_def
+class_rule 		:	CLASS CLASSID IS_A complex_type (OF_TYPE CLASSID)? OPEN_BRACKET field* construct_def
                             function_def* CLOSE_BRACKET SEMI_COLON
                 ;
-condition		:	IF OPEN_PAREN ss_exp CLOSE_PAREN OPEN_BRACKET block CLOSE_BRACKET
-                            (ELSE OPEN_BRACKET block CLOSE_BRACKET)?
+condition		:	IF OPEN_PAREN ss_exp CLOSE_PAREN OPEN_BRACKET block* CLOSE_BRACKET
+                            (ELSE OPEN_BRACKET block* CLOSE_BRACKET)?
                 ;
 constant		:	INTEGER
                 |   REAL
-                |   STRING 
+                |   STRING
                 |   VARID
                 |   array_var
                 |   TRUE
@@ -26,7 +26,7 @@ constant		:	INTEGER
                 ;
 construct_call 	:	NEW CLASSID OPEN_PAREN (arguments)? CLOSE_PAREN
                 ;
-construct_def	:	CLASSID OPEN_PAREN (function_args)? CLOSE_PAREN OPEN_BRACKET block CLOSE_BRACKET SEMI_COLON
+construct_def	:	CLASSID OPEN_PAREN (function_args)? CLOSE_PAREN OPEN_BRACKET block* CLOSE_BRACKET SEMI_COLON
                 ;
 enum			:	CAPITALID (COMMA CAPITALID)* SEMI_COLON
                 ;
@@ -45,47 +45,47 @@ function_args	:	(super_type | array_arg) VARID (COMMA (super_type | array_arg) V
                 ;
 function_call	:	((THIS | CLASSID) PERIOD)? VARID OPEN_PAREN (arguments)? CLOSE_PAREN
                 ;
-function_def	:	simple_type VARID OPEN_PAREN (function_args)? CLOSE_PAREN OPEN_BRACKET block
+function_def	:	simple_type VARID OPEN_PAREN (function_args)? CLOSE_PAREN OPEN_BRACKET block*
                             (RETURN ss_exp SEMI_COLON)? CLOSE_BRACKET SEMI_COLON
                 ;
 operand 		:	LESS_THAN
-                |   LESS_EQUAL 
-                |   GREATER_THAN 
-                |   GREATER_EQUAL 
-                |   EQUAL_EQUAL 
+                |   LESS_EQUAL
+                |   GREATER_THAN
+                |   GREATER_EQUAL
+                |   EQUAL_EQUAL
                 ;
-field           :	(FIELD LESS_THAN (super_type | array_def) GREATER_THAN VARID SEMI_COLON)*
+field           :	FIELD LESS_THAN (super_type | array_def) GREATER_THAN VARID SEMI_COLON
                 ;
-spec_function   :   (simple_type VARID OPEN_PAREN (function_args)? CLOSE_PAREN SEMI_COLON)+
+spec_function   :   simple_type VARID OPEN_PAREN (function_args)? CLOSE_PAREN SEMI_COLON
                 ;
-specification	:	SPEC CLASSID OPEN_BRACKET (spec_function)? CLOSE_BRACKET SEMI_COLON
+specification	:	SPEC CLASSID OPEN_BRACKET spec_function* CLOSE_BRACKET SEMI_COLON
                 ;
 assignation_def :   super_type VARID EQUALS (construct_call | ss_exp)
                 ;
 statute			:	function_call
                 |   assignation
                 |   assignation_def
-                |   while_loop 
+                |   while_loop
                 |   condition
                 ;
-term			:	factor ((STAR | SLASH) factor)* 
+term			:	factor ((STAR | SLASH) factor)*
                 ;
-super_type 		:	simple_type 
-                |   complex_type 
+super_type 		:	simple_type
+                |   complex_type
                 ;
-simple_type		:	INT  
-                |   TEXT 
+simple_type		:	INT
+                |   TEXT
                 |   FLOAT
-                |   NOTHING 
+                |   NOTHING
                 |   BOOLEAN
                 ;
 complex_type	:	SET
-                |   MAP 
+                |   MAP
                 |   SIZE
                 |   COMPONENT
                 |   CLASSID
                 ;
-while_loop		:	WHILE OPEN_PAREN ss_exp CLOSE_PAREN OPEN_BRACKET block CLOSE_BRACKET
+while_loop		:	WHILE OPEN_PAREN ss_exp CLOSE_PAREN OPEN_BRACKET block* CLOSE_BRACKET
                 ;
 array_def       :   super_type OPEN_SBRACKET INTEGER CLOSE_SBRACKET
                 ;
@@ -119,7 +119,7 @@ EQUAL_EQUAL		:	'==' ;
 AND				:	'&&' ;
 OR 				:	'||' ;
 THIS			:	'this' ;
-IF				:	'if' ; 
+IF				:	'if' ;
 ELSE			:	'else' ;
 COMPONENT		:	'Component' ;
 INT 			:	'Int' ;
@@ -152,4 +152,4 @@ INTEGER			:	DIGIT+ ;
 REAL			:	DIGIT+ ([.,] DIGIT+)? ;
 WHITESPACE		:	' ' -> skip ;
 STRING			:	'"' ( ~('\'' | '\\' | '\n' | '\r') ) + '"' ;
-WS : [ \t\n]+ -> skip;
+WS : [ \t\n\r]+ -> skip;

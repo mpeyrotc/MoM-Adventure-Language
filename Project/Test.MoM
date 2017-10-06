@@ -1,0 +1,11 @@
+Character is a Card of type Player {
+
+    Character() {
+    }
+
+    Nothing addCommonCard() {
+    }
+
+    Text name() {
+    }
+}

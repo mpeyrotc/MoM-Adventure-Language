@@ -4,6 +4,7 @@ class Character is_a Card of_type Player {
     };
 
     Text name(Int a_number) {
+        Real a_real = 3.14;
     };
 
     Nothing addCommonCard() {

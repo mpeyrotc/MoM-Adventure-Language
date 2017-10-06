@@ -299,15 +299,15 @@ class MoMListener(ParseTreeListener):
         pass
 
     def enterSpec_function(self, ctx: MoMParser.Spec_functionContext) -> None:
-        for name, return_type in zip(ctx.VARID(), ctx.simple_type()):
-            method = Method(name.getText(), return_type.getText())
-            self.current_method = method.name
+        name, return_type = ctx.VARID(), ctx.simple_type()
+        method = Method(name.getText(), return_type.getText())
+        self.current_method = method.name
 
-            if method.name in master_tables.specifications[self.current_specification].methods:
-                raise NameError("Method '" + method.name + "' redefined in specification '" +
-                                self.current_specification + "', this is not supported at language level.")
+        if method.name in master_tables.specifications[self.current_specification].methods:
+            raise NameError("Method '" + method.name + "' redefined in specification '" +
+                            self.current_specification + "', this is not supported at language level.")
 
-            master_tables.specifications[self.current_specification].add_method(method)
+        master_tables.specifications[self.current_specification].add_method(method)
 
     # Exit a parse tree produced by MoMParser#spec_function.
     def exitSpec_function(self, ctx:MoMParser.Spec_functionContext):
@@ -337,11 +337,24 @@ class MoMListener(ParseTreeListener):
 
     # Enter a parse tree produced by MoMParser#assignation_def.
     def enterAssignation_def(self, ctx:MoMParser.Assignation_defContext):
-        pass
+        self.in_signature = True
+        self.arguments = []
+        self.argument_names = []
+        print("Enter assign locally " + self.current_method)
+
+
+        var_name = ctx.VARID()
+        self.argument_names.append(var_name.getText())
 
     # Exit a parse tree produced by MoMParser#assignation_def.
     def exitAssignation_def(self, ctx:MoMParser.Assignation_defContext):
-        pass
+        self.in_signature = False
+        for name, var in zip(self.argument_names, self.arguments):
+            if self.current_structure == StructureType.CLASS:
+                print(name + " " + var.var_type + " &&&&& " + self.current_class + " %%%%%% " + self.current_method)
+                master_tables.classes[self.current_class].methods[self.current_method].add_argument(name, var.var_type,
+                                                                                                    var.is_array)
+                # print(master_tables.classes[self.current_class].methods[self.current_method].variables)
 
 
     # Enter a parse tree produced by MoMParser#statute.
@@ -434,6 +447,3 @@ class MoMListener(ParseTreeListener):
     def exitArray_arg(self, ctx: MoMParser.Array_argContext) -> None:
         if self.in_signature:
             self.arguments[-1].is_array = True
-
-
-
