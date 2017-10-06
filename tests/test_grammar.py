@@ -76,4 +76,3 @@ class TestGrammar(object):
 
     def test_types(self):
         assert general_function("resources/type_test.mom")
-
