@@ -337,11 +337,24 @@ class MoMListener(ParseTreeListener):
 
     # Enter a parse tree produced by MoMParser#assignation_def.
     def enterAssignation_def(self, ctx:MoMParser.Assignation_defContext):
-        pass
+        self.in_signature = True
+        self.arguments = []
+        self.argument_names = []
+        print("Enter assign locally " + self.current_method)
+
+
+        var_name = ctx.VARID()
+        self.argument_names.append(var_name.getText())
 
     # Exit a parse tree produced by MoMParser#assignation_def.
     def exitAssignation_def(self, ctx:MoMParser.Assignation_defContext):
-        pass
+        self.in_signature = False
+        for name, var in zip(self.argument_names, self.arguments):
+            if self.current_structure == StructureType.CLASS:
+                print(name + " " + var.var_type + " &&&&& " + self.current_class + " %%%%%% " + self.current_method)
+                master_tables.classes[self.current_class].methods[self.current_method].add_argument(name, var.var_type,
+                                                                                                    var.is_array)
+                # print(master_tables.classes[self.current_class].methods[self.current_method].variables)
 
 
     # Enter a parse tree produced by MoMParser#statute.
