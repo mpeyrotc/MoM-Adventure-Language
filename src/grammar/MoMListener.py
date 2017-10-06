@@ -238,6 +238,9 @@ class MoMListener(ParseTreeListener):
                 master_tables.classes[self.current_class].methods[self.current_method].add_argument(name, var.var_type,
                                                                                                     var.is_array)
                 # print(master_tables.classes[self.current_class].methods[self.current_method].variables)
+            elif self.current_structure == StructureType.SPECIFICATION:
+                master_tables.specifications[self.current_specification].methods[
+                    self.current_method].add_argument(name, var.var_type, var.is_array)
 
     # Enter a parse tree produced by MoMParser#function_call.
     def enterFunction_call(self, ctx:MoMParser.Function_callContext):
@@ -300,7 +303,7 @@ class MoMListener(ParseTreeListener):
 
     def enterSpec_function(self, ctx: MoMParser.Spec_functionContext) -> None:
         name, return_type = ctx.VARID(), ctx.simple_type()
-        method = Method(name.getText(), return_type.getText())
+        method = Method(name.getText(), get_type(return_type.getText()))
         self.current_method = method.name
 
         if method.name in master_tables.specifications[self.current_specification].methods:

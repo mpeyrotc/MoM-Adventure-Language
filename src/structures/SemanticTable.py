@@ -120,6 +120,8 @@ def get_type(name: str) -> Type:
         return Type.INT
     if name == 'Nothing':
         return Type.NOTHING
+    if name == 'Real':
+        return Type.REAL
 
     raise TypeError(name + " type is not a simple type.")
 

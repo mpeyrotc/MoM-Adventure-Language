@@ -52,7 +52,20 @@ class TestGrammar(object):
                 assert len(methods[method].variables) == 0
             elif method == "name":
                 assert methods[method].return_type == Type.TEXT
-                assert len(methods[method].variables) == 2, "HAHAHA: " + str(methods[method].variables)
+                assert len(methods[method].variables) == 2
+
+                assert "a_number" in methods[method].variables
+                assert "a_real" in methods[method].variables
+
+                for variable in methods[method].variables:
+                    if variable == "a_number":
+                        assert methods[method].variables["a_number"]["type"] == "Int"
+                        assert not methods[method].variables["a_number"]["is_array"]
+                    elif variable == "a_real":
+                        assert methods[method].variables["a_real"]["type"] == "Real"
+                        assert not methods[method].variables["a_real"]["is_array"]
+                    else:
+                        assert False
             elif method == "addCommonCard":
                 assert methods[method].return_type == Type.NOTHING
                 assert len(methods[method].variables) == 0
@@ -61,6 +74,42 @@ class TestGrammar(object):
 
     def test_single_specification(self):
         assert general_function("resources/specification.mom")
+        specifications = master_tables.specifications
+
+        assert len(specifications) == 1
+        assert "ComplexNumber" in specifications
+        assert specifications["ComplexNumber"].name == "ComplexNumber"
+
+        methods = specifications["ComplexNumber"].methods
+        assert len(methods) == 4
+        assert "real" in methods
+        assert "imaginary" in methods
+        assert "convert" in methods
+        assert "summary" in methods
+
+        for name in methods:
+            method = methods[name]
+
+            if method.name == "real":
+                assert method.return_type == Type.INT
+            elif method.name == "imaginary":
+                assert method.return_type == Type.INT
+            elif method.name == "convert":
+                assert method.return_type == Type.NOTHING
+                assert len(method.variables) == 1
+                assert "angle" in method.variables
+                assert method.variables["angle"]["type"] == "Int"
+                assert not method.variables["angle"]["is_array"]
+            else:
+                assert method.return_type == Type.REAL
+                assert method.name == "summary"
+                assert len(method.variables) == 2
+                assert "c" in method.variables
+                assert method.variables["c"]["type"] == "Component"
+                assert method.variables["c"]["is_array"]
+                assert "r" in method.variables
+                assert method.variables["r"]["type"] == "Real"
+                assert not method.variables["r"]["is_array"]
 
     def test_single_enumeration(self):
         assert general_function("resources/enumeration.mom")
