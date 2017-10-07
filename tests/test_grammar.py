@@ -113,9 +113,95 @@ class TestGrammar(object):
 
     def test_single_enumeration(self):
         assert general_function("resources/enumeration.mom")
+        enumerations = master_tables.enumerations
+
+        assert len(enumerations) == 1
+
+        values = enumerations["Days"].values
+        assert "MONDAY" in values
+        assert values["MONDAY"] == 1
+        assert "TUESDAY" in values
+        assert values["TUESDAY"] == 2
+        assert "WEDNESDAY" in values
+        assert values["WEDNESDAY"] == 3
+        assert "THURSDAY" in values
+        assert values["THURSDAY"] == 4
+        assert "FRIDAY" in values
+        assert values["FRIDAY"] == 5
 
     def test_two_classes(self):
         assert general_function("resources/two_classes.mom")
+        classes = master_tables.classes
+        assert len(classes) == 2, "more classes than expected."
+
+        # Character Method
+        assert classes["Character"].name == "Character"
+        assert classes["Character"].parent == "Card"
+        assert len(classes["Character"].specifications) == 1
+        assert "Player" in classes["Character"].specifications
+        assert len(classes["Character"].methods) == 3
+
+        assert "Character" in classes["Character"].methods
+        assert "addCommonCard" in classes["Character"].methods
+        assert "name" in classes["Character"].methods
+
+        for name in classes["Character"].methods:
+            method = classes["Character"].methods[name]
+
+            if method.name == "Character":
+                assert str(method.return_type) == "Character"
+                assert len(method.variables) == 2
+
+                assert "physicalLife" in method.variables
+                assert "mentalLife" in method.variables
+
+                for var_name in method.variables:
+                    variable = method.variables[var_name]
+                    if var_name == "physicalLife":
+                        assert variable["type"] == "Int"
+                        assert variable["is_array"]
+                    if var_name == "mental_life":
+                        assert variable["type"] == "Real"
+                        assert variable["is_array"]
+            elif method.name == "addCommonCard":
+                assert method.return_type == Type.NOTHING
+                assert len(method.variables) == 1
+                assert "card" in method.variables
+                variable = method.variables["card"]
+                assert variable["type"] == "Card"
+                assert not variable["is_array"]
+            else:
+                assert method.return_type == Type.TEXT
+                assert len(method.variables) == 1
+                assert "greeting" in method.variables
+                variable = method.variables["greeting"]
+                assert variable["type"] == "Text"
+                assert not variable["is_array"]
+
+        # Card Method
+        assert classes["Card"].name == "Card"
+        assert classes["Card"].parent == "Component"
+        assert len(classes["Card"].specifications) == 0
+        assert len(classes["Card"].methods) == 1
+
+        assert "Card" in classes["Card"].methods
+        method = classes["Card"].methods["Card"]
+        assert str(method.return_type) == "Card"
+        assert len(method.variables) == 2
+
+        assert "physicalLife" in method.variables
+        assert "mentalLife" in method.variables
+
+        for var_name in method.variables:
+            variable = method.variables[var_name]
+            if var_name == "physicalLife":
+                assert variable["type"] == "Int"
+                assert not variable["is_array"]
+            elif var_name == "mentalLife":
+                assert variable["type"] == "Int"
+                assert not variable["is_array"]
+            else:
+                assert False
 
     def test_multiple_segments(self):
         assert general_function("resources/class_enum_specification.mom")

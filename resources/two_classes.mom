@@ -13,7 +13,8 @@ class Character is_a Card of_type Player {
     };
 
     Text name() {
-        return "Father Mateo";
+        Text greeting = "Hello!";
+        return greeting + "Father Mateo";
     };
 };
 
