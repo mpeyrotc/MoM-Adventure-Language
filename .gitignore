@@ -142,3 +142,6 @@ tmtagsHistory
 *.sublime-project
 *.sublime-workspace
 .bundle
+
+mom_log.aux
+raw_data.txt

@@ -4,13 +4,13 @@ class Character is_a Card of_type Player {
 
     Character(Int physicalLife, Int mentalLife) {
         parent();
-        physicalLife = physicalLife;
+        this.physicalLife = physicalLife;
         this.mentalLife = init(mentalLife);
         ha = new Object();
     };
 
     Int setCommonCard(Card card) {
-        i = card[0];
+        Face i = card[0];
 
         if(!numberOfItems <  (-1) || ((-34 >= card[5]) && func(a, b[2]))) {
             physicalLife = physicalLife;

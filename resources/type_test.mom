@@ -1,6 +1,7 @@
 class Character is_a Card of_type Player {
+    field<Int> var;
 
-    Character() {
+    Character(Character character) {
         this.var = 2;
         character.var = 2;
         Int var = 2;
