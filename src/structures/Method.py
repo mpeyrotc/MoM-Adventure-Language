@@ -7,6 +7,16 @@ class Method:
     It holds a name, a return type, and if required the arguments it receives.
     """
 
+    LOCAL_INT_TOP = 10_000
+    LOCAL_REAL_TOP = 12_000
+    LOCAL_BOOLEAN_TOP = 14_000
+    LOCAL_TEXT_TOP = 16_000
+
+    LOCAL_INT_BOTTOM = 11_999
+    LOCAL_REAL_BOTTOM = 13_999
+    LOCAL_BOOLEAN_BOTTOM = 15_999
+    LOCAL_TEXT_BOTTOM = 17_999
+
     def __init__(self, name: str, return_type: Type) -> None:
         """The de facto constructor for a method definition.
 
