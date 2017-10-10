@@ -32,13 +32,31 @@ enum			:	CAPITALID (COMMA CAPITALID)* SEMI_COLON
                 ;
 enumeration		:	ENUMERATE CLASSID OPEN_BRACKET enum CLOSE_BRACKET SEMI_COLON
                 ;
-ss_exp			:	s_exp ((AND | OR) s_exp)*
+exit_sexp       :   // nothing
                 ;
-s_exp 			:	expression (operand expression)?
+and_op          :   // nothing
                 ;
-expression		:	(function_call | term) ((PLUS | MINUS | condition) (function_call | term))*
+or_op           :   // nothing
                 ;
-factor 			:	OPEN_PAREN ss_exp CLOSE_PAREN
+ss_exp			:	s_exp exit_sexp ((AND and_op| OR or_op) s_exp exit_sexp)*
+                ;
+exit_exp        :   // nothing
+                ;
+s_exp 			:	expression (operand expression exit_exp)?
+                ;
+exit_term       :   // nothing
+                ;
+plus_op         :   // nothing
+                ;
+minus_op        :   // nothing
+                ;
+expression		:	(function_call | term exit_term) ((PLUS plus_op | MINUS minus_op | condition) (function_call | term exit_term))*
+                ;
+open_paren      :   // nothing
+                ;
+close_paren     :   // nothing
+                ;
+factor 			:	OPEN_PAREN open_paren ss_exp close_paren CLOSE_PAREN
                 |   (PLUS | MINUS | NOT)? constant
                 ;
 function_args	:	(super_type | array_arg) VARID (COMMA (super_type | array_arg) VARID)*
@@ -68,7 +86,13 @@ statute			:	function_call
                 |   while_loop
                 |   condition
                 ;
-term			:	factor ((STAR | SLASH) factor)*
+exit_factor     :   // nothing
+                ;
+star_op         :   // nothing
+                ;
+div_op          :   // nothing
+                ;
+term			:	factor exit_factor ((STAR star_op | SLASH div_op) factor exit_factor)*
                 ;
 super_type 		:	simple_type
                 |   complex_type
