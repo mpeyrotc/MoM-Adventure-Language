@@ -35,7 +35,7 @@ class Class:
         self._methods = {}
         self.cur_global_int = self.GLOBAL_INT_TOP
         self.cur_global_real = self.GLOBAL_REAL_TOP
-        self.cur_global_bool = self.GLOBAL_BOOLEAN_TOP
+        self.cur_global_boolean = self.GLOBAL_BOOLEAN_TOP
         self.cur_global_text = self.GLOBAL_TEXT_TOP
         self.cur_temp_int = self.TEMP_INT_TOP
         self.cur_temp_real = self.TEMP_REAL_TOP
@@ -43,7 +43,7 @@ class Class:
         self.cur_temp_text = self.TEMP_TEXT_TOP
         self.cur_const_int = self.CONST_INT_TOP
         self.cur_const_real = self.CONST_REAL_TOP
-        self.cur_const_bool = self.CONST_BOOLEAN_TOP
+        self.cur_const_boolean = self.CONST_BOOLEAN_TOP
         self.cur_const_text = self.CONST_TEXT_TOP
 
     def add_method(self, method: Method):

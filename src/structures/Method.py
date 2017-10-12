@@ -27,10 +27,15 @@ class Method:
         self._name = name
         self._return_type = return_type
         self._variables = {}
+        self.cur_local_int = self.LOCAL_INT_TOP
+        self.cur_local_real = self.LOCAL_REAL_TOP
+        self.cur_local_boolean = self.LOCAL_BOOLEAN_TOP
+        self.cur_local_text = self.LOCAL_TEXT_TOP
 
-    def add_argument(self, arg_name: str, arg_type, is_array: bool) -> None:
+    def add_argument(self, arg_name: str, arg_type, is_array: bool, address: int) -> None:
         """Add argument to variable dictionary along with its type.
 
+        :param address: the virtual address for this argument, according to its type, in the VM.
         :param is_array: a boolean argument that specifies if the argument is an array.
         :param arg_type: the type of the argument, may be simple or complex (a.k.a a super type in the grammar).
         :param arg_name: the name of the argument, must be unique among the rest of the arguments and
@@ -41,7 +46,8 @@ class Method:
             raise NameError("Method name already defined within scope.")
 
         self._variables[arg_name] = {'type': arg_type,
-                                     'is_array': is_array}
+                                     'is_array': is_array,
+                                     'address': address}
 
     @property
     def name(self):

@@ -50,12 +50,67 @@ class MoMListener(ParseTreeListener):
     temps = 0
     quads = list()
 
+    @staticmethod
+    def get_address_by_type(m: Method, t: Type):
+        # TODO: should be treated as String ot Type variable
+        if t == "Int":
+            return m.cur_local_int
+        elif t == "Real":
+            return m.cur_local_real
+        elif t == "Text":
+            return m.cur_local_text
+        elif t == "Boolean":
+            return m.cur_local_boolean
+        else:
+            print("SPECIAL CASE FOR GET: " + str(t))
+            return -1
+
+    @staticmethod
+    def get_const_address_by_type(c: Class, t: Type):
+        if t == Type.INT:
+            return c.cur_const_int
+        elif t == Type.REAL:
+            return c.cur_const_real
+        elif t == Type.TEXT:
+            return c.cur_const_text
+        elif t == Type.BOOLEAN:
+            return c.cur_const_boolean
+        else:
+            print("SPECIAL CASE FOR GET CONST: " + str(t))
+            return -1
+
+    @staticmethod
+    def increment_address_by_type(m: Method, t: Type):
+        if t == "Int":
+            m.cur_local_int += 1
+        elif t == "Real":
+            m.cur_local_real += 1
+        elif t == "Text":
+            m.cur_local_text += 1
+        elif t == "Boolean":
+            m.cur_local_boolean += 1
+        else:
+            print("SPECIAL CASE FOR INCREMENT: " + str(t))
+
+    @staticmethod
+    def increment_const_address_by_type(c: Class, t: Type):
+        if t == Type.INT:
+            c.cur_const_int += 1
+        elif t == Type.REAL:
+            c.cur_const_real += 1
+        elif t == Type.TEXT:
+            c.cur_const_text += 1
+        elif t == Type.BOOLEAN:
+            c.cur_const_boolean += 1
+        else:
+            print("SPECIAL CASE FOR CONST INCREMENT: " + str(t))
+
     # Enter a parse tree produced by MoMParser#program.
     def enterProgram(self, ctx:MoMParser.ProgramContext):
         pass
 
     # Exit a parse tree produced by MoMParser#program.
-    def exitProgram(self, ctx:MoMParser.ProgramContext):
+    def exitProgram(self, ctx: MoMParser.ProgramContext) -> None:
         for quad in MoMListener.quads:
             print(str(quad.operator) + ", " + str(quad.left_operand) + ", "
                   + str(quad.right_operand) + ", " + str(quad.result))
@@ -131,25 +186,39 @@ class MoMListener(ParseTreeListener):
     def exitCondition(self, ctx:MoMParser.ConditionContext):
         pass
 
-    def enterConstant(self, ctx:MoMParser.ConstantContext) -> None:
+    def enterConstant(self, ctx: MoMParser.ConstantContext) -> None:
+        c = master_tables.classes[self.current_class]
         if ctx.INTEGER() is not None:
-            self.pending_operands.append(ctx.getText())
+            address = self.get_const_address_by_type(c, Type.INT)
+            self.pending_operands.append(address)
+            self.increment_const_address_by_type(c, Type.INT)
             self.pending_types.append(Type.INT)
         elif ctx.REAL() is not None:
-            self.pending_operands.append(ctx.getText())
+            address = self.get_const_address_by_type(c, Type.REAL)
+            self.pending_operands.append(address)
+            self.increment_const_address_by_type(c, Type.REAL)
             self.pending_types.append(Type.REAL)
         elif ctx.TRUE() is not None:
-            self.pending_operands.append(ctx.getText())
+            address = self.get_const_address_by_type(c, Type.BOOLEAN)
+            self.pending_operands.append(address)
+            self.increment_const_address_by_type(c, Type.BOOLEAN)
             self.pending_types.append(Type.BOOLEAN)
         elif ctx.FALSE() is not None:
-            self.pending_operands.append(ctx.getText())
+            address = self.get_const_address_by_type(c, Type.BOOLEAN)
+            self.pending_operands.append(address)
+            self.increment_const_address_by_type(c, Type.BOOLEAN)
             self.pending_types.append(Type.BOOLEAN)
         elif ctx.STRING() is not None:
-            self.pending_operands.append(ctx.getText())
+            address = self.get_const_address_by_type(c, Type.TEXT)
+            self.pending_operands.append(address)
+            self.increment_const_address_by_type(c, Type.TEXT)
             self.pending_types.append(Type.TEXT)
         elif ctx.VARID() is not None:
             self.pending_operands.append(ctx.getText())
             # TODO: Find type according to declaration, INT type used to avoid errors
+            # TODO: should look in local
+            # TODO: should look in global
+            # TODO: if not, mark error
             self.pending_types.append(Type.INT)
         elif ctx.array_var() is not None:
             # See array_var listener
@@ -372,11 +441,13 @@ class MoMListener(ParseTreeListener):
 
         for name, var in zip(self.argument_names, self.arguments):
             if self.current_structure == StructureType.CLASS:
-                master_tables.classes[self.current_class].methods[self.current_method].add_argument(name, var.var_type,
-                                                                                                    var.is_array)
+                m = master_tables.classes[self.current_class].methods[self.current_method]
+                address = self.get_address_by_type(m, var.var_type)
+                m.add_argument(name, var.var_type, var.is_array, address)
+                self.increment_address_by_type(m, var.var_type)
             elif self.current_structure == StructureType.SPECIFICATION:
                 master_tables.specifications[self.current_specification].methods[
-                    self.current_method].add_argument(name, var.var_type, var.is_array)
+                    self.current_method].add_argument(name, var.var_type, var.is_array, -2)
 
     # Enter a parse tree produced by MoMParser#function_call.
     def enterFunction_call(self, ctx:MoMParser.Function_callContext):
@@ -483,19 +554,21 @@ class MoMListener(ParseTreeListener):
         var_name = ctx.VARID()
         self.argument_names.append(var_name.getText())
 
-    def exitAssignation_def(self, ctx: MoMParser.Assignation_defContext):
+    def exitAssignation_def(self, ctx: MoMParser.Assignation_defContext) -> None:
         self.in_signature = False
         for name, var in zip(self.argument_names, self.arguments):
             if self.current_structure == StructureType.CLASS:
-                master_tables.classes[self.current_class].methods[self.current_method].add_argument(name, var.var_type,
-                                                                                                    var.is_array)
+                m = master_tables.classes[self.current_class].methods[self.current_method]
+                address = self.get_address_by_type(m, var.var_type)
+                m.add_argument(name, var.var_type, var.is_array, address)
+                self.increment_address_by_type(m, var.var_type)
 
     # Enter a parse tree produced by MoMParser#statute.
-    def enterStatute(self, ctx:MoMParser.StatuteContext):
+    def enterStatute(self, ctx: MoMParser.StatuteContext):
         pass
 
     # Exit a parse tree produced by MoMParser#statute.
-    def exitStatute(self, ctx:MoMParser.StatuteContext):
+    def exitStatute(self, ctx: MoMParser.StatuteContext):
         pass
 
     def enterExit_factor(self, ctx: MoMParser.Exit_factorContext) -> None:
@@ -529,13 +602,12 @@ class MoMListener(ParseTreeListener):
     def exitStar_op(self, ctx:MoMParser.Star_opContext):
         pass
 
-    def enterDiv_op(self, ctx:MoMParser.Div_opContext) -> None:
+    def enterDiv_op(self, ctx: MoMParser.Div_opContext) -> None:
         self.pending_operators.append(Operator.DIVIDES)
 
     # Exit a parse tree produced by MoMParser#div_op.
-    def exitDiv_op(self, ctx:MoMParser.Div_opContext):
+    def exitDiv_op(self, ctx: MoMParser.Div_opContext):
         pass
-
 
     # Enter a parse tree produced by MoMParser#term.
     def enterTerm(self, ctx:MoMParser.TermContext):
