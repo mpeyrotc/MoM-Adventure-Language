@@ -7,7 +7,8 @@ import src.MasterTables as master_tables
 from src.structures.Class import Class
 from src.structures.Enumeration import Enumeration
 from src.structures.Method import Method
-from src.structures.SemanticTable import get_type
+from src.structures.Quadrupole import Quadrupole
+from src.structures.SemanticTable import get_type, Type, Operator, semantic_table
 from src.structures.Specification import Specification
 
 if __name__ is not None and "." in __name__:
@@ -43,13 +44,21 @@ class MoMListener(ParseTreeListener):
 
     current_structure = StructureType.CLASS
 
+    pending_operands = list()
+    pending_types = list()
+    pending_operators = list()
+    temps = 0
+    quads = list()
+
     # Enter a parse tree produced by MoMParser#program.
     def enterProgram(self, ctx:MoMParser.ProgramContext):
         pass
 
     # Exit a parse tree produced by MoMParser#program.
     def exitProgram(self, ctx:MoMParser.ProgramContext):
-        pass
+        for quad in MoMListener.quads:
+            print(str(quad.operator) + ", " + str(quad.left_operand) + ", "
+                  + str(quad.right_operand) + ", " + str(quad.result))
 
 
     # Enter a parse tree produced by MoMParser#arguments.
@@ -122,10 +131,29 @@ class MoMListener(ParseTreeListener):
     def exitCondition(self, ctx:MoMParser.ConditionContext):
         pass
 
-
-    # Enter a parse tree produced by MoMParser#constant.
-    def enterConstant(self, ctx:MoMParser.ConstantContext):
-        pass
+    def enterConstant(self, ctx:MoMParser.ConstantContext) -> None:
+        if ctx.INTEGER() is not None:
+            self.pending_operands.append(ctx.getText())
+            self.pending_types.append(Type.INT)
+        elif ctx.REAL() is not None:
+            self.pending_operands.append(ctx.getText())
+            self.pending_types.append(Type.REAL)
+        elif ctx.TRUE() is not None:
+            self.pending_operands.append(ctx.getText())
+            self.pending_types.append(Type.BOOLEAN)
+        elif ctx.FALSE() is not None:
+            self.pending_operands.append(ctx.getText())
+            self.pending_types.append(Type.BOOLEAN)
+        elif ctx.STRING() is not None:
+            self.pending_operands.append(ctx.getText())
+            self.pending_types.append(Type.TEXT)
+        elif ctx.VARID() is not None:
+            self.pending_operands.append(ctx.getText())
+            # TODO: Find type according to declaration, INT type used to avoid errors
+            self.pending_types.append(Type.INT)
+        elif ctx.array_var() is not None:
+            # See array_var listener
+            pass
 
     # Exit a parse tree produced by MoMParser#constant.
     def exitConstant(self, ctx:MoMParser.ConstantContext):
@@ -141,7 +169,6 @@ class MoMListener(ParseTreeListener):
         pass
 
     def enterConstruct_def(self, ctx: MoMParser.Construct_defContext) -> None:
-        print("Entered constructor")
         method_name = ctx.CLASSID().getText()
         self.current_method = method_name
 
@@ -149,7 +176,7 @@ class MoMListener(ParseTreeListener):
         master_tables.classes[self.current_class].add_method(new_method)
 
     def exitConstruct_def(self, ctx: MoMParser.Construct_defContext):
-        print("Exited constructor")
+        pass
 
     def enterEnum(self, ctx: MoMParser.EnumContext) -> None:
         """Takes each value defined in the enumeration and assigns it to its
@@ -181,28 +208,39 @@ class MoMListener(ParseTreeListener):
     def exitEnumeration(self, ctx:MoMParser.EnumerationContext):
         pass
 
+    def enterExit_sexp(self, ctx:MoMParser.Exit_sexpContext) -> None:
+        if not len(self.pending_operators) == 0:
+            if self.pending_operators[-1] == Operator.AND or self.pending_operators[-1] == Operator.OR:
+                right_operand = self.pending_operands.pop()
+                right_type = self.pending_types.pop()
+                left_operand = self.pending_operands.pop()
+                left_type = self.pending_types.pop()
+                operator = self.pending_operators.pop()
+                result_type = semantic_table[left_type][right_type][operator]
 
-    # Enter a parse tree produced by MoMParser#exit_sexp.
-    def enterExit_sexp(self, ctx:MoMParser.Exit_sexpContext):
-        pass
+                if result_type == Type.OTHER:
+                    raise TypeError("Type mismatch for expression.")
+                else:
+                    result = self.temps
+                    self.temps += 1
+                    quad = Quadrupole(operator, left_operand, right_operand, result)
+                    self.quads.append(quad)
+                    self.pending_operands.append(result)
+                    self.pending_types.append(result_type)
 
     # Exit a parse tree produced by MoMParser#exit_sexp.
     def exitExit_sexp(self, ctx:MoMParser.Exit_sexpContext):
         pass
 
-
-    # Enter a parse tree produced by MoMParser#and_op.
-    def enterAnd_op(self, ctx:MoMParser.And_opContext):
-        pass
+    def enterAnd_op(self, ctx: MoMParser.And_opContext) -> None:
+        self.pending_operators.append(Operator.AND)
 
     # Exit a parse tree produced by MoMParser#and_op.
     def exitAnd_op(self, ctx:MoMParser.And_opContext):
         pass
 
-
-    # Enter a parse tree produced by MoMParser#or_op.
-    def enterOr_op(self, ctx:MoMParser.Or_opContext):
-        pass
+    def enterOr_op(self, ctx:MoMParser.Or_opContext) -> None:
+        self.pending_operators.append(Operator.OR)
 
     # Exit a parse tree produced by MoMParser#or_op.
     def exitOr_op(self, ctx:MoMParser.Or_opContext):
@@ -217,10 +255,27 @@ class MoMListener(ParseTreeListener):
     def exitSs_exp(self, ctx:MoMParser.Ss_expContext):
         pass
 
+    def enterExit_exp(self, ctx: MoMParser.Exit_expContext) -> None:
+        if not len(self.pending_operators) == 0:
+            op = self.pending_operators[-1]
+            if op == Operator.EQUAL_EQUAL or op == Operator.LESS_THAN or op == Operator.LESS_EQUAL \
+                    or op == Operator.GREATER_THAN or op == Operator.GREATER_EQUAL:
+                right_operand = self.pending_operands.pop()
+                right_type = self.pending_types.pop()
+                left_operand = self.pending_operands.pop()
+                left_type = self.pending_types.pop()
+                operator = self.pending_operators.pop()
+                result_type = semantic_table[left_type][right_type][operator]
 
-    # Enter a parse tree produced by MoMParser#exit_exp.
-    def enterExit_exp(self, ctx:MoMParser.Exit_expContext):
-        pass
+                if result_type == Type.OTHER:
+                    raise TypeError("Type mismatch for expression.")
+                else:
+                    result = self.temps
+                    self.temps += 1
+                    quad = Quadrupole(operator, left_operand, right_operand, result)
+                    self.quads.append(quad)
+                    self.pending_operands.append(result)
+                    self.pending_types.append(result_type)
 
     # Exit a parse tree produced by MoMParser#exit_exp.
     def exitExit_exp(self, ctx:MoMParser.Exit_expContext):
@@ -235,33 +290,43 @@ class MoMListener(ParseTreeListener):
     def exitS_exp(self, ctx:MoMParser.S_expContext):
         pass
 
+    def enterExit_term(self, ctx:MoMParser.Exit_termContext) -> None:
+        if not len(self.pending_operators) == 0:
+            if self.pending_operators[-1] == Operator.PLUS or self.pending_operators[-1] == Operator.MINUS:
+                right_operand = self.pending_operands.pop()
+                right_type = self.pending_types.pop()
+                left_operand = self.pending_operands.pop()
+                left_type = self.pending_types.pop()
+                operator = self.pending_operators.pop()
+                result_type = semantic_table[int(left_type)][int(right_type)][int(operator)]
 
-    # Enter a parse tree produced by MoMParser#exit_term.
-    def enterExit_term(self, ctx:MoMParser.Exit_termContext):
-        pass
+                if result_type == Type.OTHER:
+                    raise TypeError("Type mismatch for expression.")
+                else:
+                    result = self.temps
+                    self.temps += 1
+                    quad = Quadrupole(operator, left_operand, right_operand, result)
+                    self.quads.append(quad)
+                    self.pending_operands.append(result)
+                    self.pending_types.append(result_type)
 
     # Exit a parse tree produced by MoMParser#exit_term.
     def exitExit_term(self, ctx:MoMParser.Exit_termContext):
         pass
 
-
-    # Enter a parse tree produced by MoMParser#plus_op.
-    def enterPlus_op(self, ctx:MoMParser.Plus_opContext):
-        pass
+    def enterPlus_op(self, ctx:MoMParser.Plus_opContext) -> None:
+        self.pending_operators.append(Operator.PLUS)
 
     # Exit a parse tree produced by MoMParser#plus_op.
     def exitPlus_op(self, ctx:MoMParser.Plus_opContext):
         pass
 
-
-    # Enter a parse tree produced by MoMParser#minus_op.
-    def enterMinus_op(self, ctx:MoMParser.Minus_opContext):
-        pass
+    def enterMinus_op(self, ctx:MoMParser.Minus_opContext) -> None:
+        self.pending_operators.append(Operator.MINUS)
 
     # Exit a parse tree produced by MoMParser#minus_op.
     def exitMinus_op(self, ctx:MoMParser.Minus_opContext):
         pass
-
 
     # Enter a parse tree produced by MoMParser#expression.
     def enterExpression(self, ctx:MoMParser.ExpressionContext):
@@ -271,19 +336,15 @@ class MoMListener(ParseTreeListener):
     def exitExpression(self, ctx:MoMParser.ExpressionContext):
         pass
 
-
-    # Enter a parse tree produced by MoMParser#open_paren.
-    def enterOpen_paren(self, ctx:MoMParser.Open_parenContext):
-        pass
+    def enterOpen_paren(self, ctx:MoMParser.Open_parenContext) -> None:
+        self.pending_operators.append(Operator.OPEN_PAREN)
 
     # Exit a parse tree produced by MoMParser#open_paren.
     def exitOpen_paren(self, ctx:MoMParser.Open_parenContext):
         pass
 
-
-    # Enter a parse tree produced by MoMParser#close_paren.
     def enterClose_paren(self, ctx:MoMParser.Close_parenContext):
-        pass
+        self.pending_operators.pop()
 
     # Exit a parse tree produced by MoMParser#close_paren.
     def exitClose_paren(self, ctx:MoMParser.Close_parenContext):
@@ -303,22 +364,16 @@ class MoMListener(ParseTreeListener):
         self.arguments = []
         self.argument_names = []
 
-        print("Enter args for " + self.current_method)
-
         for var_name in ctx.VARID():
             self.argument_names.append(var_name.getText())
 
     def exitFunction_args(self, ctx: MoMParser.Function_argsContext) -> None:
         self.in_signature = False
 
-        print("Exit args for " + self.current_method)
-
         for name, var in zip(self.argument_names, self.arguments):
             if self.current_structure == StructureType.CLASS:
-                print(name + " " + var.var_type + " &&&&& " + self.current_class + " %%%%%% " + self.current_method)
                 master_tables.classes[self.current_class].methods[self.current_method].add_argument(name, var.var_type,
                                                                                                     var.is_array)
-                # print(master_tables.classes[self.current_class].methods[self.current_method].variables)
             elif self.current_structure == StructureType.SPECIFICATION:
                 master_tables.specifications[self.current_specification].methods[
                     self.current_method].add_argument(name, var.var_type, var.is_array)
@@ -346,7 +401,6 @@ class MoMListener(ParseTreeListener):
         self.enterSimple_type(return_type)
         method_name = method_name.getText()
         self.current_method = method_name
-        print("Current self.Method: " + self.current_method + ", current method in f: " + method_name)
 
         new_method = Method(method_name, get_type(self.current_type))
 
@@ -360,10 +414,17 @@ class MoMListener(ParseTreeListener):
     def exitFunction_def(self, ctx:MoMParser.Function_defContext):
         pass
 
-
-    # Enter a parse tree produced by MoMParser#operand.
-    def enterOperand(self, ctx:MoMParser.OperandContext):
-        pass
+    def enterOperand(self, ctx: MoMParser.OperandContext) -> None:
+        if ctx.EQUAL_EQUAL() is not None:
+            self.pending_operators.append(Operator.EQUAL_EQUAL)
+        elif ctx.GREATER_EQUAL() is not None:
+            self.pending_operators.append(Operator.GREATER_EQUAL)
+        elif ctx.GREATER_THAN() is not None:
+            self.pending_operators.append(Operator.GREATER_THAN)
+        elif ctx.LESS_EQUAL() is not None:
+            self.pending_operators.append(Operator.LESS_EQUAL)
+        else:
+            self.pending_operators.append(Operator.LESS_THAN)
 
     # Exit a parse tree produced by MoMParser#operand.
     def exitOperand(self, ctx:MoMParser.OperandContext):
@@ -418,7 +479,6 @@ class MoMListener(ParseTreeListener):
         self.in_signature = True
         self.arguments = []
         self.argument_names = []
-        print("Enter assign locally " + self.current_method)
 
         var_name = ctx.VARID()
         self.argument_names.append(var_name.getText())
@@ -427,7 +487,6 @@ class MoMListener(ParseTreeListener):
         self.in_signature = False
         for name, var in zip(self.argument_names, self.arguments):
             if self.current_structure == StructureType.CLASS:
-                print(name + " " + var.var_type + " &&&&& " + self.current_class + " %%%%%% " + self.current_method)
                 master_tables.classes[self.current_class].methods[self.current_method].add_argument(name, var.var_type,
                                                                                                     var.is_array)
 
@@ -439,28 +498,39 @@ class MoMListener(ParseTreeListener):
     def exitStatute(self, ctx:MoMParser.StatuteContext):
         pass
 
+    def enterExit_factor(self, ctx: MoMParser.Exit_factorContext) -> None:
+        if not len(self.pending_operators) == 0:
+            if self.pending_operators[-1] == Operator.TIMES or self.pending_operators[-1] == Operator.DIVIDES:
+                right_operand = self.pending_operands.pop()
+                right_type = self.pending_types.pop()
+                left_operand = self.pending_operands.pop()
+                left_type = self.pending_types.pop()
+                operator = self.pending_operators.pop()
+                result_type = semantic_table[int(left_type)][int(right_type)][int(operator)]
 
-    # Enter a parse tree produced by MoMParser#exit_factor.
-    def enterExit_factor(self, ctx:MoMParser.Exit_factorContext):
-        pass
+                if result_type == Type.OTHER:
+                    raise TypeError("Type mismatch for expression.")
+                else:
+                    result = self.temps
+                    self.temps += 1
+                    quad = Quadrupole(operator, left_operand, right_operand, result)
+                    self.quads.append(quad)
+                    self.pending_operands.append(result)
+                    self.pending_types.append(result_type)
 
     # Exit a parse tree produced by MoMParser#exit_factor.
     def exitExit_factor(self, ctx:MoMParser.Exit_factorContext):
         pass
 
-
-    # Enter a parse tree produced by MoMParser#star_op.
-    def enterStar_op(self, ctx:MoMParser.Star_opContext):
-        pass
+    def enterStar_op(self, ctx:MoMParser.Star_opContext) -> None:
+        self.pending_operators.append(Operator.TIMES)
 
     # Exit a parse tree produced by MoMParser#star_op.
     def exitStar_op(self, ctx:MoMParser.Star_opContext):
         pass
 
-
-    # Enter a parse tree produced by MoMParser#div_op.
-    def enterDiv_op(self, ctx:MoMParser.Div_opContext):
-        pass
+    def enterDiv_op(self, ctx:MoMParser.Div_opContext) -> None:
+        self.pending_operators.append(Operator.DIVIDES)
 
     # Exit a parse tree produced by MoMParser#div_op.
     def exitDiv_op(self, ctx:MoMParser.Div_opContext):
@@ -531,10 +601,10 @@ class MoMListener(ParseTreeListener):
     def exitArray_def(self, ctx:MoMParser.Array_defContext):
         pass
 
-
-    # Enter a parse tree produced by MoMParser#array_var.
-    def enterArray_var(self, ctx:MoMParser.Array_varContext):
-        pass
+    def enterArray_var(self, ctx: MoMParser.Array_varContext) -> None:
+        self.pending_operands.append(ctx.getText())
+        # TODO: check value for type, depending on array declaration, INT type used to avoid errors
+        self.pending_types.append(Type.INT)
 
     # Exit a parse tree produced by MoMParser#array_var.
     def exitArray_var(self, ctx:MoMParser.Array_varContext):

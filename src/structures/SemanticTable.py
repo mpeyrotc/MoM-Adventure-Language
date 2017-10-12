@@ -45,10 +45,13 @@ class Operator(IntEnum):
     GREATER_THAN = auto()
     GREATER_EQUAL = auto()
     EQUAL_EQUAL = auto()
+    OPEN_PAREN = auto()
+    CLOSE_PAREN = auto()
+    EQUAL = auto()
 
 
 num_types = 5
-num_operators = 12
+num_operators = 15
 semantic_table = np.zeros((num_types + 1, num_types + 1, num_operators + 1))
 
 semantic_table[Type.TEXT][Type.TEXT][Operator.PLUS] = Type.TEXT

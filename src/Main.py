@@ -24,7 +24,7 @@ if __name__ == "__main__":
         walker = ParseTreeWalker()
         walker.walk(MoMListener(), tree)
     except Exception as e:
-        print(e)
+        print(e.with_traceback())
         exit(1)
 
     print("OK")

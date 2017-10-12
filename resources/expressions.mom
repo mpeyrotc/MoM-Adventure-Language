@@ -1,0 +1,41 @@
+class Expressions is_a Component {
+    Expression() {
+    };
+
+    Nothing exp1() {
+        Real a = b + c;
+    };
+
+    Nothing exp2() {
+        Real a = 3.14;
+        Int b = 3;
+        Real result = a - b;
+    };
+
+    Nothing exp3() {
+        Real a = 3.14;
+        Int b = 3;
+        Real result = a * b;
+    };
+
+    Nothing exp4() {
+        Real a = 3.14;
+        Int b = 3;
+        Real result = a / b;
+    };
+
+    Nothing exp5() {
+        Real a = 3.14;
+        Int b = 3;
+        Int c = 5;
+        Int d = 2;
+        Real e = 0.5;
+        Int f = 1;
+        Real g = 9.9;
+        Real h = 2.0;
+        Int i = 7;
+        Real j = 2;
+
+        Real result = a + (b + c / d * e - f * g) / h + i - j;
+    };
+};
