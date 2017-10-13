@@ -7,15 +7,23 @@ class Method:
     It holds a name, a return type, and if required the arguments it receives.
     """
 
-    LOCAL_INT_TOP = 10_000
-    LOCAL_REAL_TOP = 12_000
-    LOCAL_BOOLEAN_TOP = 14_000
-    LOCAL_TEXT_TOP = 16_000
+    LOCAL_INT_TOP = 14_000
+    LOCAL_REAL_TOP = 15_000
+    LOCAL_BOOLEAN_TOP = 16_000
+    LOCAL_TEXT_TOP = 17_000
+    TEMP_INT_TOP = 18_000
+    TEMP_REAL_TOP = 19_000
+    TEMP_BOOLEAN_TOP = 20_000
+    TEMP_TEXT_TOP = 21_000
 
-    LOCAL_INT_BOTTOM = 11_999
-    LOCAL_REAL_BOTTOM = 13_999
-    LOCAL_BOOLEAN_BOTTOM = 15_999
+    LOCAL_INT_BOTTOM = 14_999
+    LOCAL_REAL_BOTTOM = 15_999
+    LOCAL_BOOLEAN_BOTTOM = 16_999
     LOCAL_TEXT_BOTTOM = 17_999
+    TEMP_INT_BOTTOM = 18_999
+    TEMP_REAL_BOTTOM = 19_999
+    TEMP_BOOLEAN_BOTTOM = 20_999
+    TEMP_TEXT_BOTTOM = 21_999
 
     def __init__(self, name: str, return_type: Type) -> None:
         """The de facto constructor for a method definition.
@@ -31,6 +39,10 @@ class Method:
         self.cur_local_real = self.LOCAL_REAL_TOP
         self.cur_local_boolean = self.LOCAL_BOOLEAN_TOP
         self.cur_local_text = self.LOCAL_TEXT_TOP
+        self.cur_temp_int = self.TEMP_INT_TOP
+        self.cur_temp_real = self.TEMP_REAL_TOP
+        self.cur_temp_boolean = self.TEMP_BOOLEAN_TOP
+        self.cur_temp_text = self.TEMP_TEXT_TOP
 
     def add_argument(self, arg_name: str, arg_type, is_array: bool, address: int) -> None:
         """Add argument to variable dictionary along with its type.
@@ -48,6 +60,16 @@ class Method:
         self._variables[arg_name] = {'type': arg_type,
                                      'is_array': is_array,
                                      'address': address}
+
+    def reset_address_counters(self):
+        self.cur_local_int = self.LOCAL_INT_TOP
+        self.cur_local_real = self.LOCAL_REAL_TOP
+        self.cur_local_boolean = self.LOCAL_BOOLEAN_TOP
+        self.cur_local_text = self.LOCAL_TEXT_TOP
+        self.cur_temp_int = self.TEMP_INT_TOP
+        self.cur_temp_real = self.TEMP_REAL_TOP
+        self.cur_temp_bool = self.TEMP_BOOLEAN_TOP
+        self.cur_temp_text = self.TEMP_TEXT_TOP
 
     @property
     def name(self):

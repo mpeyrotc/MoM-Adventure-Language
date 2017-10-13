@@ -47,12 +47,11 @@ class MoMListener(ParseTreeListener):
     pending_operands = list()
     pending_types = list()
     pending_operators = list()
-    temps = 0
     quads = list()
 
     @staticmethod
     def get_address_by_type(m: Method, t: Type):
-        # TODO: should be treated as String ot Type variable
+        # TODO: should be treated as String or Type variable?
         if t == "Int":
             return m.cur_local_int
         elif t == "Real":
@@ -61,6 +60,21 @@ class MoMListener(ParseTreeListener):
             return m.cur_local_text
         elif t == "Boolean":
             return m.cur_local_boolean
+        else:
+            print("SPECIAL CASE FOR GET: " + str(t))
+            return -1
+
+    @staticmethod
+    def get_temp_address_by_type(m: Method, t: Type):
+        # TODO: should be treated as String or Type variable?
+        if t == Type.INT:
+            return m.cur_temp_int
+        elif t == Type.REAL:
+            return m.cur_temp_real
+        elif t == Type.TEXT:
+            return m.cur_temp_text
+        elif t == Type.BOOLEAN:
+            return m.cur_temp_boolean
         else:
             print("SPECIAL CASE FOR GET: " + str(t))
             return -1
@@ -93,6 +107,19 @@ class MoMListener(ParseTreeListener):
             print("SPECIAL CASE FOR INCREMENT: " + str(t))
 
     @staticmethod
+    def increment_temp_address_by_type(m: Method, t: Type):
+        if t == Type.INT:
+            m.cur_temp_int += 1
+        elif t == Type.REAL:
+            m.cur_temp_real += 1
+        elif t == Type.TEXT:
+            m.cur_temp_text += 1
+        elif t == Type.BOOLEAN:
+            m.cur_temp_boolean += 1
+        else:
+            print("SPECIAL CASE FOR INCREMENT: " + str(t))
+
+    @staticmethod
     def increment_const_address_by_type(c: Class, t: Type):
         if t == Type.INT:
             c.cur_const_int += 1
@@ -115,7 +142,6 @@ class MoMListener(ParseTreeListener):
             print(str(quad.operator) + ", " + str(quad.left_operand) + ", "
                   + str(quad.right_operand) + ", " + str(quad.result))
 
-
     # Enter a parse tree produced by MoMParser#arguments.
     def enterArguments(self, ctx:MoMParser.ArgumentsContext):
         pass
@@ -124,7 +150,6 @@ class MoMListener(ParseTreeListener):
     def exitArguments(self, ctx:MoMParser.ArgumentsContext):
         pass
 
-
     # Enter a parse tree produced by MoMParser#assignation.
     def enterAssignation(self, ctx:MoMParser.AssignationContext):
         pass
@@ -132,7 +157,6 @@ class MoMListener(ParseTreeListener):
     # Exit a parse tree produced by MoMParser#assignation.
     def exitAssignation(self, ctx:MoMParser.AssignationContext):
         pass
-
 
     # Enter a parse tree produced by MoMParser#block.
     def enterBlock(self, ctx:MoMParser.BlockContext):
@@ -214,12 +238,21 @@ class MoMListener(ParseTreeListener):
             self.increment_const_address_by_type(c, Type.TEXT)
             self.pending_types.append(Type.TEXT)
         elif ctx.VARID() is not None:
-            self.pending_operands.append(ctx.getText())
-            # TODO: Find type according to declaration, INT type used to avoid errors
-            # TODO: should look in local
-            # TODO: should look in global
-            # TODO: if not, mark error
-            self.pending_types.append(Type.INT)
+            var = ctx.VARID().getText()
+            c = master_tables.classes[self.current_class]
+            m = c.methods[self.current_method]
+
+            # Look in local variables, if not, look in global variables
+            if var in m.variables:
+                t = m.variables[var]["type"]
+                self.pending_operands.append(m.variables[var]["address"])
+            elif var in c.variables:
+                t = c.variables[var]["type"]
+                self.pending_operands.append(c.variables[var]["address"])
+            else:
+                raise NameError("Variable ' " + var + " is undefined.")
+
+            self.pending_types.append(get_type(t))
         elif ctx.array_var() is not None:
             # See array_var listener
             pass
@@ -227,7 +260,6 @@ class MoMListener(ParseTreeListener):
     # Exit a parse tree produced by MoMParser#constant.
     def exitConstant(self, ctx:MoMParser.ConstantContext):
         pass
-
 
     # Enter a parse tree produced by MoMParser#construct_call.
     def enterConstruct_call(self, ctx:MoMParser.Construct_callContext):
@@ -290,8 +322,9 @@ class MoMListener(ParseTreeListener):
                 if result_type == Type.OTHER:
                     raise TypeError("Type mismatch for expression.")
                 else:
-                    result = self.temps
-                    self.temps += 1
+                    m = master_tables.classes[self.current_class].methods[self.current_method]
+                    result = self.get_temp_address_by_type(m, result_type)
+                    self.increment_temp_address_by_type(m, result_type)
                     quad = Quadrupole(operator, left_operand, right_operand, result)
                     self.quads.append(quad)
                     self.pending_operands.append(result)
@@ -339,8 +372,9 @@ class MoMListener(ParseTreeListener):
                 if result_type == Type.OTHER:
                     raise TypeError("Type mismatch for expression.")
                 else:
-                    result = self.temps
-                    self.temps += 1
+                    m = master_tables.classes[self.current_class].methods[self.current_method]
+                    result = self.get_temp_address_by_type(m, result_type)
+                    self.increment_temp_address_by_type(m, result_type)
                     quad = Quadrupole(operator, left_operand, right_operand, result)
                     self.quads.append(quad)
                     self.pending_operands.append(result)
@@ -372,14 +406,14 @@ class MoMListener(ParseTreeListener):
                 if result_type == Type.OTHER:
                     raise TypeError("Type mismatch for expression.")
                 else:
-                    result = self.temps
-                    self.temps += 1
+                    m = master_tables.classes[self.current_class].methods[self.current_method]
+                    result = self.get_temp_address_by_type(m, result_type)
+                    self.increment_temp_address_by_type(m, result_type)
                     quad = Quadrupole(operator, left_operand, right_operand, result)
                     self.quads.append(quad)
                     self.pending_operands.append(result)
                     self.pending_types.append(result_type)
 
-    # Exit a parse tree produced by MoMParser#exit_term.
     def exitExit_term(self, ctx:MoMParser.Exit_termContext):
         pass
 
@@ -467,6 +501,12 @@ class MoMListener(ParseTreeListener):
             type contexts.
         :return: None.
         """
+        # reset virtual memory counters
+        Method.cur_local_boolean = Method.LOCAL_BOOLEAN_TOP
+        Method.cur_local_real = Method.LOCAL_REAL_TOP
+        Method.cur_local_int = Method.LOCAL_INT_TOP
+        Method.cur_local_text = Method.LOCAL_TEXT_TOP
+
         return_type, method_name = ctx.simple_type(), ctx.VARID()
         # refresh simple type to take it into account when creating the new method
         self.enterSimple_type(return_type)
@@ -584,8 +624,9 @@ class MoMListener(ParseTreeListener):
                 if result_type == Type.OTHER:
                     raise TypeError("Type mismatch for expression.")
                 else:
-                    result = self.temps
-                    self.temps += 1
+                    m = master_tables.classes[self.current_class].methods[self.current_method]
+                    result = self.get_temp_address_by_type(m, result_type)
+                    self.increment_temp_address_by_type(m, result_type)
                     quad = Quadrupole(operator, left_operand, right_operand, result)
                     self.quads.append(quad)
                     self.pending_operands.append(result)

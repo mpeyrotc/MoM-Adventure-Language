@@ -3,6 +3,8 @@ class Expressions is_a Component {
     };
 
     Nothing exp1() {
+        Int b = 2;
+        Int c = 3;
         Real a = b + c;
     };
 
