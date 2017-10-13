@@ -27,6 +27,7 @@ class Class:
         self._class_parent = class_parent
         self._class_specifications = class_specifications
         self._methods = {}
+        self._variables = {}
         self.cur_global_int = self.GLOBAL_INT_TOP
         self.cur_global_real = self.GLOBAL_REAL_TOP
         self.cur_global_boolean = self.GLOBAL_BOOLEAN_TOP
@@ -49,6 +50,23 @@ class Class:
         self.cur_const_boolean = self.CONST_BOOLEAN_TOP
         self.cur_const_text = self.CONST_TEXT_TOP
 
+    def add_argument(self, arg_name: str, arg_type, is_array: bool, address: int) -> None:
+        """Add argument to variable dictionary along with its type.
+
+        :param address: the virtual address for this argument, according to its type, in the VM.
+        :param is_array: a boolean argument that specifies if the argument is an array.
+        :param arg_type: the type of the argument, may be simple or complex (a.k.a a super type in the grammar).
+        :param arg_name: the name of the argument, must be unique among the rest of the arguments and
+            the local variables of the method.
+        :return: None.
+        """
+        if arg_name in self._variables:
+            raise NameError("Method name already defined within scope.")
+
+        self._variables[arg_name] = {'type': arg_type,
+                                     'is_array': is_array,
+                                     'address': address}
+
     @property
     def name(self):
         return self._class_name
@@ -64,3 +82,7 @@ class Class:
     @property
     def methods(self):
         return self._methods
+
+    @property
+    def variables(self):
+        return self._variables

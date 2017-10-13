@@ -61,7 +61,22 @@ class MoMListener(ParseTreeListener):
         elif t == "Boolean":
             return m.cur_local_boolean
         else:
-            print("SPECIAL CASE FOR GET: " + str(t))
+            print("SPECIAL CASE FOR get_address_by_type: " + str(t))
+            return -1
+
+    @staticmethod
+    def get_global_address_by_type(c: Class, t: Type):
+        # TODO: should be treated as String or Type variable?
+        if t == "Int":
+            return c.cur_global_int
+        elif t == "Real":
+            return c.cur_global_real
+        elif t == "Text":
+            return c.cur_global_text
+        elif t == "Boolean":
+            return c.cur_global_boolean
+        else:
+            print("SPECIAL CASE FOR get_global_address_by_type: " + str(t))
             return -1
 
     @staticmethod
@@ -76,7 +91,7 @@ class MoMListener(ParseTreeListener):
         elif t == Type.BOOLEAN:
             return m.cur_temp_boolean
         else:
-            print("SPECIAL CASE FOR GET: " + str(t))
+            print("SPECIAL CASE FOR get_temp_address_by_type: " + str(t))
             return -1
 
     @staticmethod
@@ -90,7 +105,7 @@ class MoMListener(ParseTreeListener):
         elif t == Type.BOOLEAN:
             return c.cur_const_boolean
         else:
-            print("SPECIAL CASE FOR GET CONST: " + str(t))
+            print("SPECIAL CASE FOR GET get_const_address_by_type: " + str(t))
             return -1
 
     @staticmethod
@@ -104,7 +119,20 @@ class MoMListener(ParseTreeListener):
         elif t == "Boolean":
             m.cur_local_boolean += 1
         else:
-            print("SPECIAL CASE FOR INCREMENT: " + str(t))
+            print("SPECIAL CASE FOR increment_address_by_type: " + str(t))
+
+    @staticmethod
+    def increment_global_address_by_type(c: Class, t: Type):
+        if t == "Int":
+            c.cur_global_int += 1
+        elif t == "Real":
+            c.cur_global_real += 1
+        elif t == "Text":
+            c.cur_global_text += 1
+        elif t == "Boolean":
+            c.cur_global_boolean += 1
+        else:
+            print("SPECIAL CASE FOR increment_global_address_by_type: " + str(t))
 
     @staticmethod
     def increment_temp_address_by_type(m: Method, t: Type):
@@ -117,7 +145,7 @@ class MoMListener(ParseTreeListener):
         elif t == Type.BOOLEAN:
             m.cur_temp_boolean += 1
         else:
-            print("SPECIAL CASE FOR INCREMENT: " + str(t))
+            print("SPECIAL CASE FOR increment_temp_address_by_type: " + str(t))
 
     @staticmethod
     def increment_const_address_by_type(c: Class, t: Type):
@@ -130,7 +158,7 @@ class MoMListener(ParseTreeListener):
         elif t == Type.BOOLEAN:
             c.cur_const_boolean += 1
         else:
-            print("SPECIAL CASE FOR CONST INCREMENT: " + str(t))
+            print("SPECIAL CASE FOR CONST increment_const_address_by_type: " + str(t))
 
     # Enter a parse tree produced by MoMParser#program.
     def enterProgram(self, ctx:MoMParser.ProgramContext):
@@ -541,9 +569,7 @@ class MoMListener(ParseTreeListener):
     def exitOperand(self, ctx:MoMParser.OperandContext):
         pass
 
-
-    # Enter a parse tree produced by MoMParser#field.
-    def enterField(self, ctx:MoMParser.FieldContext):
+    def enterField(self, ctx: MoMParser.FieldContext) -> None:
         pass
 
     # Exit a parse tree produced by MoMParser#field.
