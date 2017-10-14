@@ -775,18 +775,34 @@ class MoMListener(ParseTreeListener):
         m = c.methods[self.current_method]
 
         # Look in local variables, if not, look in global variables
+        # TODO: check value for type, depending on array declaration, INT type used to avoid errors
         if variable in m.variables:
             t = m.variables[variable]["type"]
-            self.pending_operands.append(m.variables[variable]["address"] + var_index)
+            is_array = m.variables[variable]["is_array"]
+            mem_size = m.variables[variable]["mem_size"]
+            if is_array:
+                if 0 <= var_index < mem_size:
+                    self.pending_operands.append(m.variables[variable]["address"] + var_index)
+                    self.pending_types.append(Type.INT)
+                else:
+                    raise NameError("Out of bounds")
+            else:
+                raise NameError("Variable " + variable + " is not an array")
         elif variable in c.variables:
             t = c.variables[variable]["type"]
-            self.pending_operands.append(c.variables[variable]["address"] + var_index)
+            is_array = c.variables[variable]["is_array"]
+            mem_size = c.variables[variable]["mem_size"]
+            if is_array:
+                if 0 <= var_index < mem_size:
+                    self.pending_operands.append(c.variables[variable]["address"] + var_index)
+                    self.pending_types.append(Type.INT)
+                else:
+                    raise NameError("Out of bounds")
+            else:
+                raise NameError("Variable " + variable + " is not an array")
         else:
             raise NameError("Variable ' " + variable + " is undefined.")
 
-        #self.pending_types.append(get_type(t))
-        # TODO: check value for type, depending on array declaration, INT type used to avoid errors
-        self.pending_types.append(Type.INT)
 
     # Exit a parse tree produced by MoMParser#array_var.
     def exitArray_var(self, ctx:MoMParser.Array_varContext):

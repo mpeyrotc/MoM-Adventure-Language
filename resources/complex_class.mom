@@ -5,7 +5,7 @@ class Character is_a Card of_type Player {
     field<Int> numberOfItems;
 
     Character(Int physicalLife, Int mentalLife) {
-        physicalLife = ints[0] + ints[5];
+        physicalLife = ints[0] + ints[99];
         parent();
         this.physicalLife = physicalLife;
         this.mentalLife = init(mentalLife);
@@ -13,13 +13,13 @@ class Character is_a Card of_type Player {
     };
 
     Int setCommonCard(Card card) {
-        Face i = card[0];
+        Face i = 2;
 
         if(TRUE || FALSE) {
             physicalLife = 100;
         };
 
-        return card[10];
+        return 3;
     };
 
     Boolean addCommonCard(Card[] cards, Int[] ints) {
