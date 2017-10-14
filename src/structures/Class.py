@@ -50,7 +50,7 @@ class Class:
         self.cur_const_boolean = self.CONST_BOOLEAN_TOP
         self.cur_const_text = self.CONST_TEXT_TOP
 
-    def add_argument(self, arg_name: str, arg_type, is_array: bool, address: int) -> None:
+    def add_argument(self, arg_name: str, arg_type, is_array: bool, address: int, mem_size: int) -> None:
         """Add argument to variable dictionary along with its type.
 
         :param address: the virtual address for this argument, according to its type, in the VM.
@@ -58,6 +58,7 @@ class Class:
         :param arg_type: the type of the argument, may be simple or complex (a.k.a a super type in the grammar).
         :param arg_name: the name of the argument, must be unique among the rest of the arguments and
             the local variables of the method.
+        :param mem_size : the size in memory, by default 1
         :return: None.
         """
         if arg_name in self._variables:
@@ -65,7 +66,8 @@ class Class:
 
         self._variables[arg_name] = {'type': arg_type,
                                      'is_array': is_array,
-                                     'address': address}
+                                     'address': address,
+                                     'mem_size' : mem_size}
 
     @property
     def name(self):

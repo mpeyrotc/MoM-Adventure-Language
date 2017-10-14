@@ -27,6 +27,7 @@ class StructureType(IntEnum):
 class Variable:
     var_type = ""
     is_array = False
+    mem_size = 1
 
     def __init__(self):
         self.is_array = False
@@ -109,28 +110,30 @@ class MoMListener(ParseTreeListener):
             return -1
 
     @staticmethod
-    def increment_address_by_type(m: Method, t: Type):
+    def increment_address_by_type(m: Method, t: Type, s: int):
+        print("incrementing local " + str(s) + " of " + m._name)
         if t == "Int":
-            m.cur_local_int += 1
+            m.cur_local_int += s
         elif t == "Real":
-            m.cur_local_real += 1
+            m.cur_local_real += s
         elif t == "Text":
-            m.cur_local_text += 1
+            m.cur_local_text += s
         elif t == "Boolean":
-            m.cur_local_boolean += 1
+            m.cur_local_boolean += s
         else:
             print("SPECIAL CASE FOR increment_address_by_type: " + str(t))
 
     @staticmethod
-    def increment_global_address_by_type(c: Class, t: Type):
+    def increment_global_address_by_type(c: Class, t: Type, s: int):
+        print("incrementing global " + str(s))
         if t == "Int":
-            c.cur_global_int += 1
+            c.cur_global_int += s
         elif t == "Real":
-            c.cur_global_real += 1
+            c.cur_global_real += s
         elif t == "Text":
-            c.cur_global_text += 1
+            c.cur_global_text += s
         elif t == "Boolean":
-            c.cur_global_boolean += 1
+            c.cur_global_boolean += s
         else:
             print("SPECIAL CASE FOR increment_global_address_by_type: " + str(t))
 
@@ -505,11 +508,11 @@ class MoMListener(ParseTreeListener):
             if self.current_structure == StructureType.CLASS:
                 m = master_tables.classes[self.current_class].methods[self.current_method]
                 address = self.get_address_by_type(m, var.var_type)
-                m.add_argument(name, var.var_type, var.is_array, address)
-                self.increment_address_by_type(m, var.var_type)
+                m.add_argument(name, var.var_type, var.is_array, address, var.mem_size)
+                self.increment_address_by_type(m, var.var_type, var.mem_size)
             elif self.current_structure == StructureType.SPECIFICATION:
                 master_tables.specifications[self.current_specification].methods[
-                    self.current_method].add_argument(name, var.var_type, var.is_array, -2)
+                    self.current_method].add_argument(name, var.var_type, var.is_array, -2, var.mem_size)
 
     # Enter a parse tree produced by MoMParser#function_call.
     def enterFunction_call(self, ctx:MoMParser.Function_callContext):
@@ -570,11 +573,23 @@ class MoMListener(ParseTreeListener):
         pass
 
     def enterField(self, ctx: MoMParser.FieldContext) -> None:
-        pass
+        self.in_signature = True
+        self.arguments = []
+        self.argument_names = []
+        var_name = ctx.VARID()
+        self.argument_names.append(var_name.getText())
 
     # Exit a parse tree produced by MoMParser#field.
     def exitField(self, ctx:MoMParser.FieldContext):
-        pass
+        for name, var in zip(self.argument_names, self.arguments):
+            if self.current_structure == StructureType.CLASS:
+                c = master_tables.classes[self.current_class]
+                address = self.get_global_address_by_type(c, var.var_type)
+                c.add_argument(name, var.var_type, var.is_array, address, var.mem_size)
+                self.increment_global_address_by_type(c, var.var_type, var.mem_size)
+            elif self.current_structure == StructureType.SPECIFICATION:
+                master_tables.specifications[self.current_specification].methods[
+                    self.current_method].add_argument(name, var.var_type, var.is_array, -2, var.mem_size)
 
     def enterSpec_function(self, ctx: MoMParser.Spec_functionContext) -> None:
         name, return_type = ctx.VARID(), ctx.simple_type()
@@ -626,8 +641,8 @@ class MoMListener(ParseTreeListener):
             if self.current_structure == StructureType.CLASS:
                 m = master_tables.classes[self.current_class].methods[self.current_method]
                 address = self.get_address_by_type(m, var.var_type)
-                m.add_argument(name, var.var_type, var.is_array, address)
-                self.increment_address_by_type(m, var.var_type)
+                m.add_argument(name, var.var_type, var.is_array, address, var.mem_size)
+                self.increment_address_by_type(m, var.var_type, var.mem_size)
 
     # Enter a parse tree produced by MoMParser#statute.
     def enterStatute(self, ctx: MoMParser.StatuteContext):
@@ -734,11 +749,22 @@ class MoMListener(ParseTreeListener):
 
     # Enter a parse tree produced by MoMParser#array_def.
     def enterArray_def(self, ctx:MoMParser.Array_defContext):
-        pass
+        texto = ctx.getText()
+        abre = texto.find("[")
+        cierra = texto.find("]")
+        cuantos = int(texto[abre+1:cierra])
+        tipo = texto[:abre]
+        print("enter array " + texto)
+        if self.in_signature:
+            self.arguments.append(Variable())
+            self.arguments[-1].var_type = tipo
+            self.arguments[-1].mem_size = cuantos
+            self.arguments[-1].is_array = True
 
     # Exit a parse tree produced by MoMParser#array_def.
     def exitArray_def(self, ctx:MoMParser.Array_defContext):
-        pass
+        if self.in_signature:
+            self.arguments[-1].is_array = True
 
     def enterArray_var(self, ctx: MoMParser.Array_varContext) -> None:
         self.pending_operands.append(ctx.getText())

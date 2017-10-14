@@ -44,7 +44,7 @@ class Method:
         self.cur_temp_boolean = self.TEMP_BOOLEAN_TOP
         self.cur_temp_text = self.TEMP_TEXT_TOP
 
-    def add_argument(self, arg_name: str, arg_type, is_array: bool, address: int) -> None:
+    def add_argument(self, arg_name: str, arg_type, is_array: bool, address: int, mem_size: int) -> None:
         """Add argument to variable dictionary along with its type.
 
         :param address: the virtual address for this argument, according to its type, in the VM.
@@ -52,6 +52,7 @@ class Method:
         :param arg_type: the type of the argument, may be simple or complex (a.k.a a super type in the grammar).
         :param arg_name: the name of the argument, must be unique among the rest of the arguments and
             the local variables of the method.
+        :param mem_size: size in memory, default 1
         :return: None.
         """
         if arg_name in self._variables:
@@ -59,7 +60,8 @@ class Method:
 
         self._variables[arg_name] = {'type': arg_type,
                                      'is_array': is_array,
-                                     'address': address}
+                                     'address': address,
+                                     'mem_size': mem_size}
 
     def reset_address_counters(self):
         self.cur_local_int = self.LOCAL_INT_TOP

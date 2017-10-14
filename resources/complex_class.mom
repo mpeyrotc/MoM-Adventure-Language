@@ -1,6 +1,8 @@
 class Character is_a Card of_type Player {
     field<Card> card;
     field<Int[100]> ints;
+    field<Int> physicalLife;
+    field<Int> numberOfItems;
 
     Character(Int physicalLife, Int mentalLife) {
         parent();
@@ -13,7 +15,7 @@ class Character is_a Card of_type Player {
         Face i = card[0];
 
         if(TRUE || FALSE) {
-            physicalLife = physicalLife;
+            physicalLife = 100;
         };
 
         return card[10];
