@@ -126,7 +126,8 @@ def get_type(name: str) -> Type:
     if name == 'Real':
         return Type.REAL
 
-    raise TypeError(name + " type is not a simple type.")
+    print(name + " type is not a simple type.")
+    return Type.OTHER
 
 
 __author__ = "Marco A. Peyrot (mpeyrotc)"

@@ -1,6 +1,6 @@
 class Character is_a Card of_type Player {
     field<Card> items;
-    field<Int> items;
+    field<Int> item;
 
     Character(Int physicalLife, Int mentalLife) {
         physicalLife = physicalLife;

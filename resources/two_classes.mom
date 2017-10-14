@@ -1,14 +1,15 @@
 class Character is_a Card of_type Player {
     field<Card> items;
-    field<Int> items;
+    field<Int> item;
+    field<Card> physicalLife;
 
     Character(Int[] physicalLife, Real[] mentalLife) {
         physicalLife = physicalLife;
     };
 
-    Nothing addCommonCard(Card card) {
+    Nothing addCommonCard(Card card, Int numberOfItems) {
         if(numberOfItems <  -1) {
-            physicalLife = physicalLife;
+            physicalLife = card;
         };
     };
 
