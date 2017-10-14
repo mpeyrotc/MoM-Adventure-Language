@@ -1,4 +1,6 @@
 class Expressions is_a Component {
+    field<Int[2]> arr;
+
     Expression() {
     };
 
@@ -16,8 +18,9 @@ class Expressions is_a Component {
 
     Nothing exp3() {
         Real a = 3.14;
-        Int b = 3;
-        Real result = a * b;
+        Int b = arr[0];
+        b = 2;
+        Real result = arr[0] * b;
     };
 
     Nothing exp4() {

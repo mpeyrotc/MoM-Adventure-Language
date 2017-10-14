@@ -181,13 +181,30 @@ class MoMListener(ParseTreeListener):
     def exitArguments(self, ctx:MoMParser.ArgumentsContext):
         pass
 
-    # Enter a parse tree produced by MoMParser#assignation.
-    def enterAssignation(self, ctx:MoMParser.AssignationContext):
+    def enterAssignation(self, ctx: MoMParser.AssignationContext) -> None:
         pass
 
-    # Exit a parse tree produced by MoMParser#assignation.
-    def exitAssignation(self, ctx:MoMParser.AssignationContext):
-        pass
+    def exitAssignation(self, ctx:MoMParser.AssignationContext) -> None:
+        if len(ctx.VARID()) == 1:
+            var = ctx.VARID()[0].getText()
+        else:
+            var = ctx.VARID()[1].getText()
+        c = master_tables.classes[self.current_class]
+        m = c.methods[self.current_method]
+
+        # Look in local variables, if not, look in global variables
+        if var in m.variables:
+            destination = m.variables[var]["address"]
+            holder = self.pending_operands.pop()
+            quad = Quadrupole(Operator.EQUAL, holder, None, destination)
+            self.quads.append(quad)
+        elif var in c.variables:
+            destination = c.variables[var]["address"]
+            holder = self.pending_operands.pop()
+            quad = Quadrupole(Operator.EQUAL, holder, None, destination)
+            self.quads.append(quad)
+        else:
+            raise NameError("Variable ' " + var + " is undefined.")
 
     # Enter a parse tree produced by MoMParser#block.
     def enterBlock(self, ctx:MoMParser.BlockContext):
@@ -381,11 +398,11 @@ class MoMListener(ParseTreeListener):
 
 
     # Enter a parse tree produced by MoMParser#ss_exp.
-    def enterSs_exp(self, ctx:MoMParser.Ss_expContext):
+    def enterSs_exp(self, ctx: MoMParser.Ss_expContext):
         pass
 
     # Exit a parse tree produced by MoMParser#ss_exp.
-    def exitSs_exp(self, ctx:MoMParser.Ss_expContext):
+    def exitSs_exp(self, ctx: MoMParser.Ss_expContext):
         pass
 
     def enterExit_exp(self, ctx: MoMParser.Exit_expContext) -> None:
@@ -414,7 +431,6 @@ class MoMListener(ParseTreeListener):
     # Exit a parse tree produced by MoMParser#exit_exp.
     def exitExit_exp(self, ctx:MoMParser.Exit_expContext):
         pass
-
 
     # Enter a parse tree produced by MoMParser#s_exp.
     def enterS_exp(self, ctx:MoMParser.S_expContext):
@@ -579,8 +595,7 @@ class MoMListener(ParseTreeListener):
         var_name = ctx.VARID()
         self.argument_names.append(var_name.getText())
 
-    # Exit a parse tree produced by MoMParser#field.
-    def exitField(self, ctx:MoMParser.FieldContext):
+    def exitField(self, ctx: MoMParser.FieldContext) -> None:
         for name, var in zip(self.argument_names, self.arguments):
             if self.current_structure == StructureType.CLASS:
                 c = master_tables.classes[self.current_class]
@@ -627,7 +642,7 @@ class MoMListener(ParseTreeListener):
     def exitSpecification(self, ctx: MoMParser.SpecificationContext):
         pass
 
-    def enterAssignation_def(self, ctx: MoMParser.Assignation_defContext):
+    def enterAssignation_def(self, ctx: MoMParser.Assignation_defContext) -> None:
         self.in_signature = True
         self.arguments = []
         self.argument_names = []
@@ -643,6 +658,12 @@ class MoMListener(ParseTreeListener):
                 address = self.get_address_by_type(m, var.var_type)
                 m.add_argument(name, var.var_type, var.is_array, address, var.mem_size)
                 self.increment_address_by_type(m, var.var_type, var.mem_size)
+
+                destination = m.variables[name]["address"]
+
+                holder = self.pending_operands.pop()
+                quad = Quadrupole(Operator.EQUAL, holder, None, destination)
+                self.quads.append(quad)
 
     # Enter a parse tree produced by MoMParser#statute.
     def enterStatute(self, ctx: MoMParser.StatuteContext):
