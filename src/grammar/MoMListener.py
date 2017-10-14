@@ -111,7 +111,7 @@ class MoMListener(ParseTreeListener):
 
     @staticmethod
     def increment_address_by_type(m: Method, t: Type, s: int):
-        print("incrementing local " + str(s) + " of " + m._name)
+        # print("incrementing local " + str(s) + " of " + m._name)
         if t == "Int":
             m.cur_local_int += s
         elif t == "Real":
@@ -125,7 +125,7 @@ class MoMListener(ParseTreeListener):
 
     @staticmethod
     def increment_global_address_by_type(c: Class, t: Type, s: int):
-        print("incrementing global " + str(s))
+        # print("incrementing global " + str(s))
         if t == "Int":
             c.cur_global_int += s
         elif t == "Real":
@@ -752,9 +752,8 @@ class MoMListener(ParseTreeListener):
         texto = ctx.getText()
         abre = texto.find("[")
         cierra = texto.find("]")
-        cuantos = int(texto[abre+1:cierra])
-        tipo = texto[:abre]
-        print("enter array " + texto)
+        cuantos = int(texto[abre+1:cierra].strip())
+        tipo = texto[:abre].strip()
         if self.in_signature:
             self.arguments.append(Variable())
             self.arguments[-1].var_type = tipo
@@ -767,7 +766,25 @@ class MoMListener(ParseTreeListener):
             self.arguments[-1].is_array = True
 
     def enterArray_var(self, ctx: MoMParser.Array_varContext) -> None:
-        self.pending_operands.append(ctx.getText())
+        texto = ctx.getText()
+        abre = texto.find("[")
+        cierra = texto.find("]")
+        variable = texto[:abre].strip()
+        var_index = int(texto[abre+1:cierra])
+        c = master_tables.classes[self.current_class]
+        m = c.methods[self.current_method]
+
+        # Look in local variables, if not, look in global variables
+        if variable in m.variables:
+            t = m.variables[variable]["type"]
+            self.pending_operands.append(m.variables[variable]["address"] + var_index)
+        elif variable in c.variables:
+            t = c.variables[variable]["type"]
+            self.pending_operands.append(c.variables[variable]["address"] + var_index)
+        else:
+            raise NameError("Variable ' " + variable + " is undefined.")
+
+        #self.pending_types.append(get_type(t))
         # TODO: check value for type, depending on array declaration, INT type used to avoid errors
         self.pending_types.append(Type.INT)
 

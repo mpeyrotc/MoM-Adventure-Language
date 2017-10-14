@@ -5,6 +5,7 @@ class Character is_a Card of_type Player {
     field<Int> numberOfItems;
 
     Character(Int physicalLife, Int mentalLife) {
+        physicalLife = ints[0] + ints[5];
         parent();
         this.physicalLife = physicalLife;
         this.mentalLife = init(mentalLife);
