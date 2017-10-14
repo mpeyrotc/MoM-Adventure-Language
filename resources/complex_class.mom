@@ -9,7 +9,7 @@ class Character is_a Card of_type Player {
         parent();
         this.physicalLife = physicalLife;
         this.mentalLife = init(mentalLife);
-        ha = new Object();
+        Object ha = new Object();
     };
 
     Int setCommonCard(Card card) {
