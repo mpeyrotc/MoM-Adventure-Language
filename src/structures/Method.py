@@ -35,6 +35,7 @@ class Method:
         self._name = name
         self._return_type = return_type
         self._variables = {}
+        self._argument_types = []
         self.cur_local_int = self.LOCAL_INT_TOP
         self.cur_local_real = self.LOCAL_REAL_TOP
         self.cur_local_boolean = self.LOCAL_BOOLEAN_TOP
@@ -63,6 +64,9 @@ class Method:
                                      'address': address,
                                      'mem_size': mem_size}
 
+    def add_argument_type(self, arg_type, is_array: bool):
+        self._argument_types.append({"arg_type": arg_type, "is_array": is_array})
+
     def reset_address_counters(self):
         self.cur_local_int = self.LOCAL_INT_TOP
         self.cur_local_real = self.LOCAL_REAL_TOP
@@ -70,7 +74,7 @@ class Method:
         self.cur_local_text = self.LOCAL_TEXT_TOP
         self.cur_temp_int = self.TEMP_INT_TOP
         self.cur_temp_real = self.TEMP_REAL_TOP
-        self.cur_temp_bool = self.TEMP_BOOLEAN_TOP
+        self.cur_temp_boolean = self.TEMP_BOOLEAN_TOP
         self.cur_temp_text = self.TEMP_TEXT_TOP
 
     @property
@@ -84,6 +88,10 @@ class Method:
     @property
     def variables(self):
         return self._variables
+
+    @property
+    def argument_types(self):
+        return self._argument_types
 
 
 __author__ = "Marco A. Peyrot (mpeyrotc)"

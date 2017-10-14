@@ -28,6 +28,7 @@ class Class:
         self._class_specifications = class_specifications
         self._methods = {}
         self._variables = {}
+        self._argument_types = []
         self.cur_global_int = self.GLOBAL_INT_TOP
         self.cur_global_real = self.GLOBAL_REAL_TOP
         self.cur_global_boolean = self.GLOBAL_BOOLEAN_TOP
@@ -69,6 +70,9 @@ class Class:
                                      'address': address,
                                      'mem_size': mem_size}
 
+    def add_argument_type(self, arg_type, is_array: bool):
+        self._argument_types.append({"arg_type": arg_type, "is_array": is_array})
+
     @property
     def name(self):
         return self._class_name
@@ -88,3 +92,7 @@ class Class:
     @property
     def variables(self):
         return self._variables
+
+    @property
+    def argument_types(self):
+        return self._argument_types
