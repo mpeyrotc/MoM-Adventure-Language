@@ -17,12 +17,12 @@ class Type(IntEnum):
     well as ensure that the language semantics are followed to the letter
     during compilation.
     """
-    TEXT = auto()
-    INT = auto()
-    REAL = auto()
-    BOOLEAN = auto()
-    OTHER = auto()
-    NOTHING = auto()
+    TEXT = 1
+    INT = 2
+    REAL = 3
+    BOOLEAN = 4
+    OTHER = 5
+    NOTHING = 6
 
 
 @unique
@@ -33,24 +33,30 @@ class Operator(IntEnum):
     well as ensure that the language semantics are followed to the letter
     during compilation.
     """
-    PLUS = auto()
-    MINUS = auto()
-    TIMES = auto()
-    DIVIDES = auto()
-    AND = auto()
-    OR = auto()
-    NOT = auto()
-    LESS_THAN = auto()
-    LESS_EQUAL = auto()
-    GREATER_THAN = auto()
-    GREATER_EQUAL = auto()
-    EQUAL_EQUAL = auto()
-    OPEN_PAREN = auto()
-    CLOSE_PAREN = auto()
-    EQUAL = auto()
+    PLUS = 1
+    MINUS = 2
+    TIMES = 3
+    DIVIDES = 4
+    AND = 5
+    OR = 6
+    NOT = 7
+    LESS_THAN = 8
+    LESS_EQUAL = 9
+    GREATER_THAN = 10
+    GREATER_EQUAL = 11
+    EQUAL_EQUAL = 12
+    OPEN_PAREN = 13
+    CLOSE_PAREN = 14
+    EQUAL = 15
 
 
-num_types = 5
+class Operation(IntEnum):
+    GO_TO_FALSE = 16
+    GO_TO_TRUE = 17
+    GO_TO = 18
+
+
+num_types = 6
 num_operators = 15
 semantic_table = np.zeros((num_types + 1, num_types + 1, num_operators + 1))
 

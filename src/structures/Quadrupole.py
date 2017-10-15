@@ -1,8 +1,8 @@
-from src.structures.SemanticTable import Operator
+from src.structures.SemanticTable import Operator, Operation
 
 
 class Quadrupole:
-    def __init__(self, operator: Operator, left_operand, right_operand, result):
+    def __init__(self, operator, left_operand, right_operand, result):
         self._operator = operator
         self._left_operand = left_operand
         self._right_operand = right_operand
@@ -23,3 +23,8 @@ class Quadrupole:
     @property
     def result(self):
         return self._result
+
+    @result.setter
+    def result(self, value: int):
+        self._result = value
+

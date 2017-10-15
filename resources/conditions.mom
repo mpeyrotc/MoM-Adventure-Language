@@ -1,0 +1,18 @@
+class Condition is_a Component {
+    Condition() {
+    };
+
+    Nothing test1() {
+        if(1 < 5) {
+
+        };
+    };
+
+    Nothing test2() {
+        if(1 + 5 > 2) {
+
+        } else {
+
+        };
+    };
+};

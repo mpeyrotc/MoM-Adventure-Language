@@ -13,8 +13,14 @@ block			:	statute SEMI_COLON
 class_rule 		:	CLASS CLASSID IS_A complex_type (OF_TYPE CLASSID)? OPEN_BRACKET field* construct_def
                             function_def* CLOSE_BRACKET SEMI_COLON
                 ;
-condition		:	IF OPEN_PAREN ss_exp CLOSE_PAREN OPEN_BRACKET block* CLOSE_BRACKET
-                            (ELSE OPEN_BRACKET block* CLOSE_BRACKET)?
+exit_if_check   :   // Nothing.
+                ;
+condition_end   :   // Nothing.
+                ;
+enter_else      :   // Nothing.
+                ;
+condition		:	IF OPEN_PAREN ss_exp CLOSE_PAREN exit_if_check OPEN_BRACKET block* CLOSE_BRACKET
+                            (ELSE enter_else OPEN_BRACKET block* CLOSE_BRACKET)? condition_end
                 ;
 constant		:	INTEGER
                 |   REAL

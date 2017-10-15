@@ -8,7 +8,7 @@ from src.structures.Class import Class
 from src.structures.Enumeration import Enumeration
 from src.structures.Method import Method
 from src.structures.Quadrupole import Quadrupole
-from src.structures.SemanticTable import get_type, Type, Operator, semantic_table
+from src.structures.SemanticTable import get_type, Type, Operator, semantic_table, Operation
 from src.structures.Specification import Specification
 
 if __name__ is not None and "." in __name__:
@@ -48,6 +48,7 @@ class MoMListener(ParseTreeListener):
     pending_operands = list()
     pending_types = list()
     pending_operators = list()
+    pending_jumps = list()
     quads = list()
 
     @staticmethod
@@ -163,6 +164,10 @@ class MoMListener(ParseTreeListener):
         else:
             print("SPECIAL CASE FOR CONST increment_const_address_by_type: " + str(t))
 
+    def fill(self, end: int, next_quad: int) -> None:
+        quad = self.quads[end]
+        quad.result = next_quad
+
     # Enter a parse tree produced by MoMParser#program.
     def enterProgram(self, ctx:MoMParser.ProgramContext):
         pass
@@ -268,8 +273,42 @@ class MoMListener(ParseTreeListener):
     def enterCondition(self, ctx:MoMParser.ConditionContext):
         pass
 
-    # Exit a parse tree produced by MoMParser#condition.
     def exitCondition(self, ctx:MoMParser.ConditionContext):
+        if ctx.ELSE() is not None:
+            print("ELSE detected.")
+        else:
+            print("IF detected.")
+
+    def enterExit_if_check(self, ctx: MoMParser.Exit_if_checkContext) -> None:
+        exp_type = self.pending_types.pop()
+
+        if exp_type is not Type.BOOLEAN:
+            assert TypeError("Condition in if statement is not boolean. It is: " + str(exp_type))
+
+        result = self.pending_operands.pop()
+        quad = Quadrupole(Operation.GO_TO_FALSE, result, None, None)
+        self.quads.append(quad)
+        self.pending_jumps.append(len(self.quads) - 1)
+
+    # Exit a parse tree produced by MoMParser#exit_if_check.
+    def exitExit_if_check(self, ctx: MoMParser.Exit_if_checkContext):
+        pass
+
+    # Enter a parse tree produced by MoMParser#condition_end.
+    def enterCondition_end(self, ctx: MoMParser.Condition_endContext):
+        pass
+
+    def exitCondition_end(self, ctx: MoMParser.Condition_endContext) -> None:
+        end = self.pending_jumps.pop()
+        # TODO: TO TEACHER, what if it is the last quad?
+        self.fill(end, len(self.quads))
+
+    # Enter a parse tree produced by MoMParser#enter_else.
+    def enterEnter_else(self, ctx: MoMParser.Enter_elseContext):
+        pass
+
+    # Exit a parse tree produced by MoMParser#enter_else.
+    def exitEnter_else(self, ctx: MoMParser.Enter_elseContext):
         pass
 
     def enterConstant(self, ctx: MoMParser.ConstantContext) -> None:
@@ -454,7 +493,7 @@ class MoMListener(ParseTreeListener):
     def exitS_exp(self, ctx:MoMParser.S_expContext):
         pass
 
-    def enterExit_term(self, ctx:MoMParser.Exit_termContext) -> None:
+    def enterExit_term(self, ctx: MoMParser.Exit_termContext) -> None:
         if not len(self.pending_operators) == 0:
             if self.pending_operators[-1] == Operator.PLUS or self.pending_operators[-1] == Operator.MINUS:
                 right_operand = self.pending_operands.pop()
@@ -462,8 +501,8 @@ class MoMListener(ParseTreeListener):
                 left_operand = self.pending_operands.pop()
                 left_type = self.pending_types.pop()
                 operator = self.pending_operators.pop()
-                result_type = semantic_table[int(left_type)][int(right_type)][int(operator)]
-
+                # TODO: check why cast was necessary
+                result_type = Type(semantic_table[left_type][right_type][operator])
                 if result_type == Type.OTHER:
                     raise TypeError("Type mismatch for expression.")
                 else:
