@@ -539,6 +539,7 @@ class MoMListener(ParseTreeListener):
                 m = master_tables.classes[self.current_class].methods[self.current_method]
                 address = self.get_address_by_type(m, var.var_type)
                 m.add_argument(name, var.var_type, var.is_array, address, var.mem_size)
+                m.add_argument_type(var.var_type, var.is_array)
                 self.increment_address_by_type(m, var.var_type, var.mem_size)
             elif self.current_structure == StructureType.SPECIFICATION:
                 master_tables.specifications[self.current_specification].methods[

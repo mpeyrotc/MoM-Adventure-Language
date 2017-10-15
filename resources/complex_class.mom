@@ -7,7 +7,7 @@ class Character is_a Card of_type Player {
     Character(Int physicalLife, Int mentalLife) {
         physicalLife = ints[0] + ints[99];
         ints[3] = 4;
-        ints[4] = ints[5];
+        ints[4] = physicalLife;
         parent();
         this.physicalLife = physicalLife;
         this.mentalLife = init(mentalLife);
