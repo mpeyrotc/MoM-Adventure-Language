@@ -185,21 +185,35 @@ class MoMListener(ParseTreeListener):
         pass
 
     def exitAssignation(self, ctx:MoMParser.AssignationContext) -> None:
-        if len(ctx.VARID()) == 1:
+        isArray = 0
+        if len(ctx.VARID()) == 0:
+            # array assign
+            text = ctx.getText()
+            abre = text.find("[")
+            cierra = text.find("]")
+            indexOf = int(text[abre+1:cierra].strip())
+            var = text[:abre].strip()
+            isArray = 1
+        elif len(ctx.VARID()) == 1:
             var = ctx.VARID()[0].getText()
         else:
             var = ctx.VARID()[1].getText()
+
         c = master_tables.classes[self.current_class]
         m = c.methods[self.current_method]
 
         # Look in local variables, if not, look in global variables
         if var in m.variables:
             destination = m.variables[var]["address"]
+            if isArray == 1:
+                destination += indexOf
             holder = self.pending_operands.pop()
             quad = Quadrupole(Operator.EQUAL, holder, None, destination)
             self.quads.append(quad)
         elif var in c.variables:
             destination = c.variables[var]["address"]
+            if isArray == 1:
+                destination += indexOf
             holder = self.pending_operands.pop()
             quad = Quadrupole(Operator.EQUAL, holder, None, destination)
             self.quads.append(quad)

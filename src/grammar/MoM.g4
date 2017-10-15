@@ -6,7 +6,7 @@ program			:	(class_rule
                 ;
 arguments		:	ss_exp (COMMA ss_exp)*
                 ;
-assignation		:	((THIS | VARID) PERIOD)? VARID EQUALS (construct_call | ss_exp)
+assignation		:	((THIS | VARID) PERIOD)? (VARID | array_var) EQUALS (construct_call | ss_exp)
                 ;
 block			:	statute SEMI_COLON
                 ;
