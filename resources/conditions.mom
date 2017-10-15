@@ -29,4 +29,10 @@ class Condition is_a Component {
         } else {
         };
     };
+
+    Nothing test3() {
+        while(a < b) {
+            c = d + c;
+        };
+    };
 };

@@ -517,6 +517,24 @@ class MoMListener(ParseTreeListener):
     def exitExit_term(self, ctx:MoMParser.Exit_termContext):
         pass
 
+    # Enter a parse tree produced by MoMParser#after_while.
+    def enterAfter_while(self, ctx: MoMParser.After_whileContext):
+        pass
+
+    def exitAfter_while(self, ctx: MoMParser.After_whileContext) -> None:
+        self.pending_jumps.append(len(self.quads))
+
+    # Enter a parse tree produced by MoMParser#end_while.
+    def enterEnd_while(self, ctx: MoMParser.End_whileContext):
+        pass
+
+    def exitEnd_while(self, ctx: MoMParser.End_whileContext) -> None:
+        end = self.pending_jumps.pop()
+        go_back = self.pending_jumps.pop()
+        quad = Quadrupole(Operation.GO_TO, None, None, go_back)
+        self.quads.append(quad)
+        self.fill(end, len(self.quads))
+
     def enterPlus_op(self, ctx:MoMParser.Plus_opContext) -> None:
         self.pending_operators.append(Operator.PLUS)
 
@@ -891,3 +909,4 @@ class MoMListener(ParseTreeListener):
     def exitArray_arg(self, ctx: MoMParser.Array_argContext) -> None:
         if self.in_signature:
             self.arguments[-1].is_array = True
+

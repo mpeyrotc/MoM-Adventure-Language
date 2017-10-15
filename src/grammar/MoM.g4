@@ -13,11 +13,11 @@ block			:	statute SEMI_COLON
 class_rule 		:	CLASS CLASSID IS_A complex_type (OF_TYPE CLASSID)? OPEN_BRACKET field* construct_def
                             function_def* CLOSE_BRACKET SEMI_COLON
                 ;
-exit_if_check   :   // Nothing.
+exit_if_check   :   // nothing.
                 ;
-condition_end   :   // Nothing.
+condition_end   :   // nothing.
                 ;
-enter_else      :   // Nothing.
+enter_else      :   // nothing.
                 ;
 condition		:	IF OPEN_PAREN ss_exp CLOSE_PAREN exit_if_check OPEN_BRACKET block* CLOSE_BRACKET
                             (ELSE enter_else OPEN_BRACKET block* CLOSE_BRACKET)? condition_end
@@ -115,7 +115,11 @@ complex_type	:	SET
                 |   COMPONENT
                 |   CLASSID
                 ;
-while_loop		:	WHILE OPEN_PAREN ss_exp CLOSE_PAREN OPEN_BRACKET block* CLOSE_BRACKET
+end_while       :   // nothing.
+                ;
+after_while     :   // nothing.
+                ;
+while_loop		:	WHILE after_while OPEN_PAREN ss_exp CLOSE_PAREN exit_if_check OPEN_BRACKET block* CLOSE_BRACKET end_while
                 ;
 array_def       :   super_type OPEN_SBRACKET INTEGER CLOSE_SBRACKET
                 ;
