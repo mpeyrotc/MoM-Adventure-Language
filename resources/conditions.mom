@@ -1,18 +1,32 @@
 class Condition is_a Component {
+    field<Int> a;
+    field<Int> b;
+    field<Int> c;
+    field<Int> d;
+
     Condition() {
+        if(a + b > d) {
+            if(a < b) {
+                a = 0;
+                b = b + d;
+            } else {
+                c = a + b;
+            };
+        } else {
+            a = b + c;
+        };
+
+        d = b + a * c;
     };
 
     Nothing test1() {
         if(1 < 5) {
-
         };
     };
 
     Nothing test2() {
         if(1 + 5 > 2) {
-
         } else {
-
         };
     };
 };

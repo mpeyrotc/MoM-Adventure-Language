@@ -174,8 +174,8 @@ class MoMListener(ParseTreeListener):
 
     # Exit a parse tree produced by MoMParser#program.
     def exitProgram(self, ctx: MoMParser.ProgramContext) -> None:
-        for quad in MoMListener.quads:
-            print(str(quad.operator) + ", " + str(quad.left_operand) + ", "
+        for index, quad in enumerate(MoMListener.quads):
+            print(str(index) + ") " + str(quad.operator) + ", " + str(quad.left_operand) + ", "
                   + str(quad.right_operand) + ", " + str(quad.result))
 
     # Enter a parse tree produced by MoMParser#arguments.
@@ -270,14 +270,11 @@ class MoMListener(ParseTreeListener):
 
 
     # Enter a parse tree produced by MoMParser#condition.
-    def enterCondition(self, ctx:MoMParser.ConditionContext):
+    def enterCondition(self, ctx: MoMParser.ConditionContext):
         pass
 
-    def exitCondition(self, ctx:MoMParser.ConditionContext):
-        if ctx.ELSE() is not None:
-            print("ELSE detected.")
-        else:
-            print("IF detected.")
+    def exitCondition(self, ctx: MoMParser.ConditionContext) -> None:
+        pass
 
     def enterExit_if_check(self, ctx: MoMParser.Exit_if_checkContext) -> None:
         exp_type = self.pending_types.pop()
@@ -307,9 +304,12 @@ class MoMListener(ParseTreeListener):
     def enterEnter_else(self, ctx: MoMParser.Enter_elseContext):
         pass
 
-    # Exit a parse tree produced by MoMParser#enter_else.
-    def exitEnter_else(self, ctx: MoMParser.Enter_elseContext):
-        pass
+    def exitEnter_else(self, ctx: MoMParser.Enter_elseContext) -> None:
+        quad = Quadrupole(Operation.GO_TO, None, None, None)
+        self.quads.append(quad)
+        false = self.pending_jumps.pop()
+        self.pending_jumps.append(len(self.quads) - 1)
+        self.fill(false, len(self.quads))
 
     def enterConstant(self, ctx: MoMParser.ConstantContext) -> None:
         c = master_tables.classes[self.current_class]
@@ -502,7 +502,7 @@ class MoMListener(ParseTreeListener):
                 left_type = self.pending_types.pop()
                 operator = self.pending_operators.pop()
                 # TODO: check why cast was necessary
-                result_type = Type(semantic_table[left_type][right_type][operator])
+                result_type = Type(semantic_table[int(left_type)][int(right_type)][int(operator)])
                 if result_type == Type.OTHER:
                     raise TypeError("Type mismatch for expression.")
                 else:
