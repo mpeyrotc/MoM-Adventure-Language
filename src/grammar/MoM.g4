@@ -92,6 +92,7 @@ statute			:	function_call
                 |   while_loop
                 |   condition
                 |   write_func
+                |   read_func
                 ;
 exit_factor     :   // nothing
                 ;
@@ -130,6 +131,8 @@ array_arg       :   super_type OPEN_SBRACKET CLOSE_SBRACKET
                 ;
 write_func      :   PRINT OPEN_PAREN (s_exp) CLOSE_PAREN
                 ;
+read_func       :   READ OPEN_PAREN VARID CLOSE_PAREN
+                ;
 OPEN_PAREN		:	'(' ;
 COMMA			:	',' ;
 CLOSE_PAREN		:	')' ;
@@ -166,6 +169,7 @@ MAP				:	'Map' ;
 SIZE			:	'Size' ;
 NOTHING 		:	'Nothing' ;
 PRINT           :   'Write' ;
+READ            :   'Read' ;
 CLASS 			:	'class' ;
 NEW				:	'new' ;
 ENUMERATE		:	'enumerate' ;

@@ -49,6 +49,7 @@ class Operator(IntEnum):
     CLOSE_PAREN = 14
     EQUAL = 15
     WRITE = 19
+    READ = 20
 
 
 class Operation(IntEnum):

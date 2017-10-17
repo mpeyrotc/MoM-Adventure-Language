@@ -8,6 +8,7 @@ class Character is_a Card of_type Player {
         Write("hey");
         Write(1 + 2);
         physicalLife = ints[0] + ints[99];
+        Read(physicalLife);
         Write(physicalLife);
         ints[3] = 4;
         ints[4] = physicalLife;

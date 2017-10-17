@@ -921,3 +921,28 @@ class MoMListener(ParseTreeListener):
         result = self.pending_operands.pop()
         quad = Quadrupole(op, None, None, result)
         self.quads.append(quad)
+
+    # Enter a parse tree produced by MoMParser#read_func.
+    def enterRead_func(self, ctx: MoMParser.Read_funcContext):
+        self.pending_operators.append(Operator.READ)
+
+    # Exit a parse tree produced by MoMParser#read_func.
+    def exitRead_func(self, ctx: MoMParser.Read_funcContext):
+        op = self.pending_operators.pop()
+        var = ctx.VARID().getText()
+        c = master_tables.classes[self.current_class]
+        m = c.methods[self.current_method]
+
+        # Look in local variables, if not, look in global variables
+        if var in m.variables:
+            t = m.variables[var]["type"]
+            address = m.variables[var]["address"]
+        elif var in c.variables:
+            t = c.variables[var]["type"]
+            address = c.variables[var]["address"]
+        else:
+            raise NameError("Variable ' " + var + " is undefined.")
+
+        quad = Quadrupole(op, None, None, address)
+        self.quads.append(quad)
+        print("exit read")
