@@ -91,6 +91,7 @@ statute			:	function_call
                 |   assignation_def
                 |   while_loop
                 |   condition
+                |   write_func
                 ;
 exit_factor     :   // nothing
                 ;
@@ -127,7 +128,8 @@ array_var       :   ((THIS | CLASSID) PERIOD)? VARID OPEN_SBRACKET INTEGER CLOSE
                 ;
 array_arg       :   super_type OPEN_SBRACKET CLOSE_SBRACKET
                 ;
-
+write_func      :   PRINT OPEN_PAREN (s_exp) CLOSE_PAREN
+                ;
 OPEN_PAREN		:	'(' ;
 COMMA			:	',' ;
 CLOSE_PAREN		:	')' ;
@@ -163,6 +165,7 @@ SET 			:	'Set' ;
 MAP				:	'Map' ;
 SIZE			:	'Size' ;
 NOTHING 		:	'Nothing' ;
+PRINT           :   'Write' ;
 CLASS 			:	'class' ;
 NEW				:	'new' ;
 ENUMERATE		:	'enumerate' ;

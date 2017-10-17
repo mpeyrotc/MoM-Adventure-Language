@@ -48,6 +48,7 @@ class Operator(IntEnum):
     OPEN_PAREN = 13
     CLOSE_PAREN = 14
     EQUAL = 15
+    WRITE = 19
 
 
 class Operation(IntEnum):

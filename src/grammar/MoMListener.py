@@ -910,3 +910,14 @@ class MoMListener(ParseTreeListener):
         if self.in_signature:
             self.arguments[-1].is_array = True
 
+
+    # Enter a parse tree produced by MoMParser#write_func.
+    def enterWrite_func(self, ctx: MoMParser.Write_funcContext):
+        self.pending_operators.append(Operator.WRITE)
+
+    # Exit a parse tree produced by MoMParser#write_func.
+    def exitWrite_func(self, ctx: MoMParser.Write_funcContext):
+        op = self.pending_operators.pop()
+        result = self.pending_operands.pop()
+        quad = Quadrupole(op, None, None, result)
+        self.quads.append(quad)
