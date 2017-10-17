@@ -945,4 +945,3 @@ class MoMListener(ParseTreeListener):
 
         quad = Quadrupole(op, None, None, address)
         self.quads.append(quad)
-        print("exit read")
