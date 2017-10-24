@@ -54,6 +54,7 @@ class Operation(IntEnum):
     GO_TO_FALSE = 16
     GO_TO_TRUE = 17
     GO_TO = 18
+    RETURN = 19
 
 
 num_types = 6

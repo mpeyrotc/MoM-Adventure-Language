@@ -36,6 +36,8 @@ class Method:
         self._return_type = return_type
         self._variables = {}
         self._argument_types = []
+        self._start_quad = -1
+
         self.cur_local_int = self.LOCAL_INT_TOP
         self.cur_local_real = self.LOCAL_REAL_TOP
         self.cur_local_boolean = self.LOCAL_BOOLEAN_TOP
@@ -92,6 +94,22 @@ class Method:
     @property
     def argument_types(self):
         return self._argument_types
+
+    @property
+    def num_of_params(self):
+        return len(self._argument_types)
+
+    @property
+    def num_local_vars(self):
+        return len(self._variables) - len(self._argument_types)
+
+    @property
+    def start(self):
+        return self._start_quad
+
+    @start.setter
+    def start(self, start):
+        self._start_quad = start
 
 
 __author__ = "Marco A. Peyrot (mpeyrotc)"

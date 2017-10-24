@@ -29,10 +29,14 @@ constant		:	INTEGER
                 |   array_var
                 |   TRUE
                 |   FALSE
+                |   function_call
                 ;
 construct_call 	:	NEW CLASSID OPEN_PAREN (arguments)? CLOSE_PAREN
                 ;
-construct_def	:	CLASSID OPEN_PAREN (function_args)? CLOSE_PAREN OPEN_BRACKET block* CLOSE_BRACKET SEMI_COLON
+exit_con_def    :   // nothing
+                ;
+construct_def	:	CLASSID OPEN_PAREN (function_args)? CLOSE_PAREN OPEN_BRACKET block* CLOSE_BRACKET
+                            exit_con_def SEMI_COLON
                 ;
 enum			:	CAPITALID (COMMA CAPITALID)* SEMI_COLON
                 ;
@@ -56,7 +60,7 @@ plus_op         :   // nothing
                 ;
 minus_op        :   // nothing
                 ;
-expression		:	(function_call | term exit_term) ((PLUS plus_op | MINUS minus_op | condition) (function_call | term exit_term))*
+expression		:	term exit_term ((PLUS plus_op | MINUS minus_op | condition) term exit_term)*
                 ;
 open_paren      :   // nothing
                 ;
@@ -67,10 +71,12 @@ factor 			:	OPEN_PAREN open_paren ss_exp close_paren CLOSE_PAREN
                 ;
 function_args	:	(super_type | array_arg) VARID (COMMA (super_type | array_arg) VARID)*
                 ;
-function_call	:	((THIS | CLASSID) PERIOD)? VARID OPEN_PAREN (arguments)? CLOSE_PAREN
+function_call	:	((THIS | VARID) PERIOD)? VARID OPEN_PAREN (arguments)? CLOSE_PAREN
+                ;
+exit_func_def   :   // nothing
                 ;
 function_def	:	simple_type VARID OPEN_PAREN (function_args)? CLOSE_PAREN OPEN_BRACKET block*
-                            (RETURN ss_exp SEMI_COLON)? CLOSE_BRACKET SEMI_COLON
+                            (RETURN ss_exp SEMI_COLON)? CLOSE_BRACKET exit_func_def SEMI_COLON
                 ;
 operand 		:	LESS_THAN
                 |   LESS_EQUAL
