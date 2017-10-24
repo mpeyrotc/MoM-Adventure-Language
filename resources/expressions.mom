@@ -27,6 +27,7 @@ class Expressions is_a Component {
         Real a = 3.14;
         Int b = 3;
         Real result = a / b;
+        Write(result);
     };
 
     Nothing exp5() {
