@@ -306,7 +306,6 @@ class MoMListener(ParseTreeListener):
 
     def exitCondition_end(self, ctx: MoMParser.Condition_endContext) -> None:
         end = self.pending_jumps.pop()
-        # TODO: TO TEACHER, what if it is the last quad?
         self.fill(end, len(self.quads))
 
     # Enter a parse tree produced by MoMParser#enter_else.
@@ -384,13 +383,25 @@ class MoMListener(ParseTreeListener):
         pass
 
     def exitExit_con_def(self, ctx: MoMParser.Exit_con_defContext) -> None:
-        pass
+        quad = Quadrupole(Operation.RETURN, None, None, None)
+        self.quads.append(quad)
 
     def enterConstruct_def(self, ctx: MoMParser.Construct_defContext) -> None:
+        # reset virtual memory counters
+        Method.cur_local_boolean = Method.LOCAL_BOOLEAN_TOP
+        Method.cur_local_real = Method.LOCAL_REAL_TOP
+        Method.cur_local_int = Method.LOCAL_INT_TOP
+        Method.cur_local_text = Method.LOCAL_TEXT_TOP
+
         method_name = ctx.CLASSID().getText()
         self.current_method = method_name
-
         new_method = Method(method_name, method_name)
+        new_method.start = len(self.quads)
+
+        if method_name in master_tables.classes[self.current_class].methods:
+            raise NameError("Method '" + method_name + "' redefined in class '"
+                            + self.current_class + "', this is not supported at language level.")
+
         master_tables.classes[self.current_class].add_method(new_method)
 
     def exitConstruct_def(self, ctx: MoMParser.Construct_defContext):
