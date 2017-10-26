@@ -9,8 +9,17 @@ specification Card {
     Int face();
 };
 
-class Character is_a Component of_type Card, ComplexNumber {
+class Entity is_a Component {
+    Entity() {
 
+    };
+
+    Int lifeValue() {
+
+    };
+};
+
+class Character is_a Entity of_type Card, ComplexNumber {
     Character() {
     };
 
@@ -21,12 +30,13 @@ class Character is_a Component of_type Card, ComplexNumber {
     };
 
     Int imaginary(){
+        lifeValue();
     };
 
     Nothing convert(Int angle){
     };
 
-    Int summary(Component[] c, Real r){
+    Real summary(Component[] c, Real r){
     };
 
     Text name(Int a_number) {
@@ -34,5 +44,6 @@ class Character is_a Component of_type Card, ComplexNumber {
     };
 
     Nothing addCommonCard() {
+        getWidth();
     };
 };

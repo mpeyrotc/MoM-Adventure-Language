@@ -170,9 +170,45 @@ class MoMListener(ParseTreeListener):
         quad = self.quads[end]
         quad.result = next_quad
 
-    # Enter a parse tree produced by MoMParser#program.
-    def enterProgram(self, ctx: MoMParser.ProgramContext):
-        pass
+    def enterProgram(self, ctx: MoMParser.ProgramContext) -> None:
+        # Register in tables the Component class, which is the base class of the language
+        class_specifications = set()
+        class_name = "Component"
+        class_parent = ""
+        master_tables.classes[class_name] = Class(class_name, class_parent, class_specifications)
+
+        # The basic methods for the base class are width and height
+        # reset virtual memory counters
+        Method.cur_local_boolean = Method.LOCAL_BOOLEAN_TOP
+        Method.cur_local_real = Method.LOCAL_REAL_TOP
+        Method.cur_local_int = Method.LOCAL_INT_TOP
+        Method.cur_local_text = Method.LOCAL_TEXT_TOP
+
+        return_type, method_name = "Real", "getWidth"
+        new_method = Method(method_name, get_type(return_type))
+        new_method.start = len(self.quads)
+        master_tables.classes[class_name].add_method(new_method)
+
+        # create width method quadrupoles
+        # TODO: what happens when it is a variable or value?
+        quad = Quadrupole(Operation.RETURN, None, None, master_tables.classes[class_name].cur_global_real)
+        self.quads.append(quad)
+
+        Method.cur_local_boolean = Method.LOCAL_BOOLEAN_TOP
+        Method.cur_local_real = Method.LOCAL_REAL_TOP
+        Method.cur_local_int = Method.LOCAL_INT_TOP
+        Method.cur_local_text = Method.LOCAL_TEXT_TOP
+
+        return_type, method_name = "Real", "getHeight"
+        new_method = Method(method_name, get_type(return_type))
+        new_method.start = len(self.quads)
+        master_tables.classes[class_name].add_method(new_method)
+
+        # create height method quadrupoles
+        quad = Quadrupole(Operation.RETURN, None, None, master_tables.classes[class_name].cur_global_real + 1)
+        self.quads.append(quad)
+
+        # TODO: add setters for the Component class
 
     # Exit a parse tree produced by MoMParser#program.
     def exitProgram(self, ctx: MoMParser.ProgramContext) -> None:
@@ -304,7 +340,6 @@ class MoMListener(ParseTreeListener):
         if class_name in master_tables.classes:
             raise NameError("Redefinition of class '" + class_name + "' found. This is not supported by the language.")
 
-        # TODO: determine if need to check existence of parent or will be done in second stage
         # get the parent of this class
         self.enterComplex_type(ctx.complex_type())
         class_parent = self.current_type
@@ -720,6 +755,28 @@ class MoMListener(ParseTreeListener):
                     # TODO: handle special case for parent constructor call
                     return
                 else:
+                    # look for method in ancestors, if not found, report error
+                    ancestor = class_instance.parent
+
+                    while not ancestor == "Component":
+                        methods = master_tables.classes[ancestor].methods
+                        for method_n in methods:
+                            method = methods[method_n]
+                            if method_name == method.name:
+                                self.current_counter = 0
+                                self.current_method_instance = method
+                                return
+
+                        ancestor = master_tables.classes[ancestor].parent
+
+                    methods = master_tables.classes["Component"].methods
+                    for method_n in methods:
+                        method = methods[method_n]
+                        if method_name == method.name:
+                            self.current_counter = 0
+                            self.current_method_instance = method
+                            return
+
                     raise NameError("Method name `" + method_name + "` not defined for class: " + self.current_class)
 
             self.current_counter = 0
