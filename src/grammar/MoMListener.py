@@ -203,7 +203,8 @@ class MoMListener(ParseTreeListener):
 
         if not argument_type == expected_type['arg_type']:
             raise TypeError("Argument for method `" + self.current_method + "` call wrong. "
-                            "Argument should be of type " + expected_type["arg_type"] +
+                                                                            "Argument should be of type " +
+                            expected_type["arg_type"] +
                             ", instead got: " + str(argument_type))
 
         quad = Quadrupole(Operation.PARAM, argument, None, "DEST" + str(self.current_counter))
@@ -285,13 +286,17 @@ class MoMListener(ParseTreeListener):
         :return: None.
         """
         class_specifications = set()
-
-        # It is a class with at least one specification
-        # TODO: the grammar only supports one specification, there should be the possibility for several later
         class_name = ctx.CLASSID()[0].getText()
 
+        # It is a class with at least one specification
         for i in range(1, len(ctx.CLASSID())):
-            class_specifications.add(ctx.CLASSID()[i].getText())
+            specification_name = ctx.CLASSID()[i].getText()
+
+            if specification_name not in master_tables.specifications:
+                raise NameError("Specification with name `" + specification_name + "` for class `" + class_name +
+                                "` is undefined.")
+
+            class_specifications.add(specification_name)
 
         self.current_class = class_name
         self.current_structure = StructureType.CLASS
@@ -306,9 +311,39 @@ class MoMListener(ParseTreeListener):
 
         master_tables.classes[class_name] = Class(class_name, class_parent, class_specifications)
 
-    # Exit a parse tree produced by MoMParser#class_rule.
-    def exitClass_rule(self, ctx: MoMParser.Class_ruleContext):
-        pass
+    def exitClass_rule(self, ctx: MoMParser.Class_ruleContext) -> None:
+        # for all interfaces declared for current class, check that their methods are defined in the body of the class
+        class_instance = master_tables.classes[self.current_class]
+        specifications = class_instance.specifications
+
+        for specification_name in specifications:
+            specification = master_tables.specifications[specification_name]
+            for method_name in specification.methods:
+                if method_name not in class_instance.methods:
+                    raise NameError("The method `" + method_name +
+                                    "` is not implemented by the class: " + class_instance.name)
+
+                class_method = class_instance.methods[method_name]
+
+                for s_var, c_var in zip(specification.methods[method_name].variables, class_method.argument_types):
+                    t = specification.methods[method_name].variables[s_var]["type"]
+                    is_arr = specification.methods[method_name].variables[s_var]["is_array"]
+                    if not t == c_var['arg_type']:
+                        raise TypeError("Argument type mismatch in class `" + class_instance.name +
+                                        "`, method `" + method_name + "`. Expected: " + t +
+                                        ", got " + c_var['arg_type'] + " instead.")
+
+                    if not is_arr == c_var["is_array"]:
+                        raise TypeError("Argument type mismatch in class `" + class_instance.name +
+                                        "`, method `" + method_name + "`. Expected: " + t +
+                                        "[], got " + c_var['arg_type'] + " instead.")
+
+                # TODO: check for return type, num arguments, name, type arguments, if they are arrays or not in tests
+                r = specification.methods[method_name].return_type
+                if not r == class_method.return_type:
+                    raise TypeError("Return type mismatch in class `" + class_instance.name +
+                                    "`, method `" + method_name + "`. Expected: " + str(r) +
+                                    ", got " + str(class_method.return_type) + " instead.")
 
     # Enter a parse tree produced by MoMParser#condition.
     def enterCondition(self, ctx: MoMParser.ConditionContext):

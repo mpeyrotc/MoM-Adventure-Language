@@ -14,8 +14,8 @@ assignation		:	((THIS | VARID) PERIOD)? (VARID | array_var) EQUALS (construct_ca
                 ;
 block			:	statute SEMI_COLON
                 ;
-class_rule 		:	CLASS CLASSID IS_A complex_type (OF_TYPE CLASSID)? OPEN_BRACKET field* construct_def
-                            function_def* CLOSE_BRACKET SEMI_COLON
+class_rule 		:	CLASS CLASSID IS_A complex_type (OF_TYPE CLASSID (COMMA CLASSID)*)? OPEN_BRACKET
+                            field* construct_def function_def* CLOSE_BRACKET SEMI_COLON
                 ;
 exit_if_check   :   // nothing.
                 ;

@@ -1,0 +1,38 @@
+specification ComplexNumber {
+    Int real();
+    Int imaginary();
+    Nothing convert(Int angle);
+    Real summary(Component[] c, Real r);
+};
+
+specification Card {
+    Int face();
+};
+
+class Character is_a Component of_type Card, ComplexNumber {
+
+    Character() {
+    };
+
+    Int face() {
+    };
+
+    Int real() {
+    };
+
+    Int imaginary(){
+    };
+
+    Nothing convert(Int angle){
+    };
+
+    Int summary(Component[] c, Real r){
+    };
+
+    Text name(Int a_number) {
+        Real a_real = 3.14;
+    };
+
+    Nothing addCommonCard() {
+    };
+};
