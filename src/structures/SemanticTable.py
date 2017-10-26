@@ -57,10 +57,14 @@ class Operation(IntEnum):
     GO_TO_TRUE = 17
     GO_TO = 18
     RETURN = 19
+    ERA = 20
+    PARAM = 21
+    GO_SUB = 22
+    GO_CONSTRUCTOR = 23
 
 
 num_types = 6
-num_operators = 15
+num_operators = 17
 semantic_table = np.zeros((num_types + 1, num_types + 1, num_operators + 1))
 
 semantic_table[Type.TEXT][Type.TEXT][Operator.PLUS] = Type.TEXT
@@ -137,6 +141,27 @@ def get_type(name: str) -> Type:
 
     print(name + " type is not a simple type.")
     return Type.OTHER
+
+
+def get_name(t: Type) -> str:
+    """Returns a simple type instance depending on the name of the type.
+
+    :raises TypeError if the type is not part of the simple types.
+    :return: the type object corresponding to the type name.
+    """
+    if t == Type.BOOLEAN:
+        return "Boolean"
+    if t == Type.TEXT:
+        return "Text"
+    if t == Type.INT:
+        return "Int"
+    if t == Type.NOTHING:
+        return "Nothing"
+    if t == Type.REAL:
+        return "Real"
+
+    print(str(t) + " type is not a simple type.")
+    return "Other"
 
 
 __author__ = "Marco A. Peyrot (mpeyrotc)"

@@ -2,9 +2,13 @@ grammar MoM;
 
 program			:	(class_rule
                 |   enumeration
-                |   specification) + EOF
+                |   specification)+ EOF
                 ;
-arguments		:	ss_exp (COMMA ss_exp)*
+after_argument  :   // nothing
+                ;
+advance_count   :   // nothing
+                ;
+arguments		:	ss_exp after_argument advance_count (COMMA ss_exp after_argument advance_count)*
                 ;
 assignation		:	((THIS | VARID) PERIOD)? (VARID | array_var) EQUALS (construct_call | ss_exp)
                 ;

@@ -1,0 +1,31 @@
+class Expressions is_a Component {
+    field<Int[2]> arr;
+
+    Expressions(Int a) {
+    };
+
+    Nothing func1() {
+        Int b = 2;
+        Int c = 3;
+        Expressions e = new Expressions(c);
+        Real a = b + c;
+    };
+
+    Int func2(Int a, Real b, Real c) {
+        func1();
+        return 0;
+    };
+
+    Nothing func3() {
+        Real b = 3.3;
+        Int a = func2(2, b, 4.4);
+    };
+
+    Nothing func4() {
+        this.func3();
+    };
+
+    Nothing func5() {
+        component.func4();
+    };
+};

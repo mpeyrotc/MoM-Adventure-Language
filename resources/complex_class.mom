@@ -12,9 +12,8 @@ class Character is_a Card of_type Player {
         Write(physicalLife);
         ints[3] = 4;
         ints[4] = physicalLife;
-        parent();
         this.physicalLife = physicalLife;
-        this.mentalLife = init(mentalLife);
+        this.mentalLife = 2;
     };
 
     Int setCommonCard(Card card) {
@@ -34,9 +33,12 @@ class Character is_a Card of_type Player {
             if(numberOfItems <  -1) {
                 physicalLife = physicalLife;
             } else {
-                call();
+
             };
         };
+    };
+
+    Nothing doAction() {
     };
 
     Text name() {

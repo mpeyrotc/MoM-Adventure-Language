@@ -8,7 +8,7 @@ from src.structures.Class import Class
 from src.structures.Enumeration import Enumeration
 from src.structures.Method import Method
 from src.structures.Quadrupole import Quadrupole
-from src.structures.SemanticTable import get_type, Type, Operator, semantic_table, Operation
+from src.structures.SemanticTable import get_type, Type, Operator, semantic_table, Operation, get_name
 from src.structures.Specification import Specification
 
 if __name__ is not None and "." in __name__:
@@ -39,6 +39,8 @@ class MoMListener(ParseTreeListener):
     current_class = ""
     current_specification = ""
     current_method = ""
+    current_method_instance = ""
+    current_counter = 0
     arguments = []
     argument_names = []
     in_signature = False
@@ -187,6 +189,36 @@ class MoMListener(ParseTreeListener):
                 method_instance = class_instance.methods[method_name]
 
                 print("Name: " + method_instance.name + ", start: " + str(method_instance.start))
+
+    def enterAfter_argument(self, ctx: MoMParser.After_argumentContext) -> None:
+        argument = self.pending_operands.pop()
+        argument_type = self.pending_types.pop()
+        expected_type = self.current_method_instance.argument_types[self.current_counter]
+
+        if argument_type == Type.OTHER:
+            # Special case TODO: check what to do with objects IMPORTANT
+            return
+        else:
+            argument_type = get_name(argument_type)
+
+        if not argument_type == expected_type['arg_type']:
+            raise TypeError("Argument for method `" + self.current_method + "` call wrong. "
+                            "Argument should be of type " + expected_type["arg_type"] +
+                            ", instead got: " + str(argument_type))
+
+        quad = Quadrupole(Operation.PARAM, argument, None, "DEST" + str(self.current_counter))
+        self.quads.append(quad)
+
+    # Exit a parse tree produced by MoMParser#after_argument.
+    def exitAfter_argument(self, ctx: MoMParser.After_argumentContext):
+        pass
+
+    # Enter a parse tree produced by MoMParser#advance_count.
+    def enterAdvance_count(self, ctx: MoMParser.Advance_countContext):
+        pass
+
+    def exitAdvance_count(self, ctx: MoMParser.Advance_countContext) -> None:
+        self.current_counter += 1
 
     # Enter a parse tree produced by MoMParser#arguments.
     def enterArguments(self, ctx: MoMParser.ArgumentsContext):
@@ -370,13 +402,29 @@ class MoMListener(ParseTreeListener):
     def exitConstant(self, ctx: MoMParser.ConstantContext):
         pass
 
-    # Enter a parse tree produced by MoMParser#construct_call.
-    def enterConstruct_call(self, ctx: MoMParser.Construct_callContext):
-        pass
+    def enterConstruct_call(self, ctx: MoMParser.Construct_callContext) -> None:
+        method_name = ctx.CLASSID().getText()
+        class_instance = master_tables.classes[method_name]
 
-    # Exit a parse tree produced by MoMParser#construct_call.
-    def exitConstruct_call(self, ctx: MoMParser.Construct_callContext):
-        pass
+        if method_name not in class_instance.methods:
+            raise NameError("Constructor name `" + method_name + "` not defined for class: " + self.current_class)
+
+        self.current_counter = 0
+        self.current_method_instance = class_instance.methods[method_name]
+
+    def exitConstruct_call(self, ctx: MoMParser.Construct_callContext) -> None:
+        if not self.current_counter == self.current_method_instance.num_of_params:
+            raise IllegalStateException("Constructor `" + self.current_method_instance.name +
+                                        "` has wrong number of arguments. Should be " +
+                                        str(self.current_method_instance.num_of_params) +
+                                        ", got " + str(self.current_counter) + " instead.")
+
+        quad = Quadrupole(Operation.GO_CONSTRUCTOR, self.current_class, self.current_method_instance.name,
+                          self.current_method_instance.start)
+        self.quads.append(quad)
+
+        # TODO: remove this statement after expression support classes
+        self.pending_operands.append("CONSTRUCTOR")
 
     # Enter a parse tree produced by MoMParser#exit_con_def.
     def enterExit_con_def(self, ctx: MoMParser.Exit_con_defContext):
@@ -628,16 +676,32 @@ class MoMListener(ParseTreeListener):
                     self.current_method].add_argument(name, var.var_type, var.is_array, -2, var.mem_size)
 
     def enterFunction_call(self, ctx: MoMParser.Function_callContext) -> None:
-        if ctx.THIS() is not None:  # it is a local method, or inherited
-            pass
-        elif len(ctx.VARID()) == 1:  # it is a local method, or inherited
-            pass
-        else:  # it is a method from another class instance
-            pass
+        if ctx.THIS() is not None or len(ctx.VARID()) == 1:  # it is a local method, or inherited
+            method_name = ctx.VARID()[0].getText()
+            class_instance = master_tables.classes[self.current_class]
 
-    # Exit a parse tree produced by MoMParser#function_call.
-    def exitFunction_call(self, ctx: MoMParser.Function_callContext):
-        pass
+            if method_name not in class_instance.methods:
+                if "parent" == method_name:
+                    # TODO: handle special case for parent constructor call
+                    return
+                else:
+                    raise NameError("Method name `" + method_name + "` not defined for class: " + self.current_class)
+
+            self.current_counter = 0
+            self.current_method_instance = class_instance.methods[method_name]
+        else:  # it is a method from another class instance
+            self.current_counter = 0
+
+    def exitFunction_call(self, ctx: MoMParser.Function_callContext) -> None:
+        if not self.current_counter == self.current_method_instance.num_of_params:
+            raise IllegalStateException("Method `" + self.current_method_instance.name +
+                                        "` has wrong number of arguments. Should be " +
+                                        str(self.current_method_instance.num_of_params) +
+                                        ", got " + str(self.current_counter) + " instead.")
+
+        quad = Quadrupole(Operation.GO_SUB, self.current_class, self.current_method_instance.name,
+                          self.current_method_instance.start)
+        self.quads.append(quad)
 
     def enterFunction_def(self, ctx: MoMParser.Function_defContext) -> None:
         """This listener gets called for the methods defined inside a class body.
