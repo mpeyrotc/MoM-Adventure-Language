@@ -1,4 +1,14 @@
-class Character is_a Card of_type Player {
+class Card is_a Component {
+    field<Type> cardType;
+    field<Face> front;
+    field<Face> back;
+
+    Card(Int physicalLife, Int mentalLife) {
+        physicalLife = physicalLife;
+    };
+};
+
+class Character is_a Card {
     field<Card> items;
     field<Int> item;
     field<Card> physicalLife;
@@ -16,15 +26,5 @@ class Character is_a Card of_type Player {
     Text name() {
         Text greeting = "Hello!";
         return greeting + "Father Mateo";
-    };
-};
-
-class Card is_a Component {
-    field<Type> cardType;
-    field<Face> front;
-    field<Face> back;
-
-    Card(Int physicalLife, Int mentalLife) {
-        physicalLife = physicalLife;
     };
 };

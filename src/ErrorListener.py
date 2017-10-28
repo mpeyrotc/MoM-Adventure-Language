@@ -6,6 +6,7 @@ class MoMErrorListener(ErrorListener):
         super(MoMErrorListener, self).__init__()
 
     def syntaxError(self, recognizer, offendingSymbol, line, column, msg, e):
+        e
         raise Exception("Oh no! " + str(offendingSymbol) + " ++++++ " + msg)
 
     def reportAmbiguity(self, recognizer, dfa, startIndex, stopIndex, exact, ambigAlts, configs):

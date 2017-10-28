@@ -124,7 +124,6 @@ simple_type		:	INT
 complex_type	:	SET
                 |   MAP
                 |   SIZE
-                |   COMPONENT
                 |   CLASSID
                 ;
 end_while       :   // nothing.
@@ -170,7 +169,6 @@ OR 				:	'||' ;
 THIS			:	'this' ;
 IF				:	'if' ;
 ELSE			:	'else' ;
-COMPONENT		:	'Component' ;
 INT 			:	'Int' ;
 TEXT			:	'Text' ;
 FLOAT			:	'Real' ;

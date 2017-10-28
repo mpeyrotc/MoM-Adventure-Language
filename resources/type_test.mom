@@ -1,4 +1,4 @@
-class Character is_a Card of_type Player {
+class Character is_a Component {
     field<Int> var;
 
     Character(Character character) {

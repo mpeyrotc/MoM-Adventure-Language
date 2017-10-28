@@ -10,6 +10,8 @@ specification Card {
 };
 
 class Entity is_a Component {
+    field<Int> sanity;
+
     Entity() {
 
     };
@@ -20,7 +22,13 @@ class Entity is_a Component {
 };
 
 class Character is_a Entity of_type Card, ComplexNumber {
+    field<Text> properName;
+    field<Int> health;
+
     Character() {
+        properName = "John Derry";
+        sanity = 5;
+        health = 6;
     };
 
     Int face() {

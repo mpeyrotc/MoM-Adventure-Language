@@ -1,4 +1,8 @@
-class Character is_a Card of_type Player {
+specification Player {
+    Int a();
+};
+
+class Character is_a Component of_type Player {
     field<Card> card;
     field<Int[100]> ints;
     field<Int> physicalLife;
@@ -24,6 +28,9 @@ class Character is_a Card of_type Player {
         };
 
         return 3;
+    };
+
+    Int a() {
     };
 
     Boolean addCommonCard(Card[] cards, Int[] ints) {

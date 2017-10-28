@@ -177,6 +177,21 @@ class MoMListener(ParseTreeListener):
         class_parent = ""
         master_tables.classes[class_name] = Class(class_name, class_parent, class_specifications)
 
+        # reset virtual memory counters
+        Method.cur_local_boolean = Method.LOCAL_BOOLEAN_TOP
+        Method.cur_local_real = Method.LOCAL_REAL_TOP
+        Method.cur_local_int = Method.LOCAL_INT_TOP
+        Method.cur_local_text = Method.LOCAL_TEXT_TOP
+
+        method_name = class_name
+        self.current_method = method_name
+        new_method = Method(method_name, Type.OTHER)
+        new_method.start = len(self.quads)
+        master_tables.classes[class_name].add_method(new_method)
+
+        quad = Quadrupole(Operation.RETURN, None, None, None)
+        self.quads.append(quad)
+
         # The basic methods for the base class are width and height
         # reset virtual memory counters
         Method.cur_local_boolean = Method.LOCAL_BOOLEAN_TOP
@@ -190,7 +205,7 @@ class MoMListener(ParseTreeListener):
         master_tables.classes[class_name].add_method(new_method)
 
         # create width method quadrupoles
-        # TODO: what happens when it is a variable or value?
+        # TODO: what happens when it is a variable or value that is returned to caller?
         quad = Quadrupole(Operation.RETURN, None, None, master_tables.classes[class_name].cur_global_real)
         self.quads.append(quad)
 
@@ -212,19 +227,22 @@ class MoMListener(ParseTreeListener):
 
     # Exit a parse tree produced by MoMParser#program.
     def exitProgram(self, ctx: MoMParser.ProgramContext) -> None:
-        for index, quad in enumerate(MoMListener.quads):
-            print(str(index) + ") " + str(quad.operator) + ", " + str(quad.left_operand) + ", "
-                  + str(quad.right_operand) + ", " + str(quad.result))
+        quad = Quadrupole(Operation.END, None, None, None)
+        self.quads.append(quad)
 
-        print("#######################################################")
-
-        for class_name in master_tables.classes:
-            class_instance = master_tables.classes[class_name]
-
-            for method_name in class_instance.methods:
-                method_instance = class_instance.methods[method_name]
-
-                print("Name: " + method_instance.name + ", start: " + str(method_instance.start))
+        # for index, quad in enumerate(MoMListener.quads):
+        #     print(str(index) + ") " + str(quad.operator) + ", " + str(quad.left_operand) + ", "
+        #           + str(quad.right_operand) + ", " + str(quad.result))
+        #
+        # print("#######################################################")
+        #
+        # for class_name in master_tables.classes:
+        #     class_instance = master_tables.classes[class_name]
+        #
+        #     for method_name in class_instance.methods:
+        #         method_instance = class_instance.methods[method_name]
+        #
+        #         print("Name: " + method_instance.name + ", start: " + str(method_instance.start))
 
     def enterAfter_argument(self, ctx: MoMParser.After_argumentContext) -> None:
         argument = self.pending_operands.pop()
@@ -275,6 +293,7 @@ class MoMListener(ParseTreeListener):
             text = ctx.getText()
             abre = text.find("[")
             cierra = text.find("]")
+            # TODO: Elias checa que indexOf esté incializada correctamente, marca un warning
             indexOf = int(text[abre + 1:cierra].strip())
             var = text[:abre].strip()
             isArray = 1
@@ -302,6 +321,7 @@ class MoMListener(ParseTreeListener):
             quad = Quadrupole(Operator.EQUAL, holder, None, destination)
             self.quads.append(quad)
         else:
+            # if not present report error.
             raise NameError("Variable ' " + var + " is undefined.")
 
     # Enter a parse tree produced by MoMParser#block.
@@ -346,6 +366,19 @@ class MoMListener(ParseTreeListener):
 
         master_tables.classes[class_name] = Class(class_name, class_parent, class_specifications)
 
+        ancestor = master_tables.classes[class_name].parent
+        methods = master_tables.classes[ancestor].methods
+        variables = master_tables.classes[ancestor].variables
+
+        for method_n in methods:
+            method = methods[method_n]
+            master_tables.classes[class_name].add_method(method)
+
+        for var_n in variables:
+            v = variables[var_n]
+            master_tables.classes[class_name].add_argument(v["name"], v["type"], v["is_array"],
+                                                           v["address"], v["mem_size"])
+
     def exitClass_rule(self, ctx: MoMParser.Class_ruleContext) -> None:
         # for all interfaces declared for current class, check that their methods are defined in the body of the class
         class_instance = master_tables.classes[self.current_class]
@@ -379,6 +412,9 @@ class MoMListener(ParseTreeListener):
                     raise TypeError("Return type mismatch in class `" + class_instance.name +
                                     "`, method `" + method_name + "`. Expected: " + str(r) +
                                     ", got " + str(class_method.return_type) + " instead.")
+
+        quad = Quadrupole(Operation.END_CLASS, None, None, None)
+        self.quads.append(quad)
 
     # Enter a parse tree produced by MoMParser#condition.
     def enterCondition(self, ctx: MoMParser.ConditionContext):
@@ -474,7 +510,9 @@ class MoMListener(ParseTreeListener):
 
     def enterConstruct_call(self, ctx: MoMParser.Construct_callContext) -> None:
         method_name = ctx.CLASSID().getText()
-        class_instance = master_tables.classes[method_name]
+        class_instance = master_tables.classes[self.current_class]
+
+
 
         if method_name not in class_instance.methods:
             raise NameError("Constructor name `" + method_name + "` not defined for class: " + self.current_class)
@@ -746,43 +784,39 @@ class MoMListener(ParseTreeListener):
                     self.current_method].add_argument(name, var.var_type, var.is_array, -2, var.mem_size)
 
     def enterFunction_call(self, ctx: MoMParser.Function_callContext) -> None:
+        class_instance = master_tables.classes[self.current_class]
+
         if ctx.THIS() is not None or len(ctx.VARID()) == 1:  # it is a local method, or inherited
             method_name = ctx.VARID()[0].getText()
-            class_instance = master_tables.classes[self.current_class]
 
             if method_name not in class_instance.methods:
                 if "parent" == method_name:
-                    # TODO: handle special case for parent constructor call
-                    return
+                    method_name = class_instance.parent
                 else:
-                    # look for method in ancestors, if not found, report error
-                    ancestor = class_instance.parent
-
-                    while not ancestor == "Component":
-                        methods = master_tables.classes[ancestor].methods
-                        for method_n in methods:
-                            method = methods[method_n]
-                            if method_name == method.name:
-                                self.current_counter = 0
-                                self.current_method_instance = method
-                                return
-
-                        ancestor = master_tables.classes[ancestor].parent
-
-                    methods = master_tables.classes["Component"].methods
-                    for method_n in methods:
-                        method = methods[method_n]
-                        if method_name == method.name:
-                            self.current_counter = 0
-                            self.current_method_instance = method
-                            return
-
                     raise NameError("Method name `" + method_name + "` not defined for class: " + self.current_class)
 
             self.current_counter = 0
             self.current_method_instance = class_instance.methods[method_name]
         else:  # it is a method from another class instance
             self.current_counter = 0
+
+            var_name = ctx.VARID()[0].getText()
+            func_name = ctx.VARID()[1].getText()
+
+            if var_name in class_instance.methods[self.current_method].variables:
+                c_ref = master_tables.classes[class_instance.methods[self.current_method].variables[var_name]["type"]]
+                if func_name not in c_ref.methods:
+                    raise NameError("Method name `" + func_name + "` not defined for class: " + c_ref.name)
+
+                self.current_method_instance = c_ref.methods[func_name]
+            elif var_name in class_instance.variables:
+                c_ref = master_tables.classes[class_instance.variables[var_name]["type"]]
+                if func_name not in c_ref.methods:
+                    raise NameError("Method name `" + func_name + "` not defined for class: " + c_ref.name)
+
+                self.current_method_instance = c_ref.methods[func_name]
+            else:
+                raise NameError("Variable `" + var_name + "` not defined in class: " + class_instance.name)
 
     def exitFunction_call(self, ctx: MoMParser.Function_callContext) -> None:
         if not self.current_counter == self.current_method_instance.num_of_params:
@@ -794,6 +828,8 @@ class MoMListener(ParseTreeListener):
         quad = Quadrupole(Operation.GO_SUB, self.current_class, self.current_method_instance.name,
                           self.current_method_instance.start)
         self.quads.append(quad)
+
+        # TODO: HERE
 
     def enterFunction_def(self, ctx: MoMParser.Function_defContext) -> None:
         """This listener gets called for the methods defined inside a class body.
@@ -826,11 +862,9 @@ class MoMListener(ParseTreeListener):
 
         master_tables.classes[self.current_class].add_method(new_method)
 
-    # Exit a parse tree produced by MoMParser#function_def.
     def exitFunction_def(self, ctx: MoMParser.Function_defContext):
         pass
 
-    # Enter a parse tree produced by MoMParser#exit_func_def.
     def enterExit_func_def(self, ctx: MoMParser.Exit_func_defContext):
         pass
 

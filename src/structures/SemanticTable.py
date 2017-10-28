@@ -23,6 +23,7 @@ class Type(IntEnum):
     BOOLEAN = 4
     OTHER = 5
     NOTHING = 6
+    CLASS = 7
 
 
 @unique
@@ -61,9 +62,12 @@ class Operation(IntEnum):
     PARAM = 21
     GO_SUB = 22
     GO_CONSTRUCTOR = 23
+    ERA_CONSTRUCTOR = 24
+    END = 25
+    END_CLASS = 26
 
 
-num_types = 6
+num_types = 7
 num_operators = 17
 semantic_table = np.zeros((num_types + 1, num_types + 1, num_operators + 1))
 
