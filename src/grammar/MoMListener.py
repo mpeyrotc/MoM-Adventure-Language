@@ -373,6 +373,7 @@ class MoMListener(ParseTreeListener):
         for method_n in methods:
             method = methods[method_n]
             master_tables.classes[class_name].add_method(method)
+            self.create_method_field(method.name, method.return_type)
 
         for var_n in variables:
             v = variables[var_n]
@@ -829,7 +830,11 @@ class MoMListener(ParseTreeListener):
                           self.current_method_instance.start)
         self.quads.append(quad)
 
-        # TODO: HERE
+        var = self.current_method_instance.name
+        c = master_tables.classes[self.current_class]
+        t = c.variables[var]["type"]
+        self.pending_operands.append(c.variables[var]["address"])
+        self.pending_types.append(t)
 
     def enterFunction_def(self, ctx: MoMParser.Function_defContext) -> None:
         """This listener gets called for the methods defined inside a class body.
@@ -861,6 +866,7 @@ class MoMListener(ParseTreeListener):
                             + self.current_class + "', this is not supported at language level.")
 
         master_tables.classes[self.current_class].add_method(new_method)
+        self.create_method_field(self.current_method, new_method.return_type)
 
     def exitFunction_def(self, ctx: MoMParser.Function_defContext):
         pass
@@ -869,7 +875,8 @@ class MoMListener(ParseTreeListener):
         pass
 
     def exitExit_func_def(self, ctx: MoMParser.Exit_func_defContext) -> None:
-        quad = Quadrupole(Operation.RETURN, None, None, None)
+        address = master_tables.classes[self.current_class].variables[self.current_method]["address"]
+        quad = Quadrupole(Operation.RETURN, None, None, address)
         self.quads.append(quad)
 
     def enterOperand(self, ctx: MoMParser.OperandContext) -> None:
@@ -887,6 +894,12 @@ class MoMListener(ParseTreeListener):
     # Exit a parse tree produced by MoMParser#operand.
     def exitOperand(self, ctx: MoMParser.OperandContext):
         pass
+
+    def create_method_field(self, field_name: str, return_type: str):
+        c = master_tables.classes[self.current_class]
+        address = self.get_global_address_by_type(c, return_type)
+        c.add_argument(field_name, return_type, False, address, 1)
+        self.increment_global_address_by_type(c, return_type, 1)
 
     def enterField(self, ctx: MoMParser.FieldContext) -> None:
         self.in_signature = True

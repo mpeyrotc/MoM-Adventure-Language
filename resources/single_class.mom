@@ -6,7 +6,7 @@ class Character is_a Component of_type Player {
     field<Component> cc;
 
     Character() {
-        parent();
+
     };
 
     Text name(Int a_number) {
@@ -14,8 +14,6 @@ class Character is_a Component of_type Player {
     };
 
     Int a() {
-        Component c = new Component();
-        Real r = c.getWidth();
         Real rr = cc.getHeight();
     };
 
