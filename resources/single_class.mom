@@ -1,23 +1,6 @@
-specification Player {
-    Int a();
-};
-
-class Character is_a Component of_type Player {
-    field<Component> cc;
-
+class Character is_a Component {
     Character() {
-
-    };
-
-    Text name(Int a_number) {
-        Real a_real = getWidth();
-    };
-
-    Int a() {
-        Real rr = cc.getHeight();
-    };
-
-    Nothing addCommonCard() {
+        parent();
     };
 };
 

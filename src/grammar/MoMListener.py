@@ -41,6 +41,7 @@ class MoMListener(ParseTreeListener):
     current_method = ""
     current_method_instance = ""
     current_counter = 0
+    class_reference = ""
     arguments = []
     argument_names = []
     in_signature = False
@@ -55,37 +56,40 @@ class MoMListener(ParseTreeListener):
 
     @staticmethod
     def get_address_by_type(m: Method, t: Type):
-        # TODO: should be treated as String or Type variable?
-        if t == "Int":
+        if t == Type.INT:
             return m.cur_local_int
-        elif t == "Real":
+        elif t == Type.INT:
             return m.cur_local_real
-        elif t == "Text":
+        elif t == Type.TEXT:
             return m.cur_local_text
-        elif t == "Boolean":
+        elif t == Type.BOOLEAN:
             return m.cur_local_boolean
+        elif t == Type.OTHER:
+            raise TypeError("Local variable assignment not supported for OTHER (1).")
+        elif t == Type.CLASS:
+            return m.cur_local_object
         else:
-            print("SPECIAL CASE FOR get_address_by_type: " + str(t))
-            return -1
+            raise TypeError("Local variable assignment not supported for <INVALID> (2): " + str(t))
 
     @staticmethod
     def get_global_address_by_type(c: Class, t: Type):
-        # TODO: should be treated as String or Type variable?
-        if t == "Int":
+        if t == Type.INT:
             return c.cur_global_int
-        elif t == "Real":
+        elif t == Type.REAL:
             return c.cur_global_real
-        elif t == "Text":
+        elif t == Type.TEXT:
             return c.cur_global_text
-        elif t == "Boolean":
+        elif t == Type.BOOLEAN:
             return c.cur_global_boolean
+        elif t == Type.OTHER:
+            raise TypeError("Global variable assignment not supported for OTHER (2).")
+        elif t == Type.CLASS:
+            return c.cur_global_object
         else:
-            print("SPECIAL CASE FOR get_global_address_by_type: " + str(t))
-            return -1
+            raise TypeError("Global variable assignment not supported for <INVALID> (2): " + str(t))
 
     @staticmethod
     def get_temp_address_by_type(m: Method, t: Type):
-        # TODO: should be treated as String or Type variable?
         if t == Type.INT:
             return m.cur_temp_int
         elif t == Type.REAL:
@@ -94,9 +98,12 @@ class MoMListener(ParseTreeListener):
             return m.cur_temp_text
         elif t == Type.BOOLEAN:
             return m.cur_temp_boolean
+        elif t == Type.OTHER:
+            raise TypeError("Temporal variable assignment not supported for OTHER (3).")
+        elif t == Type.CLASS:
+            raise TypeError("No CLASS types supported for temporal variables (3): " + str(t))
         else:
-            print("SPECIAL CASE FOR get_temp_address_by_type: " + str(t))
-            return -1
+            raise TypeError("Temporal variable assignment not supported for <INVALID> (3): " + str(t))
 
     @staticmethod
     def get_const_address_by_type(c: Class, t: Type):
@@ -109,36 +116,37 @@ class MoMListener(ParseTreeListener):
         elif t == Type.BOOLEAN:
             return c.cur_const_boolean
         else:
-            print("SPECIAL CASE FOR GET get_const_address_by_type: " + str(t))
-            return -1
+            raise TypeError("Constant assignment not supported for <INVALID> (4): " + str(t))
 
     @staticmethod
     def increment_address_by_type(m: Method, t: Type, s: int):
-        # print("incrementing local " + str(s) + " of " + m._name)
-        if t == "Int":
+        if t == Type.INT:
             m.cur_local_int += s
-        elif t == "Real":
+        elif t == Type.REAL:
             m.cur_local_real += s
-        elif t == "Text":
+        elif t == Type.TEXT:
             m.cur_local_text += s
-        elif t == "Boolean":
+        elif t == Type.BOOLEAN:
             m.cur_local_boolean += s
+        elif t == Type.CLASS:
+            m.cur_local_object += s
         else:
-            print("SPECIAL CASE FOR increment_address_by_type: " + str(t))
+            raise TypeError("Local increment for OTHER or <INVALID> not supported (5): " + str(t))
 
     @staticmethod
     def increment_global_address_by_type(c: Class, t: Type, s: int):
-        # print("incrementing global " + str(s))
-        if t == "Int":
+        if t == Type.INT:
             c.cur_global_int += s
-        elif t == "Real":
+        elif t == Type.REAL:
             c.cur_global_real += s
-        elif t == "Text":
+        elif t == Type.TEXT:
             c.cur_global_text += s
-        elif t == "Boolean":
+        elif t == Type.BOOLEAN:
             c.cur_global_boolean += s
+        elif t == Type.CLASS:
+            c.cur_global_object += s
         else:
-            print("SPECIAL CASE FOR increment_global_address_by_type: " + str(t))
+            raise TypeError("Global increment for OTHER or <INVALID> not supported (6): " + str(t))
 
     @staticmethod
     def increment_temp_address_by_type(m: Method, t: Type):
@@ -151,7 +159,7 @@ class MoMListener(ParseTreeListener):
         elif t == Type.BOOLEAN:
             m.cur_temp_boolean += 1
         else:
-            print("SPECIAL CASE FOR increment_temp_address_by_type: " + str(t))
+            raise TypeError("Temporal increment for OTHER, CLASS or <INVALID> not supported (7): " + str(t))
 
     @staticmethod
     def increment_const_address_by_type(c: Class, t: Type):
@@ -164,7 +172,7 @@ class MoMListener(ParseTreeListener):
         elif t == Type.BOOLEAN:
             c.cur_const_boolean += 1
         else:
-            print("SPECIAL CASE FOR CONST increment_const_address_by_type: " + str(t))
+            raise TypeError("Local increment for OTHER or <INVALID> not supported (8): " + str(t))
 
     def fill(self, end: int, next_quad: int) -> None:
         quad = self.quads[end]
@@ -185,7 +193,7 @@ class MoMListener(ParseTreeListener):
 
         method_name = class_name
         self.current_method = method_name
-        new_method = Method(method_name, Type.OTHER)
+        new_method = Method(method_name, Type.CLASS)
         new_method.start = len(self.quads)
         master_tables.classes[class_name].add_method(new_method)
 
@@ -205,7 +213,6 @@ class MoMListener(ParseTreeListener):
         master_tables.classes[class_name].add_method(new_method)
 
         # create width method quadrupoles
-        # TODO: what happens when it is a variable or value that is returned to caller?
         quad = Quadrupole(Operation.RETURN, None, None, master_tables.classes[class_name].cur_global_real)
         self.quads.append(quad)
 
@@ -223,17 +230,15 @@ class MoMListener(ParseTreeListener):
         quad = Quadrupole(Operation.RETURN, None, None, master_tables.classes[class_name].cur_global_real + 1)
         self.quads.append(quad)
 
-        # TODO: add setters for the Component class
-
     # Exit a parse tree produced by MoMParser#program.
     def exitProgram(self, ctx: MoMParser.ProgramContext) -> None:
         quad = Quadrupole(Operation.END, None, None, None)
         self.quads.append(quad)
 
-        # for index, quad in enumerate(MoMListener.quads):
-        #     print(str(index) + ") " + str(quad.operator) + ", " + str(quad.left_operand) + ", "
-        #           + str(quad.right_operand) + ", " + str(quad.result))
-        #
+        for index, quad in enumerate(MoMListener.quads):
+            print(str(index) + ") " + str(quad.operator) + ", " + str(quad.left_operand) + ", "
+                  + str(quad.right_operand) + ", " + str(quad.result))
+
         # print("#######################################################")
         #
         # for class_name in master_tables.classes:
@@ -250,8 +255,8 @@ class MoMListener(ParseTreeListener):
         expected_type = self.current_method_instance.argument_types[self.current_counter]
 
         if argument_type == Type.OTHER:
-            # Special case TODO: check what to do with objects IMPORTANT
-            return
+            # Special case, object parameters not supported
+            raise TypeError("Object arguments not supported by functions.")
         else:
             argument_type = get_name(argument_type)
 
@@ -513,8 +518,6 @@ class MoMListener(ParseTreeListener):
         method_name = ctx.CLASSID().getText()
         class_instance = master_tables.classes[self.current_class]
 
-
-
         if method_name not in class_instance.methods:
             raise NameError("Constructor name `" + method_name + "` not defined for class: " + self.current_class)
 
@@ -532,15 +535,20 @@ class MoMListener(ParseTreeListener):
                           self.current_method_instance.start)
         self.quads.append(quad)
 
-        # TODO: remove this statement after expression support classes
-        self.pending_operands.append("CONSTRUCTOR")
+        var = self.current_method_instance.name
+        c = master_tables.classes[self.current_class]
+        t = c.variables[var]["type"]
+        print(t, c.variables[var]["address"])
+        self.pending_operands.append(c.variables[var]["address"])
+        self.pending_types.append(t)
 
     # Enter a parse tree produced by MoMParser#exit_con_def.
     def enterExit_con_def(self, ctx: MoMParser.Exit_con_defContext):
         pass
 
     def exitExit_con_def(self, ctx: MoMParser.Exit_con_defContext) -> None:
-        quad = Quadrupole(Operation.RETURN, None, None, None)
+        address = master_tables.classes[self.current_class].variables[self.current_class]["address"]
+        quad = Quadrupole(Operation.RETURN, None, None, address)
         self.quads.append(quad)
 
     def enterConstruct_def(self, ctx: MoMParser.Construct_defContext) -> None:
@@ -552,7 +560,7 @@ class MoMListener(ParseTreeListener):
 
         method_name = ctx.CLASSID().getText()
         self.current_method = method_name
-        new_method = Method(method_name, method_name)
+        new_method = Method(method_name, Type.CLASS)
         new_method.start = len(self.quads)
 
         if method_name in master_tables.classes[self.current_class].methods:
@@ -560,6 +568,7 @@ class MoMListener(ParseTreeListener):
                             + self.current_class + "', this is not supported at language level.")
 
         master_tables.classes[self.current_class].add_method(new_method)
+        self.create_method_field(new_method.name, new_method.return_type)
 
     def exitConstruct_def(self, ctx: MoMParser.Construct_defContext):
         pass
@@ -793,6 +802,7 @@ class MoMListener(ParseTreeListener):
             if method_name not in class_instance.methods:
                 if "parent" == method_name:
                     method_name = class_instance.parent
+                    self.class_reference = method_name
                 else:
                     raise NameError("Method name `" + method_name + "` not defined for class: " + self.current_class)
 
@@ -826,14 +836,21 @@ class MoMListener(ParseTreeListener):
                                         str(self.current_method_instance.num_of_params) +
                                         ", got " + str(self.current_counter) + " instead.")
 
-        quad = Quadrupole(Operation.GO_SUB, self.current_class, self.current_method_instance.name,
-                          self.current_method_instance.start)
+        if self.class_reference == "":
+            quad = Quadrupole(Operation.GO_SUB, self.current_class, self.current_method_instance.name,
+                              self.current_method_instance.start)
+        else:
+            quad = Quadrupole(Operation.GO_SUB, self.class_reference, self.current_method_instance.name,
+                              self.current_method_instance.start)
+            self.class_reference = ""
+            
         self.quads.append(quad)
 
         var = self.current_method_instance.name
         c = master_tables.classes[self.current_class]
         t = c.variables[var]["type"]
         self.pending_operands.append(c.variables[var]["address"])
+        print(t)
         self.pending_types.append(t)
 
     def enterFunction_def(self, ctx: MoMParser.Function_defContext) -> None:
@@ -968,9 +985,9 @@ class MoMListener(ParseTreeListener):
         for name, var in zip(self.argument_names, self.arguments):
             if self.current_structure == StructureType.CLASS:
                 m = master_tables.classes[self.current_class].methods[self.current_method]
-                address = self.get_address_by_type(m, var.var_type)
+                address = self.get_address_by_type(m, get_type(var.var_type))
                 m.add_argument(name, var.var_type, var.is_array, address, var.mem_size)
-                self.increment_address_by_type(m, var.var_type, var.mem_size)
+                self.increment_address_by_type(m, get_type(var.var_type), var.mem_size)
 
                 destination = m.variables[name]["address"]
 

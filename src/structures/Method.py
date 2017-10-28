@@ -16,6 +16,9 @@ class Method:
     TEMP_BOOLEAN_TOP = 20_000
     TEMP_TEXT_TOP = 21_000
 
+    LOCAL_OBJECT_TOP = 60_000
+    LOCAL_OBJECT_BOTTOM = 69_999
+
     LOCAL_INT_BOTTOM = 14_999
     LOCAL_REAL_BOTTOM = 15_999
     LOCAL_BOOLEAN_BOTTOM = 16_999
@@ -42,6 +45,7 @@ class Method:
         self.cur_local_real = self.LOCAL_REAL_TOP
         self.cur_local_boolean = self.LOCAL_BOOLEAN_TOP
         self.cur_local_text = self.LOCAL_TEXT_TOP
+        self.cur_local_object = self.LOCAL_OBJECT_TOP
         self.cur_temp_int = self.TEMP_INT_TOP
         self.cur_temp_real = self.TEMP_REAL_TOP
         self.cur_temp_boolean = self.TEMP_BOOLEAN_TOP
