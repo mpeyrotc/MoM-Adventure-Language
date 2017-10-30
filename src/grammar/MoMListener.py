@@ -569,7 +569,7 @@ class MoMListener(ParseTreeListener):
 
         if self.constructor_called == "":
             quad = Quadrupole(Operation.GO_CONSTRUCTOR, self.current_class, self.current_method_instance.name,
-                            self.current_method_instance.start)
+                              self.current_method_instance.start)
             c = master_tables.classes[self.current_class]
         else:
             quad = Quadrupole(Operation.GO_CONSTRUCTOR, self.constructor_called, self.current_method_instance.name,
@@ -709,7 +709,6 @@ class MoMListener(ParseTreeListener):
                 left_operand = self.pending_operands.pop()
                 left_type = self.pending_types.pop()
                 operator = self.pending_operators.pop()
-                print(left_type, right_type, operator)
                 result_type = semantic_table[left_type][right_type][operator]
 
                 if result_type == Type.OTHER:
@@ -744,7 +743,6 @@ class MoMListener(ParseTreeListener):
                 left_operand = self.pending_operands.pop()
                 left_type = self.pending_types.pop()
                 operator = self.pending_operators.pop()
-                print(left_type, right_type, operator)
                 result_type = Type(semantic_table[int(left_type)][int(right_type)][int(operator)])
                 if result_type == Type.OTHER:
                     raise TypeError("Type mismatch for expression.")
@@ -1093,7 +1091,29 @@ class MoMListener(ParseTreeListener):
 
     # noinspection PyPep8Naming
     def exitStatute(self, ctx: MoMParser.StatuteContext):
-        pass
+        if ctx.RETURN() is not None:
+            c = master_tables.classes[self.current_class]
+            m = c.methods[self.current_method]
+
+            if ctx.ss_exp() is not None:
+                # Found return with an expression
+                r_type = self.pending_types.pop()
+                if not r_type == m.return_type:
+                    raise TypeError("Wrong return type for method `" + m.name + "` in class: " + c.name)
+
+                r_value = self.pending_operands.pop()
+                address = master_tables.classes[self.current_class].variables[self.current_method]["address"]
+                quad = Quadrupole(Operator.EQUAL, r_value, None, address)
+                self.quads.append(quad)
+                quad = Quadrupole(Operation.RETURN, None, None, address)
+                self.quads.append(quad)
+            else:
+                # Found single return
+                if not m.return_type == Type.NOTHING:
+                    raise TypeError("Wrong return type for method `" + m.name + "` in class: " + c.name)
+
+                quad = Quadrupole(Operation.RETURN, None, None, c.nothing_address)
+                self.quads.append(quad)
 
     # noinspection PyPep8Naming,PyUnusedLocal
     def enterExit_factor(self, ctx: MoMParser.Exit_factorContext) -> None:

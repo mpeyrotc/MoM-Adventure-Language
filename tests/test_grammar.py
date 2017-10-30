@@ -260,3 +260,6 @@ class TestGrammar(object):
 
     def test_8(self):
         assert general_function("resources/specifications_in_class.mom")
+
+    def test_9(self):
+        assert general_function("resources/returns.mom")

@@ -1,0 +1,22 @@
+class Character is_a Component {
+    Character() {
+    };
+
+    Nothing a() {
+        Int b = 2 + 2;
+        return;
+    };
+
+    Int b() {
+        Int b = 2 * 2;
+        return b;
+    };
+
+    Text c(Int length) {
+        if(length >= 3) {
+            return "THREE";
+        } else {
+            return "MORE THAN THREE";
+        };
+    };
+};

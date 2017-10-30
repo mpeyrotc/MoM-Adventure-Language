@@ -80,7 +80,7 @@ function_call	:	((THIS | VARID) PERIOD)? VARID OPEN_PAREN (arguments)? CLOSE_PAR
 exit_func_def   :   // nothing
                 ;
 function_def	:	simple_type VARID OPEN_PAREN (function_args)? CLOSE_PAREN OPEN_BRACKET block*
-                            (RETURN ss_exp SEMI_COLON)? CLOSE_BRACKET exit_func_def SEMI_COLON
+                            CLOSE_BRACKET exit_func_def SEMI_COLON
                 ;
 operand 		:	LESS_THAN
                 |   LESS_EQUAL
@@ -103,6 +103,8 @@ statute			:	function_call
                 |   condition
                 |   write_func
                 |   read_func
+                |   RETURN ss_exp
+                |   RETURN
                 ;
 exit_factor     :   // nothing
                 ;
