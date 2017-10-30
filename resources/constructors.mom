@@ -1,0 +1,30 @@
+class ComplexNumber is_a Component {
+    ComplexNumber() {
+
+    };
+
+    Int real() {
+        return 1;
+    };
+
+    Int imaginary() {
+        return 2;
+    };
+};
+
+class Expressions is_a Component {
+    field<Int> integer;
+
+    Expressions(Int int) {
+        this.integer = int;
+    };
+
+    Nothing exp1() {
+        Int b = 2;
+        Int c = 3;
+        Int a = b + c;
+        ComplexNumber num = new ComplexNumber();
+        Expressions e = new Expressions(2);
+        num.real();
+    };
+};

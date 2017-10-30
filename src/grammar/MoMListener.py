@@ -42,6 +42,7 @@ class MoMListener(ParseTreeListener):
     current_method_instance = ""
     current_counter = 0
     class_reference = ""
+    constructor_called = ""
     arguments = []
     argument_names = []
     in_signature = False
@@ -58,7 +59,7 @@ class MoMListener(ParseTreeListener):
     def get_address_by_type(m: Method, t: Type):
         if t == Type.INT:
             return m.cur_local_int
-        elif t == Type.INT:
+        elif t == Type.REAL:
             return m.cur_local_real
         elif t == Type.TEXT:
             return m.cur_local_text
@@ -85,6 +86,8 @@ class MoMListener(ParseTreeListener):
             raise TypeError("Global variable assignment not supported for OTHER (2).")
         elif t == Type.CLASS:
             return c.cur_global_object
+        elif t == Type.NOTHING:
+            return c.nothing_address
         else:
             raise TypeError("Global variable assignment not supported for <INVALID> (2): " + str(t))
 
@@ -145,6 +148,8 @@ class MoMListener(ParseTreeListener):
             c.cur_global_boolean += s
         elif t == Type.CLASS:
             c.cur_global_object += s
+        elif t == Type.NOTHING:
+            pass  # the address for nothing (void) never changes
         else:
             raise TypeError("Global increment for OTHER or <INVALID> not supported (6): " + str(t))
 
@@ -178,6 +183,7 @@ class MoMListener(ParseTreeListener):
         quad = self.quads[end]
         quad.result = next_quad
 
+    # noinspection PyPep8Naming,PyUnusedLocal
     def enterProgram(self, ctx: MoMParser.ProgramContext) -> None:
         # Register in tables the Component class, which is the base class of the language
         class_specifications = set()
@@ -230,7 +236,7 @@ class MoMListener(ParseTreeListener):
         quad = Quadrupole(Operation.RETURN, None, None, master_tables.classes[class_name].cur_global_real + 1)
         self.quads.append(quad)
 
-    # Exit a parse tree produced by MoMParser#program.
+    # noinspection PyPep8Naming,PyUnusedLocal
     def exitProgram(self, ctx: MoMParser.ProgramContext) -> None:
         quad = Quadrupole(Operation.END, None, None, None)
         self.quads.append(quad)
@@ -239,16 +245,17 @@ class MoMListener(ParseTreeListener):
             print(str(index) + ") " + str(quad.operator) + ", " + str(quad.left_operand) + ", "
                   + str(quad.right_operand) + ", " + str(quad.result))
 
-        # print("#######################################################")
-        #
-        # for class_name in master_tables.classes:
-        #     class_instance = master_tables.classes[class_name]
-        #
-        #     for method_name in class_instance.methods:
-        #         method_instance = class_instance.methods[method_name]
-        #
-        #         print("Name: " + method_instance.name + ", start: " + str(method_instance.start))
+            # print("#######################################################")
+            #
+            # for class_name in master_tables.classes:
+            #     class_instance = master_tables.classes[class_name]
+            #
+            #     for method_name in class_instance.methods:
+            #         method_instance = class_instance.methods[method_name]
+            #
+            #         print("Name: " + method_instance.name + ", start: " + str(method_instance.start))
 
+    # noinspection PyPep8Naming,PyUnusedLocal
     def enterAfter_argument(self, ctx: MoMParser.After_argumentContext) -> None:
         argument = self.pending_operands.pop()
         argument_type = self.pending_types.pop()
@@ -258,39 +265,42 @@ class MoMListener(ParseTreeListener):
             # Special case, object parameters not supported
             raise TypeError("Object arguments not supported by functions.")
         else:
-            argument_type = get_name(argument_type)
+            argument_type = argument_type
 
         if not argument_type == expected_type['arg_type']:
             raise TypeError("Argument for method `" + self.current_method + "` call wrong. "
                                                                             "Argument should be of type " +
-                            expected_type["arg_type"] +
+                            str(expected_type["arg_type"]) +
                             ", instead got: " + str(argument_type))
 
-        quad = Quadrupole(Operation.PARAM, argument, None, "DEST" + str(self.current_counter))
+        quad = Quadrupole(Operation.PARAM, argument, None, "DESTINATION" + str(self.current_counter))
         self.quads.append(quad)
 
-    # Exit a parse tree produced by MoMParser#after_argument.
+    # noinspection PyPep8Naming
     def exitAfter_argument(self, ctx: MoMParser.After_argumentContext):
         pass
 
-    # Enter a parse tree produced by MoMParser#advance_count.
+    # noinspection PyPep8Naming
     def enterAdvance_count(self, ctx: MoMParser.Advance_countContext):
         pass
 
+    # noinspection PyPep8Naming,PyUnusedLocal
     def exitAdvance_count(self, ctx: MoMParser.Advance_countContext) -> None:
         self.current_counter += 1
 
-    # Enter a parse tree produced by MoMParser#arguments.
+    # noinspection PyPep8Naming
     def enterArguments(self, ctx: MoMParser.ArgumentsContext):
         pass
 
-    # Exit a parse tree produced by MoMParser#arguments.
+    # noinspection PyPep8Naming
     def exitArguments(self, ctx: MoMParser.ArgumentsContext):
         pass
 
+    # noinspection PyPep8Naming
     def enterAssignation(self, ctx: MoMParser.AssignationContext) -> None:
         pass
 
+    # noinspection PyPep8Naming
     def exitAssignation(self, ctx: MoMParser.AssignationContext) -> None:
         isArray = 0
         if len(ctx.VARID()) == 0:
@@ -329,14 +339,15 @@ class MoMListener(ParseTreeListener):
             # if not present report error.
             raise NameError("Variable ' " + var + " is undefined.")
 
-    # Enter a parse tree produced by MoMParser#block.
+    # noinspection PyPep8Naming
     def enterBlock(self, ctx: MoMParser.BlockContext):
         pass
 
-    # Exit a parse tree produced by MoMParser#block.
+    # noinspection PyPep8Naming
     def exitBlock(self, ctx: MoMParser.BlockContext):
         pass
 
+    # noinspection PyPep8Naming
     def enterClass_rule(self, ctx: MoMParser.Class_ruleContext) -> None:
         """This listener manages registering the classes that the user defines within a program.
 
@@ -383,8 +394,9 @@ class MoMListener(ParseTreeListener):
         for var_n in variables:
             v = variables[var_n]
             master_tables.classes[class_name].add_argument(v["name"], v["type"], v["is_array"],
-                                                           v["address"], v["mem_size"])
+                                                           v["address"], v["mem_size"], v["class_type"])
 
+    # noinspection PyPep8Naming,PyUnusedLocal
     def exitClass_rule(self, ctx: MoMParser.Class_ruleContext) -> None:
         # for all interfaces declared for current class, check that their methods are defined in the body of the class
         class_instance = master_tables.classes[self.current_class]
@@ -422,13 +434,15 @@ class MoMListener(ParseTreeListener):
         quad = Quadrupole(Operation.END_CLASS, None, None, None)
         self.quads.append(quad)
 
-    # Enter a parse tree produced by MoMParser#condition.
+    # noinspection PyPep8Naming
     def enterCondition(self, ctx: MoMParser.ConditionContext):
         pass
 
+    # noinspection PyPep8Naming
     def exitCondition(self, ctx: MoMParser.ConditionContext) -> None:
         pass
 
+    # noinspection PyPep8Naming,PyUnusedLocal
     def enterExit_if_check(self, ctx: MoMParser.Exit_if_checkContext) -> None:
         exp_type = self.pending_types.pop()
 
@@ -440,22 +454,24 @@ class MoMListener(ParseTreeListener):
         self.quads.append(quad)
         self.pending_jumps.append(len(self.quads) - 1)
 
-    # Exit a parse tree produced by MoMParser#exit_if_check.
+    # noinspection PyPep8Naming
     def exitExit_if_check(self, ctx: MoMParser.Exit_if_checkContext):
         pass
 
-    # Enter a parse tree produced by MoMParser#condition_end.
+    # noinspection PyPep8Naming
     def enterCondition_end(self, ctx: MoMParser.Condition_endContext):
         pass
 
+    # noinspection PyUnusedLocal,PyPep8Naming
     def exitCondition_end(self, ctx: MoMParser.Condition_endContext) -> None:
         end = self.pending_jumps.pop()
         self.fill(end, len(self.quads))
 
-    # Enter a parse tree produced by MoMParser#enter_else.
+    # noinspection PyPep8Naming
     def enterEnter_else(self, ctx: MoMParser.Enter_elseContext):
         pass
 
+    # noinspection PyPep8Naming,PyUnusedLocal
     def exitEnter_else(self, ctx: MoMParser.Enter_elseContext) -> None:
         quad = Quadrupole(Operation.GO_TO, None, None, None)
         self.quads.append(quad)
@@ -463,6 +479,7 @@ class MoMListener(ParseTreeListener):
         self.pending_jumps.append(len(self.quads) - 1)
         self.fill(false, len(self.quads))
 
+    # noinspection PyPep8Naming
     def enterConstant(self, ctx: MoMParser.ConstantContext) -> None:
         c = master_tables.classes[self.current_class]
         if ctx.INTEGER() is not None:
@@ -505,25 +522,39 @@ class MoMListener(ParseTreeListener):
             else:
                 raise NameError("Variable ' " + var + " is undefined.")
 
-            self.pending_types.append(get_type(t))
+            self.pending_types.append(t)
         elif ctx.array_var() is not None:
             # See array_var listener
             pass
 
-    # Exit a parse tree produced by MoMParser#constant.
+    # noinspection PyPep8Naming
     def exitConstant(self, ctx: MoMParser.ConstantContext):
         pass
 
+    # noinspection PyPep8Naming
     def enterConstruct_call(self, ctx: MoMParser.Construct_callContext) -> None:
         method_name = ctx.CLASSID().getText()
         class_instance = master_tables.classes[self.current_class]
 
-        if method_name not in class_instance.methods:
+        found = False
+        if method_name in class_instance.methods:
+            self.current_counter = 0
+            self.current_method_instance = class_instance.methods[method_name]
+            self.constructor_called = ""
+            found = True
+
+        for class_name in master_tables.classes:
+            if method_name in master_tables.classes[class_name].methods:
+                self.current_counter = 0
+                self.current_method_instance = master_tables.classes[class_name].methods[method_name]
+                self.constructor_called = class_name
+                found = True
+                break
+
+        if not found:
             raise NameError("Constructor name `" + method_name + "` not defined for class: " + self.current_class)
 
-        self.current_counter = 0
-        self.current_method_instance = class_instance.methods[method_name]
-
+    # noinspection PyPep8Naming,PyUnusedLocal
     def exitConstruct_call(self, ctx: MoMParser.Construct_callContext) -> None:
         if not self.current_counter == self.current_method_instance.num_of_params:
             raise IllegalStateException("Constructor `" + self.current_method_instance.name +
@@ -531,26 +562,32 @@ class MoMListener(ParseTreeListener):
                                         str(self.current_method_instance.num_of_params) +
                                         ", got " + str(self.current_counter) + " instead.")
 
-        quad = Quadrupole(Operation.GO_CONSTRUCTOR, self.current_class, self.current_method_instance.name,
-                          self.current_method_instance.start)
-        self.quads.append(quad)
+        if self.constructor_called == "":
+            quad = Quadrupole(Operation.GO_CONSTRUCTOR, self.current_class, self.current_method_instance.name,
+                            self.current_method_instance.start)
+            c = master_tables.classes[self.current_class]
+        else:
+            quad = Quadrupole(Operation.GO_CONSTRUCTOR, self.constructor_called, self.current_method_instance.name,
+                              self.current_method_instance.start)
+            c = master_tables.classes[self.constructor_called]
 
+        self.quads.append(quad)
         var = self.current_method_instance.name
-        c = master_tables.classes[self.current_class]
         t = c.variables[var]["type"]
-        print(t, c.variables[var]["address"])
         self.pending_operands.append(c.variables[var]["address"])
         self.pending_types.append(t)
 
-    # Enter a parse tree produced by MoMParser#exit_con_def.
+    # noinspection PyPep8Naming
     def enterExit_con_def(self, ctx: MoMParser.Exit_con_defContext):
         pass
 
+    # noinspection PyPep8Naming,PyUnusedLocal
     def exitExit_con_def(self, ctx: MoMParser.Exit_con_defContext) -> None:
         address = master_tables.classes[self.current_class].variables[self.current_class]["address"]
         quad = Quadrupole(Operation.RETURN, None, None, address)
         self.quads.append(quad)
 
+    # noinspection PyPep8Naming
     def enterConstruct_def(self, ctx: MoMParser.Construct_defContext) -> None:
         # reset virtual memory counters
         Method.cur_local_boolean = Method.LOCAL_BOOLEAN_TOP
@@ -570,9 +607,11 @@ class MoMListener(ParseTreeListener):
         master_tables.classes[self.current_class].add_method(new_method)
         self.create_method_field(new_method.name, new_method.return_type)
 
+    # noinspection PyPep8Naming
     def exitConstruct_def(self, ctx: MoMParser.Construct_defContext):
         pass
 
+    # noinspection PyPep8Naming
     def enterEnum(self, ctx: MoMParser.EnumContext) -> None:
         """Takes each value defined in the enumeration and assigns it to its
         corresponding enumeration.
@@ -583,10 +622,11 @@ class MoMListener(ParseTreeListener):
         for value in ctx.CAPITALID():
             master_tables.enumerations[self.current_enumeration].add_value(value.getText())
 
-    # Exit a parse tree produced by MoMParser#enum.
+    # noinspection PyPep8Naming
     def exitEnum(self, ctx: MoMParser.EnumContext):
         pass
 
+    # noinspection PyPep8Naming
     def enterEnumeration(self, ctx: MoMParser.EnumerationContext) -> None:
         """Enumeration listener, creates a new instance and saves it in the registry.
 
@@ -599,10 +639,11 @@ class MoMListener(ParseTreeListener):
         self.current_enumeration = name
         self.current_structure = StructureType.ENUMERATION
 
-    # Exit a parse tree produced by MoMParser#enumeration.
+    # noinspection PyPep8Naming
     def exitEnumeration(self, ctx: MoMParser.EnumerationContext):
         pass
 
+    # noinspection PyPep8Naming,PyUnusedLocal
     def enterExit_sexp(self, ctx: MoMParser.Exit_sexpContext) -> None:
         if not len(self.pending_operators) == 0:
             if self.pending_operators[-1] == Operator.AND or self.pending_operators[-1] == Operator.OR:
@@ -624,32 +665,35 @@ class MoMListener(ParseTreeListener):
                     self.pending_operands.append(result)
                     self.pending_types.append(result_type)
 
-    # Exit a parse tree produced by MoMParser#exit_sexp.
+    # noinspection PyPep8Naming
     def exitExit_sexp(self, ctx: MoMParser.Exit_sexpContext):
         pass
 
+    # noinspection PyPep8Naming,PyUnusedLocal
     def enterAnd_op(self, ctx: MoMParser.And_opContext) -> None:
         self.pending_operators.append(Operator.AND)
 
-    # Exit a parse tree produced by MoMParser#and_op.
+    # noinspection PyPep8Naming
     def exitAnd_op(self, ctx: MoMParser.And_opContext):
         pass
 
+    # noinspection PyPep8Naming,PyUnusedLocal
     def enterOr_op(self, ctx: MoMParser.Or_opContext) -> None:
         self.pending_operators.append(Operator.OR)
 
-    # Exit a parse tree produced by MoMParser#or_op.
+    # noinspection PyPep8Naming
     def exitOr_op(self, ctx: MoMParser.Or_opContext):
         pass
 
-    # Enter a parse tree produced by MoMParser#ss_exp.
+    # noinspection PyPep8Naming
     def enterSs_exp(self, ctx: MoMParser.Ss_expContext):
         pass
 
-    # Exit a parse tree produced by MoMParser#ss_exp.
+    # noinspection PyPep8Naming
     def exitSs_exp(self, ctx: MoMParser.Ss_expContext):
         pass
 
+    # noinspection PyUnusedLocal,PyPep8Naming
     def enterExit_exp(self, ctx: MoMParser.Exit_expContext) -> None:
         if not len(self.pending_operators) == 0:
             op = self.pending_operators[-1]
@@ -673,18 +717,19 @@ class MoMListener(ParseTreeListener):
                     self.pending_operands.append(result)
                     self.pending_types.append(result_type)
 
-    # Exit a parse tree produced by MoMParser#exit_exp.
+    # noinspection PyPep8Naming
     def exitExit_exp(self, ctx: MoMParser.Exit_expContext):
         pass
 
-    # Enter a parse tree produced by MoMParser#s_exp.
+    # noinspection PyPep8Naming
     def enterS_exp(self, ctx: MoMParser.S_expContext):
         pass
 
-    # Exit a parse tree produced by MoMParser#s_exp.
+    # noinspection PyPep8Naming
     def exitS_exp(self, ctx: MoMParser.S_expContext):
         pass
 
+    # noinspection PyUnusedLocal,PyPep8Naming
     def enterExit_term(self, ctx: MoMParser.Exit_termContext) -> None:
         if not len(self.pending_operators) == 0:
             if self.pending_operators[-1] == Operator.PLUS or self.pending_operators[-1] == Operator.MINUS:
@@ -693,7 +738,6 @@ class MoMListener(ParseTreeListener):
                 left_operand = self.pending_operands.pop()
                 left_type = self.pending_types.pop()
                 operator = self.pending_operators.pop()
-                # TODO: check why cast was necessary
                 result_type = Type(semantic_table[int(left_type)][int(right_type)][int(operator)])
                 if result_type == Type.OTHER:
                     raise TypeError("Type mismatch for expression.")
@@ -706,20 +750,23 @@ class MoMListener(ParseTreeListener):
                     self.pending_operands.append(result)
                     self.pending_types.append(result_type)
 
+    # noinspection PyPep8Naming
     def exitExit_term(self, ctx: MoMParser.Exit_termContext):
         pass
 
-    # Enter a parse tree produced by MoMParser#after_while.
+    # noinspection PyPep8Naming
     def enterAfter_while(self, ctx: MoMParser.After_whileContext):
         pass
 
+    # noinspection PyPep8Naming,PyUnusedLocal
     def exitAfter_while(self, ctx: MoMParser.After_whileContext) -> None:
         self.pending_jumps.append(len(self.quads))
 
-    # Enter a parse tree produced by MoMParser#end_while.
+    # noinspection PyPep8Naming
     def enterEnd_while(self, ctx: MoMParser.End_whileContext):
         pass
 
+    # noinspection PyPep8Naming,PyUnusedLocal
     def exitEnd_while(self, ctx: MoMParser.End_whileContext) -> None:
         end = self.pending_jumps.pop()
         go_back = self.pending_jumps.pop()
@@ -727,50 +774,55 @@ class MoMListener(ParseTreeListener):
         self.quads.append(quad)
         self.fill(end, len(self.quads))
 
+    # noinspection PyUnusedLocal,PyPep8Naming
     def enterPlus_op(self, ctx: MoMParser.Plus_opContext) -> None:
         self.pending_operators.append(Operator.PLUS)
 
-    # Exit a parse tree produced by MoMParser#plus_op.
+    # noinspection PyPep8Naming
     def exitPlus_op(self, ctx: MoMParser.Plus_opContext):
         pass
 
+    # noinspection PyPep8Naming,PyUnusedLocal
     def enterMinus_op(self, ctx: MoMParser.Minus_opContext) -> None:
         self.pending_operators.append(Operator.MINUS)
 
-    # Exit a parse tree produced by MoMParser#minus_op.
+    # noinspection PyPep8Naming
     def exitMinus_op(self, ctx: MoMParser.Minus_opContext):
         pass
 
-    # Enter a parse tree produced by MoMParser#expression.
+    # noinspection PyPep8Naming
     def enterExpression(self, ctx: MoMParser.ExpressionContext):
         pass
 
-    # Exit a parse tree produced by MoMParser#expression.
+    # noinspection PyPep8Naming
     def exitExpression(self, ctx: MoMParser.ExpressionContext):
         pass
 
+    # noinspection PyPep8Naming,PyUnusedLocal
     def enterOpen_paren(self, ctx: MoMParser.Open_parenContext) -> None:
         self.pending_operators.append(Operator.OPEN_PAREN)
 
-    # Exit a parse tree produced by MoMParser#open_paren.
+    # noinspection PyPep8Naming
     def exitOpen_paren(self, ctx: MoMParser.Open_parenContext):
         pass
 
+    # noinspection PyPep8Naming,PyUnusedLocal
     def enterClose_paren(self, ctx: MoMParser.Close_parenContext):
         self.pending_operators.pop()
 
-    # Exit a parse tree produced by MoMParser#close_paren.
+    # noinspection PyPep8Naming
     def exitClose_paren(self, ctx: MoMParser.Close_parenContext):
         pass
 
-    # Enter a parse tree produced by MoMParser#factor.
+    # noinspection PyPep8Naming
     def enterFactor(self, ctx: MoMParser.FactorContext):
         pass
 
-    # Exit a parse tree produced by MoMParser#factor.
+    # noinspection PyPep8Naming
     def exitFactor(self, ctx: MoMParser.FactorContext):
         pass
 
+    # noinspection PyPep8Naming
     def enterFunction_args(self, ctx: MoMParser.Function_argsContext) -> None:
         self.in_signature = True
         self.arguments = []
@@ -779,20 +831,28 @@ class MoMListener(ParseTreeListener):
         for var_name in ctx.VARID():
             self.argument_names.append(var_name.getText())
 
+    # noinspection PyPep8Naming,PyUnusedLocal
     def exitFunction_args(self, ctx: MoMParser.Function_argsContext) -> None:
         self.in_signature = False
 
         for name, var in zip(self.argument_names, self.arguments):
             if self.current_structure == StructureType.CLASS:
                 m = master_tables.classes[self.current_class].methods[self.current_method]
-                address = self.get_address_by_type(m, var.var_type)
-                m.add_argument(name, var.var_type, var.is_array, address, var.mem_size)
-                m.add_argument_type(var.var_type, var.is_array)
-                self.increment_address_by_type(m, var.var_type, var.mem_size)
+                address = self.get_address_by_type(m, get_type(var.var_type))
+                t = get_type(var.var_type)
+
+                if t == Type.CLASS:
+                    m.add_argument(name, t, var.is_array, address, var.mem_size, var.var_type)
+                else:
+                    m.add_argument(name, t, var.is_array, address, var.mem_size)
+
+                m.add_argument_type(get_type(var.var_type), var.is_array)
+                self.increment_address_by_type(m, get_type(var.var_type), var.mem_size)
             elif self.current_structure == StructureType.SPECIFICATION:
                 master_tables.specifications[self.current_specification].methods[
-                    self.current_method].add_argument(name, var.var_type, var.is_array, -2, var.mem_size)
+                    self.current_method].add_argument(name, get_type(var.var_type), var.is_array, -2, var.mem_size)
 
+    # noinspection PyPep8Naming
     def enterFunction_call(self, ctx: MoMParser.Function_callContext) -> None:
         class_instance = master_tables.classes[self.current_class]
 
@@ -813,9 +873,8 @@ class MoMListener(ParseTreeListener):
 
             var_name = ctx.VARID()[0].getText()
             func_name = ctx.VARID()[1].getText()
-
             if var_name in class_instance.methods[self.current_method].variables:
-                c_ref = master_tables.classes[class_instance.methods[self.current_method].variables[var_name]["type"]]
+                c_ref = master_tables.classes[class_instance.methods[self.current_method].variables[var_name]["p_type"]]
                 if func_name not in c_ref.methods:
                     raise NameError("Method name `" + func_name + "` not defined for class: " + c_ref.name)
 
@@ -829,6 +888,9 @@ class MoMListener(ParseTreeListener):
             else:
                 raise NameError("Variable `" + var_name + "` not defined in class: " + class_instance.name)
 
+            self.class_reference = c_ref.name
+
+    # noinspection PyPep8Naming,PyUnusedLocal
     def exitFunction_call(self, ctx: MoMParser.Function_callContext) -> None:
         if not self.current_counter == self.current_method_instance.num_of_params:
             raise IllegalStateException("Method `" + self.current_method_instance.name +
@@ -839,20 +901,21 @@ class MoMListener(ParseTreeListener):
         if self.class_reference == "":
             quad = Quadrupole(Operation.GO_SUB, self.current_class, self.current_method_instance.name,
                               self.current_method_instance.start)
+            c = master_tables.classes[self.current_class]
         else:
             quad = Quadrupole(Operation.GO_SUB, self.class_reference, self.current_method_instance.name,
                               self.current_method_instance.start)
+            c = master_tables.classes[self.class_reference]
             self.class_reference = ""
-            
+
         self.quads.append(quad)
 
         var = self.current_method_instance.name
-        c = master_tables.classes[self.current_class]
         t = c.variables[var]["type"]
         self.pending_operands.append(c.variables[var]["address"])
-        print(t)
         self.pending_types.append(t)
 
+    # noinspection PyPep8Naming
     def enterFunction_def(self, ctx: MoMParser.Function_defContext) -> None:
         """This listener gets called for the methods defined inside a class body.
 
@@ -885,17 +948,21 @@ class MoMListener(ParseTreeListener):
         master_tables.classes[self.current_class].add_method(new_method)
         self.create_method_field(self.current_method, new_method.return_type)
 
+    # noinspection PyPep8Naming
     def exitFunction_def(self, ctx: MoMParser.Function_defContext):
         pass
 
+    # noinspection PyPep8Naming
     def enterExit_func_def(self, ctx: MoMParser.Exit_func_defContext):
         pass
 
+    # noinspection PyPep8Naming,PyUnusedLocal
     def exitExit_func_def(self, ctx: MoMParser.Exit_func_defContext) -> None:
         address = master_tables.classes[self.current_class].variables[self.current_method]["address"]
         quad = Quadrupole(Operation.RETURN, None, None, address)
         self.quads.append(quad)
 
+    # noinspection PyPep8Naming
     def enterOperand(self, ctx: MoMParser.OperandContext) -> None:
         if ctx.EQUAL_EQUAL() is not None:
             self.pending_operators.append(Operator.EQUAL_EQUAL)
@@ -908,16 +975,17 @@ class MoMListener(ParseTreeListener):
         else:
             self.pending_operators.append(Operator.LESS_THAN)
 
-    # Exit a parse tree produced by MoMParser#operand.
+    # noinspection PyPep8Naming
     def exitOperand(self, ctx: MoMParser.OperandContext):
         pass
 
-    def create_method_field(self, field_name: str, return_type: str):
+    def create_method_field(self, field_name: str, return_type: Type):
         c = master_tables.classes[self.current_class]
         address = self.get_global_address_by_type(c, return_type)
         c.add_argument(field_name, return_type, False, address, 1)
         self.increment_global_address_by_type(c, return_type, 1)
 
+    # noinspection PyPep8Naming
     def enterField(self, ctx: MoMParser.FieldContext) -> None:
         self.in_signature = True
         self.arguments = []
@@ -925,17 +993,19 @@ class MoMListener(ParseTreeListener):
         var_name = ctx.VARID()
         self.argument_names.append(var_name.getText())
 
+    # noinspection PyPep8Naming,PyUnusedLocal
     def exitField(self, ctx: MoMParser.FieldContext) -> None:
         for name, var in zip(self.argument_names, self.arguments):
             if self.current_structure == StructureType.CLASS:
                 c = master_tables.classes[self.current_class]
-                address = self.get_global_address_by_type(c, var.var_type)
+                address = self.get_global_address_by_type(c, get_type(var.var_type))
                 c.add_argument(name, var.var_type, var.is_array, address, var.mem_size)
-                self.increment_global_address_by_type(c, var.var_type, var.mem_size)
+                self.increment_global_address_by_type(c, get_type(var.var_type), var.mem_size)
             elif self.current_structure == StructureType.SPECIFICATION:
                 master_tables.specifications[self.current_specification].methods[
                     self.current_method].add_argument(name, var.var_type, var.is_array, -2, var.mem_size)
 
+    # noinspection PyPep8Naming
     def enterSpec_function(self, ctx: MoMParser.Spec_functionContext) -> None:
         name, return_type = ctx.VARID(), ctx.simple_type()
         method = Method(name.getText(), get_type(return_type.getText()))
@@ -947,10 +1017,11 @@ class MoMListener(ParseTreeListener):
 
         master_tables.specifications[self.current_specification].add_method(method)
 
-    # Exit a parse tree produced by MoMParser#spec_function.
+    # noinspection PyPep8Naming
     def exitSpec_function(self, ctx: MoMParser.Spec_functionContext):
         pass
 
+    # noinspection PyPep8Naming
     def enterSpecification(self, ctx: MoMParser.SpecificationContext) -> None:
         """Creates a new Specification if the parser encounters one while
         reading the source code.
@@ -968,10 +1039,11 @@ class MoMListener(ParseTreeListener):
         self.current_specification = spec_name
         self.current_structure = StructureType.SPECIFICATION
 
-    # Exit a parse tree produced by MoMParser#specification.
+    # noinspection PyPep8Naming
     def exitSpecification(self, ctx: MoMParser.SpecificationContext):
         pass
 
+    # noinspection PyPep8Naming
     def enterAssignation_def(self, ctx: MoMParser.Assignation_defContext) -> None:
         self.in_signature = True
         self.arguments = []
@@ -980,29 +1052,41 @@ class MoMListener(ParseTreeListener):
         var_name = ctx.VARID()
         self.argument_names.append(var_name.getText())
 
+    # noinspection PyPep8Naming,PyUnusedLocal
     def exitAssignation_def(self, ctx: MoMParser.Assignation_defContext) -> None:
         self.in_signature = False
         for name, var in zip(self.argument_names, self.arguments):
             if self.current_structure == StructureType.CLASS:
                 m = master_tables.classes[self.current_class].methods[self.current_method]
                 address = self.get_address_by_type(m, get_type(var.var_type))
-                m.add_argument(name, var.var_type, var.is_array, address, var.mem_size)
-                self.increment_address_by_type(m, get_type(var.var_type), var.mem_size)
+                t = get_type(var.var_type)
+                if t == Type.CLASS:
+                    m.add_argument(name, t, var.is_array, address, var.mem_size, var.var_type)
+                else:
+                    m.add_argument(name, t, var.is_array, address, var.mem_size)
 
+                self.increment_address_by_type(m, get_type(var.var_type), var.mem_size)
                 destination = m.variables[name]["address"]
+
+                dest_type = get_type(var.var_type)
+                src_type = self.pending_types.pop()
+
+                if not src_type == dest_type:
+                    raise TypeError("Cannot assign value of type " + str(src_type) + " to " + str(dest_type))
 
                 holder = self.pending_operands.pop()
                 quad = Quadrupole(Operator.EQUAL, holder, None, destination)
                 self.quads.append(quad)
 
-    # Enter a parse tree produced by MoMParser#statute.
+    # noinspection PyPep8Naming
     def enterStatute(self, ctx: MoMParser.StatuteContext):
         pass
 
-    # Exit a parse tree produced by MoMParser#statute.
+    # noinspection PyPep8Naming
     def exitStatute(self, ctx: MoMParser.StatuteContext):
         pass
 
+    # noinspection PyPep8Naming,PyUnusedLocal
     def enterExit_factor(self, ctx: MoMParser.Exit_factorContext) -> None:
         if not len(self.pending_operators) == 0:
             if self.pending_operators[-1] == Operator.TIMES or self.pending_operators[-1] == Operator.DIVIDES:
@@ -1024,41 +1108,45 @@ class MoMListener(ParseTreeListener):
                     self.pending_operands.append(result)
                     self.pending_types.append(result_type)
 
-    # Exit a parse tree produced by MoMParser#exit_factor.
+    # noinspection PyPep8Naming
     def exitExit_factor(self, ctx: MoMParser.Exit_factorContext):
         pass
 
+    # noinspection PyPep8Naming,PyUnusedLocal
     def enterStar_op(self, ctx: MoMParser.Star_opContext) -> None:
         self.pending_operators.append(Operator.TIMES)
 
-    # Exit a parse tree produced by MoMParser#star_op.
+    # noinspection PyPep8Naming
     def exitStar_op(self, ctx: MoMParser.Star_opContext):
         pass
 
+    # noinspection PyPep8Naming,PyUnusedLocal
     def enterDiv_op(self, ctx: MoMParser.Div_opContext) -> None:
         self.pending_operators.append(Operator.DIVIDES)
 
-    # Exit a parse tree produced by MoMParser#div_op.
+    # noinspection PyPep8Naming
     def exitDiv_op(self, ctx: MoMParser.Div_opContext):
         pass
 
-    # Enter a parse tree produced by MoMParser#term.
+    # noinspection PyPep8Naming
     def enterTerm(self, ctx: MoMParser.TermContext):
         pass
 
-    # Exit a parse tree produced by MoMParser#term.
+    # noinspection PyPep8Naming
     def exitTerm(self, ctx: MoMParser.TermContext):
         pass
 
+    # noinspection PyPep8Naming
     def enterSuper_type(self, ctx: MoMParser.Super_typeContext) -> None:
         if self.in_signature:
             self.arguments.append(Variable())
             self.arguments[-1].var_type = ctx.getText()
 
-    # Exit a parse tree produced by MoMParser#super_type.
+    # noinspection PyPep8Naming
     def exitSuper_type(self, ctx: MoMParser.Super_typeContext):
         pass
 
+    # noinspection PyPep8Naming
     def enterSimple_type(self, ctx: MoMParser.Simple_typeContext) -> None:
         """Listener that is called each time a simple type is visited, like for return types
         inside a method definition.
@@ -1071,10 +1159,11 @@ class MoMListener(ParseTreeListener):
         """
         self.current_type = ctx.getText()
 
-    # Exit a parse tree produced by MoMParser#simple_type.
+    # noinspection PyPep8Naming
     def exitSimple_type(self, ctx: MoMParser.Simple_typeContext):
         pass
 
+    # noinspection PyPep8Naming
     def enterComplex_type(self, ctx: MoMParser.Complex_typeContext) -> None:
         """Sets the current type temp with the name of the last complex type read
         by the parser.
@@ -1084,18 +1173,19 @@ class MoMListener(ParseTreeListener):
         """
         self.current_type = ctx.getText()
 
-    # Exit a parse tree produced by MoMParser#complex_type.
+    # noinspection PyPep8Naming
     def exitComplex_type(self, ctx: MoMParser.Complex_typeContext):
         pass
 
-    # Enter a parse tree produced by MoMParser#while_loop.
+    # noinspection PyPep8Naming
     def enterWhile_loop(self, ctx: MoMParser.While_loopContext):
         pass
 
-    # Exit a parse tree produced by MoMParser#while_loop.
+    # noinspection PyPep8Naming
     def exitWhile_loop(self, ctx: MoMParser.While_loopContext):
         pass
 
+    # noinspection PyPep8Naming
     def enterArray_def(self, ctx: MoMParser.Array_defContext) -> None:
         texto = ctx.getText()
         abre = texto.find("[")
@@ -1108,11 +1198,12 @@ class MoMListener(ParseTreeListener):
             self.arguments[-1].mem_size = cuantos
             self.arguments[-1].is_array = True
 
-    # Exit a parse tree produced by MoMParser#array_def.
+    # noinspection PyPep8Naming,PyUnusedLocal
     def exitArray_def(self, ctx: MoMParser.Array_defContext) -> None:
         if self.in_signature:
             self.arguments[-1].is_array = True
 
+    # noinspection PyPep8Naming
     def enterArray_var(self, ctx: MoMParser.Array_varContext) -> None:
         texto = ctx.getText()
         abre = texto.find("[")
@@ -1125,7 +1216,6 @@ class MoMListener(ParseTreeListener):
         # Look in local variables, if not, look in global variables
         # TODO: check value for type, depending on array declaration, INT type used to avoid errors
         if variable in m.variables:
-            t = m.variables[variable]["type"]
             is_array = m.variables[variable]["is_array"]
             mem_size = m.variables[variable]["mem_size"]
             if is_array:
@@ -1137,7 +1227,6 @@ class MoMListener(ParseTreeListener):
             else:
                 raise NameError("Variable " + variable + " is not an array")
         elif variable in c.variables:
-            t = c.variables[variable]["type"]
             is_array = c.variables[variable]["is_array"]
             mem_size = c.variables[variable]["mem_size"]
             if is_array:
@@ -1151,34 +1240,35 @@ class MoMListener(ParseTreeListener):
         else:
             raise NameError("Variable ' " + variable + " is undefined.")
 
-    # Exit a parse tree produced by MoMParser#array_var.
+    # noinspection PyPep8Naming
     def exitArray_var(self, ctx: MoMParser.Array_varContext):
         pass
 
-    # Enter a parse tree produced by MoMParser#array_arg.
+    # noinspection PyPep8Naming
     def enterArray_arg(self, ctx: MoMParser.Array_argContext):
         pass
 
+    # noinspection PyPep8Naming,PyUnusedLocal
     def exitArray_arg(self, ctx: MoMParser.Array_argContext) -> None:
         if self.in_signature:
             self.arguments[-1].is_array = True
 
-    # Enter a parse tree produced by MoMParser#write_func.
+    # noinspection PyPep8Naming,PyUnusedLocal
     def enterWrite_func(self, ctx: MoMParser.Write_funcContext):
         self.pending_operators.append(Operator.WRITE)
 
-    # Exit a parse tree produced by MoMParser#write_func.
+    # noinspection PyPep8Naming,PyUnusedLocal
     def exitWrite_func(self, ctx: MoMParser.Write_funcContext):
         op = self.pending_operators.pop()
         result = self.pending_operands.pop()
         quad = Quadrupole(op, None, None, result)
         self.quads.append(quad)
 
-    # Enter a parse tree produced by MoMParser#read_func.
+    # noinspection PyPep8Naming,PyUnusedLocal
     def enterRead_func(self, ctx: MoMParser.Read_funcContext):
         self.pending_operators.append(Operator.READ)
 
-    # Exit a parse tree produced by MoMParser#read_func.
+    # noinspection PyPep8Naming
     def exitRead_func(self, ctx: MoMParser.Read_funcContext):
         op = self.pending_operators.pop()
         var = ctx.VARID().getText()
@@ -1187,10 +1277,8 @@ class MoMListener(ParseTreeListener):
 
         # Look in local variables, if not, look in global variables
         if var in m.variables:
-            t = m.variables[var]["type"]
             address = m.variables[var]["address"]
         elif var in c.variables:
-            t = c.variables[var]["type"]
             address = c.variables[var]["address"]
         else:
             raise NameError("Variable ' " + var + " is undefined.")

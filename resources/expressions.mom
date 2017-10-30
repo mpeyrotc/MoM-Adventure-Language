@@ -1,13 +1,13 @@
 class Expressions is_a Component {
     field<Int[2]> arr;
 
-    Expression() {
+    Expressions() {
     };
 
     Nothing exp1() {
         Int b = 2;
         Int c = 3;
-        Real a = b + c;
+        Int a = b + c;
     };
 
     Nothing exp2() {
@@ -18,30 +18,7 @@ class Expressions is_a Component {
 
     Nothing exp3() {
         Real a = 3.14;
-        Int b = arr[0];
-        b = 2;
-        Real result = arr[0] * b;
-    };
-
-    Nothing exp4() {
-        Real a = 3.14;
-        Int b = 3;
-        Real result = a / b;
-        Write(result);
-    };
-
-    Nothing exp5() {
-        Real a = 3.14;
-        Int b = 3;
-        Int c = 5;
-        Int d = 2;
-        Real e = 0.5;
-        Int f = 1;
-        Real g = 9.9;
-        Real h = 2.0;
-        Int i = 7;
-        Real j = 2;
-
-        Real result = a + (b + c / d * e - f * g) / h + i - j;
+        Int b = 2;
+        Real result = a * b;
     };
 };

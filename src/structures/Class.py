@@ -40,6 +40,7 @@ class Class:
         self.cur_const_boolean = self.CONST_BOOLEAN_TOP
         self.cur_const_text = self.CONST_TEXT_TOP
         self.cur_global_object = self.GLOBAL_OBJECT_TOP
+        self.nothing_address = 99_999
 
     def add_method(self, method: Method):
         self._methods[method.name] = method

@@ -4,8 +4,9 @@ The semantic_table is a 3 dimensional matrix which states what is the expected t
 operation between two parameters and an operator. If the operation is not supported, 'Other' is the
 default value used. Any operand that is 'other' will result in an invalid operation.
 """
-from enum import IntEnum, unique, auto
+from enum import IntEnum, unique
 import numpy as np
+import src.MasterTables as master_tables
 
 
 @unique
@@ -142,9 +143,10 @@ def get_type(name: str) -> Type:
         return Type.NOTHING
     if name == 'Real':
         return Type.REAL
-
-    print(name + " type is not a simple type.")
-    return Type.OTHER
+    if name in master_tables.classes or name in master_tables.specifications:
+        return Type.CLASS
+    else:
+        return Type.OTHER
 
 
 def get_name(t: Type) -> str:

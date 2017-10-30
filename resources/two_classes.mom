@@ -1,30 +1,20 @@
 class Card is_a Component {
-    field<Type> cardType;
-    field<Face> front;
-    field<Face> back;
-
     Card(Int physicalLife, Int mentalLife) {
-        physicalLife = physicalLife;
+    };
+
+    Int cardCost() {
+        Int a = 2 * 3;
+        return a;
     };
 };
 
-class Character is_a Card {
-    field<Card> items;
-    field<Int> item;
-    field<Card> physicalLife;
+class Character is_a Component {
+    field<Card> c;
 
-    Character(Int[] physicalLife, Real[] mentalLife) {
-        physicalLife = physicalLife;
+    Character() {
     };
 
-    Nothing addCommonCard(Card card, Int numberOfItems) {
-        if(numberOfItems <  -1) {
-            physicalLife = card;
-        };
-    };
-
-    Text name() {
-        Text greeting = "Hello!";
-        return greeting + "Father Mateo";
+    Nothing func1() {
+        Int res = c.cardCost() + 3;
     };
 };
