@@ -15,8 +15,8 @@ class ComplexNumber is_a Component {
 class Expressions is_a Component {
     field<Int> integer;
 
-    Expressions(Int int) {
-        this.integer = int;
+    Expressions() {
+        this.integer = 2;
     };
 
     Nothing exp1() {
@@ -24,7 +24,7 @@ class Expressions is_a Component {
         Int c = 3;
         Int a = b + c;
         ComplexNumber num = new ComplexNumber();
-        Expressions e = new Expressions(2);
+        Expressions e = new Expressions();
         num.real();
     };
 };

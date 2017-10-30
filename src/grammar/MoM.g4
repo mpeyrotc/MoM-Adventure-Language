@@ -39,7 +39,7 @@ construct_call 	:	NEW CLASSID OPEN_PAREN (arguments)? CLOSE_PAREN
                 ;
 exit_con_def    :   // nothing
                 ;
-construct_def	:	CLASSID OPEN_PAREN (function_args)? CLOSE_PAREN OPEN_BRACKET block* CLOSE_BRACKET
+construct_def	:	CLASSID OPEN_PAREN CLOSE_PAREN OPEN_BRACKET block* CLOSE_BRACKET
                             exit_con_def SEMI_COLON
                 ;
 enum			:	CAPITALID (COMMA CAPITALID)* SEMI_COLON

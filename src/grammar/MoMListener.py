@@ -865,12 +865,7 @@ class MoMListener(ParseTreeListener):
             method_name = ctx.VARID()[0].getText()
 
             if method_name not in class_instance.methods:
-                if "parent" == method_name:
-                    method_name = class_instance.parent
-                    self.class_reference = method_name
-                    self.current_method_instance = master_tables.classes[method_name].methods[method_name]
-                else:
-                    raise NameError("Method name `" + method_name + "` not defined for class: " + self.current_class)
+                raise NameError("Method name `" + method_name + "` not defined for class: " + self.current_class)
             else:
                 self.current_method_instance = class_instance.methods[method_name]
 

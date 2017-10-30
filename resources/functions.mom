@@ -1,7 +1,7 @@
 class Expressions is_a Component {
     field<Int[2]> arr;
 
-    Expressions(Int a) {
+    Expressions() {
     };
 
     Int func1() {

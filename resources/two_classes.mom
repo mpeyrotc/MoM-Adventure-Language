@@ -1,5 +1,5 @@
 class Card is_a Component {
-    Card(Int physicalLife, Int mentalLife) {
+    Card() {
     };
 
     Int cardCost() {
