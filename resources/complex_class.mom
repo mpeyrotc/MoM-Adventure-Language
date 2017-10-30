@@ -2,26 +2,38 @@ specification Player {
     Int a();
 };
 
+class Card is_a Component {
+    Card() {
+    };
+};
+
+class Face is_a Component {
+    Face() {
+    };
+};
+
 class Character is_a Component of_type Player {
     field<Card> card;
-    field<Int[100]> ints;
+    field<Int> ints;
     field<Int> physicalLife;
     field<Int> numberOfItems;
 
-    Character(Int physicalLife, Int mentalLife) {
+    Character() {
         Write("hey");
         Write(1 + 2);
-        physicalLife = ints[0] + ints[99];
+        physicalLife = 0 + 99;
         Read(physicalLife);
         Write(physicalLife);
-        ints[3] = 4;
-        ints[4] = physicalLife;
+        ints = 4;
+        ints = physicalLife;
         this.physicalLife = physicalLife;
-        this.mentalLife = 2;
+    };
+
+    Int a() {
     };
 
     Int setCommonCard(Card card) {
-        Face i = 2;
+        Face i = new Face();
 
         if(TRUE || FALSE) {
             physicalLife = 100;
@@ -30,10 +42,7 @@ class Character is_a Component of_type Player {
         return 3;
     };
 
-    Int a() {
-    };
-
-    Boolean addCommonCard(Card[] cards, Int[] ints) {
+    Boolean addCommonCard(Real cards, Int ints) {
         if(numberOfItems <  -1) {
             physicalLife = physicalLife;
         } else {

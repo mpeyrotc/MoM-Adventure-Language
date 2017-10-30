@@ -1,6 +1,5 @@
 class Character is_a Component {
     Character() {
-        parent();
     };
 };
 

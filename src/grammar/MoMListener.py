@@ -183,6 +183,12 @@ class MoMListener(ParseTreeListener):
         quad = self.quads[end]
         quad.result = next_quad
 
+    def create_method_field(self, field_name: str, return_type: Type):
+        c = master_tables.classes[self.current_class]
+        address = self.get_global_address_by_type(c, return_type)
+        c.add_argument(field_name, return_type, False, address, 1)
+        self.increment_global_address_by_type(c, return_type, 1)
+
     # noinspection PyPep8Naming,PyUnusedLocal
     def enterProgram(self, ctx: MoMParser.ProgramContext) -> None:
         # Register in tables the Component class, which is the base class of the language
@@ -605,12 +611,20 @@ class MoMListener(ParseTreeListener):
         new_method = Method(method_name, Type.CLASS)
         new_method.start = len(self.quads)
 
-        if method_name in master_tables.classes[self.current_class].methods:
+        c = master_tables.classes[self.current_class]
+        if method_name in c.methods:
             raise NameError("Method '" + method_name + "' redefined in class '"
                             + self.current_class + "', this is not supported at language level.")
 
-        master_tables.classes[self.current_class].add_method(new_method)
+        c.add_method(new_method)
         self.create_method_field(new_method.name, new_method.return_type)
+
+        # Implicit calls to ancestor constructors
+        while not c.name == "Component":
+            p = master_tables.classes[c.parent]
+            quad = Quadrupole(Operation.GO_SUB, self.current_class, c.parent, p.methods[p.name].start)
+            self.quads.append(quad)
+            c = p
 
     # noinspection PyPep8Naming
     def exitConstruct_def(self, ctx: MoMParser.Construct_defContext):
@@ -980,12 +994,6 @@ class MoMListener(ParseTreeListener):
     # noinspection PyPep8Naming
     def exitOperand(self, ctx: MoMParser.OperandContext):
         pass
-
-    def create_method_field(self, field_name: str, return_type: Type):
-        c = master_tables.classes[self.current_class]
-        address = self.get_global_address_by_type(c, return_type)
-        c.add_argument(field_name, return_type, False, address, 1)
-        self.increment_global_address_by_type(c, return_type, 1)
 
     # noinspection PyPep8Naming
     def enterField(self, ctx: MoMParser.FieldContext) -> None:

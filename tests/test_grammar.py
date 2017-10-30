@@ -263,3 +263,12 @@ class TestGrammar(object):
 
     def test_9(self):
         assert general_function("resources/returns.mom")
+
+    def test_10(self):
+        assert general_function("resources/implicit_constructors.mom")
+
+    def test_11(self):
+        assert general_function("resources/single_class.mom")
+
+    def test_12(self):
+        assert general_function("resources/complex_class.mom")
