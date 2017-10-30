@@ -68,7 +68,7 @@ class Class:
         :return: None.
         """
         if arg_name in self._variables:
-            raise NameError("Variable name in class already defined within scope.")
+            raise NameError("Variable with name `" + arg_name + "` in class already defined within scope.")
 
         self._variables[arg_name] = {'name': arg_name,
                                      'type': arg_type,

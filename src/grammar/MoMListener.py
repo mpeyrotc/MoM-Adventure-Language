@@ -386,15 +386,16 @@ class MoMListener(ParseTreeListener):
         methods = master_tables.classes[ancestor].methods
         variables = master_tables.classes[ancestor].variables
 
+        for var_n in variables:
+            v = variables[var_n]
+            if var_n not in methods:
+                master_tables.classes[class_name].add_argument(v["name"], v["type"], v["is_array"],
+                                                               v["address"], v["mem_size"], v["class_type"])
+
         for method_n in methods:
             method = methods[method_n]
             master_tables.classes[class_name].add_method(method)
             self.create_method_field(method.name, method.return_type)
-
-        for var_n in variables:
-            v = variables[var_n]
-            master_tables.classes[class_name].add_argument(v["name"], v["type"], v["is_array"],
-                                                           v["address"], v["mem_size"], v["class_type"])
 
     # noinspection PyPep8Naming,PyUnusedLocal
     def exitClass_rule(self, ctx: MoMParser.Class_ruleContext) -> None:
@@ -522,7 +523,11 @@ class MoMListener(ParseTreeListener):
             else:
                 raise NameError("Variable ' " + var + " is undefined.")
 
-            self.pending_types.append(t)
+            if type(t) == str:
+                self.pending_types.append(get_type(t))
+            else:
+                self.pending_types.append(t)
+
         elif ctx.array_var() is not None:
             # See array_var listener
             pass
@@ -704,6 +709,7 @@ class MoMListener(ParseTreeListener):
                 left_operand = self.pending_operands.pop()
                 left_type = self.pending_types.pop()
                 operator = self.pending_operators.pop()
+                print(left_type, right_type, operator)
                 result_type = semantic_table[left_type][right_type][operator]
 
                 if result_type == Type.OTHER:
@@ -738,6 +744,7 @@ class MoMListener(ParseTreeListener):
                 left_operand = self.pending_operands.pop()
                 left_type = self.pending_types.pop()
                 operator = self.pending_operators.pop()
+                print(left_type, right_type, operator)
                 result_type = Type(semantic_table[int(left_type)][int(right_type)][int(operator)])
                 if result_type == Type.OTHER:
                     raise TypeError("Type mismatch for expression.")
@@ -863,11 +870,13 @@ class MoMListener(ParseTreeListener):
                 if "parent" == method_name:
                     method_name = class_instance.parent
                     self.class_reference = method_name
+                    self.current_method_instance = master_tables.classes[method_name].methods[method_name]
                 else:
                     raise NameError("Method name `" + method_name + "` not defined for class: " + self.current_class)
+            else:
+                self.current_method_instance = class_instance.methods[method_name]
 
             self.current_counter = 0
-            self.current_method_instance = class_instance.methods[method_name]
         else:  # it is a method from another class instance
             self.current_counter = 0
 

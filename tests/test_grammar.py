@@ -235,9 +235,6 @@ class TestGrammar(object):
     # def test_complex_class(self):
     #     assert general_function("resources/complex_class.mom")
     #
-    # def test_types(self):
-    #     assert general_function("resources/type_test.mom")
-    #
     # def test_expressions(self):
     #     assert general_function("resources/expressions.mom"), "Parsing errors"
     def test_1(self):
@@ -251,3 +248,15 @@ class TestGrammar(object):
 
     def test_4(self):
         assert general_function("resources/constructors.mom")
+
+    def test_5(self):
+        assert general_function("resources/conditions.mom")
+
+    def test_6(self):
+        assert general_function("resources/enumeration.mom")
+
+    def test_7(self):
+        assert general_function("resources/specification.mom")
+
+    def test_8(self):
+        assert general_function("resources/specifications_in_class.mom")
