@@ -186,7 +186,7 @@ class MoMListener(ParseTreeListener):
     def create_method_field(self, field_name: str, return_type: Type):
         c = master_tables.classes[self.current_class]
         address = self.get_global_address_by_type(c, return_type)
-        c.add_argument(field_name, return_type, False, address, 1)
+        c.add_argument(field_name, return_type, False, address, 1, [])
         self.increment_global_address_by_type(c, return_type, 1)
 
     # noinspection PyPep8Naming,PyUnusedLocal
@@ -396,7 +396,7 @@ class MoMListener(ParseTreeListener):
             v = variables[var_n]
             if var_n not in methods:
                 master_tables.classes[class_name].add_argument(v["name"], v["type"], v["is_array"],
-                                                               v["address"], v["mem_size"], v["class_type"])
+                                                               v["address"], v["mem_size"], v["dim"], v["class_type"])
 
         for method_n in methods:
             method = methods[method_n]
@@ -861,9 +861,9 @@ class MoMListener(ParseTreeListener):
                 t = get_type(var.var_type)
 
                 if t == Type.CLASS:
-                    m.add_argument(name, t, var.is_array, address, var.mem_size, var.var_type)
+                    m.add_argument(name, t, var.is_array, address, var.mem_size, [], var.var_type)
                 else:
-                    m.add_argument(name, t, var.is_array, address, var.mem_size)
+                    m.add_argument(name, t, var.is_array, address, var.mem_size, [])
 
                 m.add_argument_type(get_type(var.var_type), var.is_array)
                 self.increment_address_by_type(m, get_type(var.var_type), var.mem_size)
@@ -1009,11 +1009,11 @@ class MoMListener(ParseTreeListener):
             if self.current_structure == StructureType.CLASS:
                 c = master_tables.classes[self.current_class]
                 address = self.get_global_address_by_type(c, get_type(var.var_type))
-                c.add_argument(name, var.var_type, var.is_array, address, var.mem_size)
+                c.add_argument(name, var.var_type, var.is_array, address, var.mem_size, var.dim)
                 self.increment_global_address_by_type(c, get_type(var.var_type), var.mem_size)
             elif self.current_structure == StructureType.SPECIFICATION:
                 master_tables.specifications[self.current_specification].methods[
-                    self.current_method].add_argument(name, var.var_type, var.is_array, -2, var.mem_size)
+                    self.current_method].add_argument(name, var.var_type, var.is_array, -2, var.mem_size, var.dim)
 
     # noinspection PyPep8Naming
     def enterSpec_function(self, ctx: MoMParser.Spec_functionContext) -> None:
@@ -1071,9 +1071,9 @@ class MoMListener(ParseTreeListener):
                 address = self.get_address_by_type(m, get_type(var.var_type))
                 t = get_type(var.var_type)
                 if t == Type.CLASS:
-                    m.add_argument(name, t, var.is_array, address, var.mem_size, var.var_type)
+                    m.add_argument(name, t, var.is_array, address, var.mem_size, [], var.var_type)
                 else:
-                    m.add_argument(name, t, var.is_array, address, var.mem_size)
+                    m.add_argument(name, t, var.is_array, address, var.mem_size, [])
 
                 self.increment_address_by_type(m, get_type(var.var_type), var.mem_size)
                 destination = m.variables[name]["address"]
@@ -1173,6 +1173,7 @@ class MoMListener(ParseTreeListener):
         if self.in_signature:
             self.arguments.append(Variable())
             self.arguments[-1].var_type = ctx.getText()
+            self.arguments[-1].dim = []
 
     # noinspection PyPep8Naming
     def exitSuper_type(self, ctx: MoMParser.Super_typeContext):
@@ -1217,23 +1218,79 @@ class MoMListener(ParseTreeListener):
     def exitWhile_loop(self, ctx: MoMParser.While_loopContext):
         pass
 
+    # Enter a parse tree produced by MoMParser#vdim.
+    def enterVdim(self, ctx: MoMParser.VdimContext):
+        self.in_signature = True
+        self.arguments = []
+        self.argument_names = []
+        var_name = ctx.VARID()
+        self.argument_names.append(var_name.getText())
+
+    def exitVdim(self, ctx: MoMParser.VdimContext):
+        if self.in_signature:
+            self.arguments[-1].is_array = True
+        self.in_signature = False
+
+        text = ctx.getText()
+        dim = []
+        r = 1
+        pos_open = text.find("[")
+        while pos_open != -1:
+            pos_close = text.find("]", pos_open + 1)
+            size = int(text[pos_open + 1:pos_close].strip())
+            dim.append(size)
+            r = r * size
+            pos_open = text.find("[", pos_open + 1)
+
+        dim_real = []
+        self.arguments[-1].mem_size = r
+        for d in dim:
+            dim_real.append((d, r / d))
+            r = r / d
+        self.arguments[-1].dim = dim_real
+
+        for name, var in zip(self.argument_names, self.arguments):
+            if self.current_structure == StructureType.CLASS:
+                m = master_tables.classes[self.current_class].methods[self.current_method]
+                address = self.get_address_by_type(m, get_type(var.var_type))
+                t = get_type(var.var_type)
+
+                if t == Type.CLASS:
+                    m.add_argument(name, t, var.is_array, address, var.mem_size, var.dim, var.var_type)
+                else:
+                    m.add_argument(name, t, var.is_array, address, var.mem_size, var.dim)
+                m.add_argument_type(get_type(var.var_type), var.is_array)
+                self.increment_address_by_type(m, get_type(var.var_type), var.mem_size)
+            elif self.current_structure == StructureType.SPECIFICATION:
+                master_tables.specifications[self.current_specification].methods[
+                    self.current_method].add_argument(name, get_type(var.var_type), var.is_array, -2, var.mem_size)
+
     # noinspection PyPep8Naming
     def enterArray_def(self, ctx: MoMParser.Array_defContext) -> None:
-        texto = ctx.getText()
-        abre = texto.find("[")
-        cierra = texto.find("]")
-        cuantos = int(texto[abre + 1:cierra].strip())
-        tipo = texto[:abre].strip()
-        if self.in_signature:
-            self.arguments.append(Variable())
-            self.arguments[-1].var_type = tipo
-            self.arguments[-1].mem_size = cuantos
-            self.arguments[-1].is_array = True
+        self.in_signature = True
 
     # noinspection PyPep8Naming,PyUnusedLocal
     def exitArray_def(self, ctx: MoMParser.Array_defContext) -> None:
         if self.in_signature:
             self.arguments[-1].is_array = True
+        self.in_signature = False
+        text = ctx.getText()
+        dim = []
+        r = 1
+        pos_open = text.find("[")
+        while pos_open != -1:
+            pos_close = text.find("]", pos_open + 1)
+            size = int(text[pos_open + 1:pos_close].strip())
+            dim.append(size)
+            r = r * size
+            pos_open = text.find("[", pos_open + 1)
+
+        dim_real = []
+        self.arguments[-1].mem_size = r
+        for d in dim:
+            dim_real.append((d, r / d))
+            r = r / d
+        self.arguments[-1].dim = dim_real
 
     # noinspection PyPep8Naming
     def enterArray_var(self, ctx: MoMParser.Array_varContext) -> None:

@@ -102,6 +102,7 @@ statute			:	function_call
                 |   while_loop
                 |   condition
                 |   write_func
+                |   vdim
                 |   read_func
                 |   RETURN ss_exp
                 |   RETURN
@@ -134,11 +135,13 @@ after_while     :   // nothing.
                 ;
 while_loop		:	WHILE after_while OPEN_PAREN ss_exp CLOSE_PAREN exit_if_check OPEN_BRACKET block* CLOSE_BRACKET end_while
                 ;
-array_def       :   super_type OPEN_SBRACKET INTEGER CLOSE_SBRACKET
+array_def       :   super_type OPEN_SBRACKET INTEGER CLOSE_SBRACKET (OPEN_SBRACKET INTEGER CLOSE_SBRACKET)*
                 ;
-array_var       :   ((THIS | CLASSID) PERIOD)? VARID OPEN_SBRACKET INTEGER CLOSE_SBRACKET
+vdim            :   super_type OPEN_SBRACKET INTEGER CLOSE_SBRACKET (OPEN_SBRACKET INTEGER CLOSE_SBRACKET)* VARID
                 ;
-array_arg       :   super_type OPEN_SBRACKET CLOSE_SBRACKET
+array_var       :   ((THIS | CLASSID) PERIOD)? VARID OPEN_SBRACKET expression CLOSE_SBRACKET (OPEN_SBRACKET expression CLOSE_SBRACKET)*
+                ;
+array_arg       :   super_type (OPEN_SBRACKET CLOSE_SBRACKET)+
                 ;
 write_func      :   PRINT OPEN_PAREN (s_exp) CLOSE_PAREN
                 ;

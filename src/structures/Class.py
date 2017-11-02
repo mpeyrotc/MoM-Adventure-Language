@@ -55,9 +55,10 @@ class Class:
         self.cur_const_boolean = self.CONST_BOOLEAN_TOP
         self.cur_const_text = self.CONST_TEXT_TOP
 
-    def add_argument(self, arg_name: str, arg_type, is_array: bool, address: int, mem_size: int, c_type="") -> None:
+    def add_argument(self, arg_name: str, arg_type, is_array: bool, address: int, mem_size: int, dim: [], c_type="") -> None:
         """Add argument to variable dictionary along with its type.
 
+        :param dim: Stores dims for array
         :param c_type: if the argument is of type CLASS, this field holds the name of the class or specification.
         :param address: the virtual address for this argument, according to its type, in the VM.
         :param is_array: a boolean argument that specifies if the argument is an array.
@@ -75,6 +76,7 @@ class Class:
                                      'is_array': is_array,
                                      'address': address,
                                      'mem_size': mem_size,
+                                     'dim': dim,
                                      'class_type': c_type}
 
     @property

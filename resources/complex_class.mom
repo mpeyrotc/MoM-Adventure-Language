@@ -16,9 +16,14 @@ class Character is_a Component of_type Player {
     field<Card> card;
     field<Int> ints;
     field<Int> physicalLife;
+    field<Int[30]> arrNums;
     field<Int> numberOfItems;
 
+
     Character() {
+
+        Text[4][5][4] arr;
+        Text[20] arr2;
         Write("hey");
         Write(1 + 2);
         physicalLife = 0 + 99;

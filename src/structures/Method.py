@@ -51,9 +51,10 @@ class Method:
         self.cur_temp_boolean = self.TEMP_BOOLEAN_TOP
         self.cur_temp_text = self.TEMP_TEXT_TOP
 
-    def add_argument(self, arg_name: str, arg_type, is_array: bool, address: int, mem_size: int, p_type="") -> None:
+    def add_argument(self, arg_name: str, arg_type, is_array: bool, address: int, mem_size: int, dim: [], p_type="") -> None:
         """Add argument to variable dictionary along with its type.
 
+        :param dim: Structure representing dimension
         :param p_type: if the argument is of type CLASS, this field holds the name of the class or specification.
         :param address: the virtual address for this argument, according to its type, in the VM.
         :param is_array: a boolean argument that specifies if the argument is an array.
@@ -70,6 +71,7 @@ class Method:
                                      'is_array': is_array,
                                      'address': address,
                                      'mem_size': mem_size,
+                                     'dim': dim,
                                      'p_type': p_type}
 
     def add_argument_type(self, arg_type, is_array: bool):
