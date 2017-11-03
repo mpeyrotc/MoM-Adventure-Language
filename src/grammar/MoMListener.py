@@ -1009,7 +1009,11 @@ class MoMListener(ParseTreeListener):
             if self.current_structure == StructureType.CLASS:
                 c = master_tables.classes[self.current_class]
                 address = self.get_global_address_by_type(c, get_type(var.var_type))
-                c.add_argument(name, var.var_type, var.is_array, address, var.mem_size, var.dim)
+                t = get_type(var.var_type)
+                if t == Type.CLASS:
+                    c.add_argument(name, t, var.is_array, address, var.mem_size, var.dim, var.var_type)
+                else:
+                    c.add_argument(name, t, var.is_array, address, var.mem_size, var.dim)
                 self.increment_global_address_by_type(c, get_type(var.var_type), var.mem_size)
             elif self.current_structure == StructureType.SPECIFICATION:
                 master_tables.specifications[self.current_specification].methods[
@@ -1353,24 +1357,69 @@ class MoMListener(ParseTreeListener):
         quad = Quadrupole(op, None, None, result)
         self.quads.append(quad)
 
-    # noinspection PyPep8Naming,PyUnusedLocal
-    def enterRead_func(self, ctx: MoMParser.Read_funcContext):
-        self.pending_operators.append(Operator.READ)
-
-    # noinspection PyPep8Naming
-    def exitRead_func(self, ctx: MoMParser.Read_funcContext):
+    # function to generalize checking valid read for any type
+    def checkRead(self, var: str, check_type: Type):
         op = self.pending_operators.pop()
-        var = ctx.VARID().getText()
         c = master_tables.classes[self.current_class]
         m = c.methods[self.current_method]
 
         # Look in local variables, if not, look in global variables
+        # verifies that variable is of that type
         if var in m.variables:
+            type_var = m.variables[var]["type"]
             address = m.variables[var]["address"]
+            is_array = m.variables[var]["is_array"]
         elif var in c.variables:
+            type_var = c.variables[var]["type"]
             address = c.variables[var]["address"]
+            is_array = c.variables[var]["is_array"]
         else:
             raise NameError("Variable ' " + var + " is undefined.")
 
-        quad = Quadrupole(op, None, None, address)
-        self.quads.append(quad)
+        # if type matches and is not an array, print it
+        print(type_var)
+        if (type_var == check_type) & (not is_array):
+            quad = Quadrupole(op, None, None, address)
+            self.quads.append(quad)
+        else:
+            raise NameError("Type mismatch. " + var + " is not a " + check_type)
+
+    # Enter a parse tree produced by MoMParser#read_int_func.
+    def enterRead_int_func(self, ctx:MoMParser.Read_int_funcContext):
+        self.pending_operators.append(Operator.READ_INT)
+
+    # Exit a parse tree produced by MoMParser#read_int_func.
+    def exitRead_int_func(self, ctx:MoMParser.Read_int_funcContext):
+        var = ctx.VARID().getText()
+        self.checkRead(var, Type.INT)
+
+    # Enter a parse tree produced by MoMParser#read_real_func.
+    def enterRead_real_func(self, ctx:MoMParser.Read_real_funcContext):
+        self.pending_operators.append(Operator.READ_REAL)
+
+    # Exit a parse tree produced by MoMParser#read_real_func.
+    def exitRead_real_func(self, ctx:MoMParser.Read_real_funcContext):
+        var = ctx.VARID().getText()
+        self.checkRead(var, Type.REAL)
+
+
+    # Enter a parse tree produced by MoMParser#read_text_func.
+    def enterRead_text_func(self, ctx:MoMParser.Read_text_funcContext):
+        self.pending_operators.append(Operator.READ_TEXT)
+
+    # Exit a parse tree produced by MoMParser#read_text_func.
+    def exitRead_text_func(self, ctx:MoMParser.Read_text_funcContext):
+        var = ctx.VARID().getText()
+        self.checkRead(var, Type.TEXT)
+
+
+    # Enter a parse tree produced by MoMParser#read_bool_func.
+    def enterRead_bool_func(self, ctx:MoMParser.Read_bool_funcContext):
+        self.pending_operators.append(Operator.READ_BOOL)
+
+    # Exit a parse tree produced by MoMParser#read_bool_func.
+    def exitRead_bool_func(self, ctx:MoMParser.Read_bool_funcContext):
+        var = ctx.VARID().getText()
+        self.checkRead(var, Type.BOOLEAN)
+
+

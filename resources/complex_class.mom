@@ -23,11 +23,18 @@ class Character is_a Component of_type Player {
     Character() {
 
         Text[4][5][4] arr;
+        Int a = 2;
         Text[20] arr2;
+        Real x = 3.4;
+        Text y = "hola";
+        Boolean z = TRUE;
         Write("hey");
         Write(1 + 2);
         physicalLife = 0 + 99;
-        Read(physicalLife);
+        ReadInt(a);
+        ReadReal(x);
+        ReadText(y);
+        ReadBoolean(z);
         Write(physicalLife);
         ints = 4;
         ints = physicalLife;

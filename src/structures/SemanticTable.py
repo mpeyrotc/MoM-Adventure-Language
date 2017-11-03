@@ -50,8 +50,11 @@ class Operator(IntEnum):
     OPEN_PAREN = 13
     CLOSE_PAREN = 14
     EQUAL = 15
-    WRITE = 19
-    READ = 20
+    WRITE = 27
+    READ_INT = 28
+    READ_REAL = 29
+    READ_TEXT = 30
+    READ_BOOL = 31
 
 
 class Operation(IntEnum):

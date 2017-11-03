@@ -103,7 +103,10 @@ statute			:	function_call
                 |   condition
                 |   write_func
                 |   vdim
-                |   read_func
+                |   read_int_func
+                |   read_real_func
+                |   read_text_func
+                |   read_bool_func
                 |   RETURN ss_exp
                 |   RETURN
                 ;
@@ -145,7 +148,13 @@ array_arg       :   super_type (OPEN_SBRACKET CLOSE_SBRACKET)+
                 ;
 write_func      :   PRINT OPEN_PAREN (s_exp) CLOSE_PAREN
                 ;
-read_func       :   READ OPEN_PAREN VARID CLOSE_PAREN
+read_int_func   :   READ_INT OPEN_PAREN VARID CLOSE_PAREN
+                ;
+read_real_func  :   READ_REAL OPEN_PAREN VARID CLOSE_PAREN
+                ;
+read_text_func  :   READ_TEXT OPEN_PAREN VARID CLOSE_PAREN
+                ;
+read_bool_func  :   READ_BOOL OPEN_PAREN VARID CLOSE_PAREN
                 ;
 OPEN_PAREN		:	'(' ;
 COMMA			:	',' ;
@@ -182,7 +191,10 @@ MAP				:	'Map' ;
 SIZE			:	'Size' ;
 NOTHING 		:	'Nothing' ;
 PRINT           :   'Write' ;
-READ            :   'Read' ;
+READ_INT        :   'ReadInt' ;
+READ_REAL       :   'ReadReal' ;
+READ_TEXT       :   'ReadText' ;
+READ_BOOL       :   'ReadBoolean' ;
 CLASS 			:	'class' ;
 NEW				:	'new' ;
 ENUMERATE		:	'enumerate' ;
