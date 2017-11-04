@@ -168,6 +168,8 @@ class MoMListener(ParseTreeListener):
         else:
             raise TypeError("Temporal increment for OTHER, CLASS or <INVALID> not supported (7): " + str(t))
 
+        m.temp_count += 1
+
     @staticmethod
     def increment_const_address_by_type(c: Class, t: Type):
         if t == Type.INT:

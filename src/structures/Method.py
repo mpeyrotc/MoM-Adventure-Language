@@ -40,6 +40,7 @@ class Method:
         self._variables = {}
         self._argument_types = []
         self._start_quad = -1
+        self.temp_count = 0
 
         self.cur_local_int = self.LOCAL_INT_TOP
         self.cur_local_real = self.LOCAL_REAL_TOP
@@ -118,6 +119,10 @@ class Method:
     @start.setter
     def start(self, start):
         self._start_quad = start
+
+    @property
+    def size(self):
+        return self.temp_count + self.num_local_vars + self.num_of_params
 
 
 __author__ = "Marco A. Peyrot (mpeyrotc)"

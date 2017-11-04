@@ -55,7 +55,7 @@ class Class:
         self.cur_const_boolean = self.CONST_BOOLEAN_TOP
         self.cur_const_text = self.CONST_TEXT_TOP
 
-    def add_argument(self, arg_name: str, arg_type, is_array: bool, address: int, mem_size: int, dim: [], c_type="") -> None:
+    def add_argument(self, arg_name: str, arg_type, is_array: bool, address: int, mem_size: int, dim=[], c_type="") -> None:
         """Add argument to variable dictionary along with its type.
 
         :param dim: Stores dims for array
@@ -98,3 +98,7 @@ class Class:
     @property
     def variables(self):
         return self._variables
+
+    @property
+    def size(self):
+        return self.variables
