@@ -33,6 +33,17 @@ class Variable:
         self.is_array = False
 
 
+CONST_INT_TOP = 22_000
+CONST_REAL_TOP = 23_000
+CONST_TEXT_TOP = 24_000
+CONST_BOOLEAN_TOP = 25_000
+
+CONST_INT_BOTTOM = 22_999
+CONST_REAL_BOTTOM = 23_999
+CONST_TEXT_BOTTOM = 24_999
+CONST_BOOLEAN_BOTTOM = 25_100
+
+
 class MoMListener(ParseTreeListener):
     current_enumeration = ""
     current_type = ""
@@ -47,6 +58,10 @@ class MoMListener(ParseTreeListener):
     argument_names = []
     in_signature = False
     main_found = False
+    cur_const_int = CONST_INT_TOP
+    cur_const_real = CONST_REAL_TOP
+    cur_const_boolean = CONST_BOOLEAN_TOP
+    cur_const_text = CONST_TEXT_TOP
 
     current_structure = StructureType.CLASS
 
@@ -110,16 +125,15 @@ class MoMListener(ParseTreeListener):
         else:
             raise TypeError("Temporal variable assignment not supported for <INVALID> (3): " + str(t))
 
-    @staticmethod
-    def get_const_address_by_type(c: Class, t: Type):
+    def get_const_address_by_type(self, t: Type):
         if t == Type.INT:
-            return c.cur_const_int
+            return self.cur_const_int
         elif t == Type.REAL:
-            return c.cur_const_real
+            return self.cur_const_real
         elif t == Type.TEXT:
-            return c.cur_const_text
+            return self.cur_const_text
         elif t == Type.BOOLEAN:
-            return c.cur_const_boolean
+            return self.cur_const_boolean
         else:
             raise TypeError("Constant assignment not supported for <INVALID> (4): " + str(t))
 
@@ -170,16 +184,15 @@ class MoMListener(ParseTreeListener):
 
         m.temp_count += 1
 
-    @staticmethod
-    def increment_const_address_by_type(c: Class, t: Type):
+    def increment_const_address_by_type(self, t: Type):
         if t == Type.INT:
-            c.cur_const_int += 1
+            self.cur_const_int += 1
         elif t == Type.REAL:
-            c.cur_const_real += 1
+            self.cur_const_real += 1
         elif t == Type.TEXT:
-            c.cur_const_text += 1
+            self.cur_const_text += 1
         elif t == Type.BOOLEAN:
-            c.cur_const_boolean += 1
+            self.cur_const_boolean += 1
         else:
             raise TypeError("Local increment for OTHER or <INVALID> not supported (8): " + str(t))
 
@@ -187,6 +200,7 @@ class MoMListener(ParseTreeListener):
         quad = self.quads[end]
         quad.result = next_quad
 
+    @staticmethod
     def debug(self, quad: Quadrupole):
         print(str(quad.operator) + ", " + str(quad.left_operand) + ", " + str(quad.right_operand) + ", " + str(
             quad.result))
@@ -512,31 +526,60 @@ class MoMListener(ParseTreeListener):
 
     # noinspection PyPep8Naming
     def enterConstant(self, ctx: MoMParser.ConstantContext) -> None:
-        c = master_tables.classes[self.current_class]
         if ctx.INTEGER() is not None:
-            address = self.get_const_address_by_type(c, Type.INT)
+            num = int(ctx.getText())
+            if num in master_tables.constants:
+                address = master_tables.constants[num]
+            else:
+                address = self.get_const_address_by_type(Type.INT)
+                self.increment_const_address_by_type(Type.INT)
+                master_tables.constants[num] = address
+
             self.pending_operands.append(address)
-            self.increment_const_address_by_type(c, Type.INT)
             self.pending_types.append(Type.INT)
         elif ctx.REAL() is not None:
-            address = self.get_const_address_by_type(c, Type.REAL)
+            num = float(ctx.getText())
+            if num in master_tables.constants:
+                address = master_tables.constants[num]
+            else:
+                address = self.get_const_address_by_type(Type.REAL)
+                self.increment_const_address_by_type(Type.REAL)
+                master_tables.constants[num] = address
+
             self.pending_operands.append(address)
-            self.increment_const_address_by_type(c, Type.REAL)
             self.pending_types.append(Type.REAL)
         elif ctx.TRUE() is not None:
-            address = self.get_const_address_by_type(c, Type.BOOLEAN)
+            num = True
+            if num in master_tables.constants:
+                address = master_tables.constants[num]
+            else:
+                address = self.get_const_address_by_type(Type.BOOLEAN)
+                self.increment_const_address_by_type(Type.BOOLEAN)
+                master_tables.constants[num] = address
+
             self.pending_operands.append(address)
-            self.increment_const_address_by_type(c, Type.BOOLEAN)
             self.pending_types.append(Type.BOOLEAN)
         elif ctx.FALSE() is not None:
-            address = self.get_const_address_by_type(c, Type.BOOLEAN)
+            num = False
+            if num in master_tables.constants:
+                address = master_tables.constants[num]
+            else:
+                address = self.get_const_address_by_type(Type.BOOLEAN)
+                self.increment_const_address_by_type(Type.BOOLEAN)
+                master_tables.constants[num] = address
+
             self.pending_operands.append(address)
-            self.increment_const_address_by_type(c, Type.BOOLEAN)
             self.pending_types.append(Type.BOOLEAN)
         elif ctx.STRING() is not None:
-            address = self.get_const_address_by_type(c, Type.TEXT)
+            num = ctx.getText()
+            if num in master_tables.constants:
+                address = master_tables.constants[num]
+            else:
+                address = self.get_const_address_by_type(Type.TEXT)
+                self.increment_const_address_by_type(Type.TEXT)
+                master_tables.constants[num] = address
+
             self.pending_operands.append(address)
-            self.increment_const_address_by_type(c, Type.TEXT)
             self.pending_types.append(Type.TEXT)
         elif ctx.VARID() is not None:
             var = ctx.VARID().getText()
@@ -1266,7 +1309,7 @@ class MoMListener(ParseTreeListener):
     def exitWhile_loop(self, ctx: MoMParser.While_loopContext):
         pass
 
-    # Enter a parse tree produced by MoMParser#vdim.
+    # noinspection PyPep8Naming
     def enterVdim(self, ctx: MoMParser.VdimContext):
         self.in_signature = True
         self.arguments = []
@@ -1274,6 +1317,7 @@ class MoMListener(ParseTreeListener):
         var_name = ctx.VARID()
         self.argument_names.append(var_name.getText())
 
+    # noinspection PyPep8Naming
     def exitVdim(self, ctx: MoMParser.VdimContext):
         if self.in_signature:
             self.arguments[-1].is_array = True
@@ -1313,7 +1357,7 @@ class MoMListener(ParseTreeListener):
                 master_tables.specifications[self.current_specification].methods[
                     self.current_method].add_argument(name, get_type(var.var_type), var.is_array, -2, var.mem_size)
 
-    # noinspection PyPep8Naming
+    # noinspection PyPep8Naming, PyUnusedLocal
     def enterArray_def(self, ctx: MoMParser.Array_defContext) -> None:
         self.in_signature = True
 
@@ -1349,12 +1393,8 @@ class MoMListener(ParseTreeListener):
 
         # Look in local variables, if not, look in global variables
         if var in m.variables:
-            destination_base = m.variables[var]["address"]
-            is_array = m.variables[var]["is_array"]
             dim = m.variables[var]["dim"]
         elif var in c.variables:
-            destination_base = c.variables[var]["address"]
-            is_array = c.variables[var]["is_array"]
             dim = c.variables[var]["dim"]
         else:
             # if not present report error.
@@ -1373,7 +1413,7 @@ class MoMListener(ParseTreeListener):
                 stack_brackets.append('[')
             if c == ']':
                 stack_brackets.pop()
-                if (len(stack_brackets) == 0):
+                if len(stack_brackets) == 0:
                     actual_dim = actual_dim + 1
 
         if original_dim != actual_dim:
@@ -1454,53 +1494,53 @@ class MoMListener(ParseTreeListener):
 
             self.quads.append(quad)
         else:
-            raise NameError("Type mismatch. " + var + " is not a " + check_type)
+            raise NameError("Type mismatch. " + var + " is not a " + str(check_type))
 
-    # Enter a parse tree produced by MoMParser#read_int_func.
+    # noinspection PyPep8Naming,PyUnusedLocal
     def enterRead_int_func(self, ctx: MoMParser.Read_int_funcContext):
         self.pending_operators.append(Operator.READ_INT)
 
-    # Exit a parse tree produced by MoMParser#read_int_func.
+    # noinspection PyPep8Naming
     def exitRead_int_func(self, ctx: MoMParser.Read_int_funcContext):
         var = ctx.VARID().getText()
         self.checkRead(var, Type.INT)
 
-    # Enter a parse tree produced by MoMParser#read_real_func.
+    # noinspection PyPep8Naming,PyUnusedLocal
     def enterRead_real_func(self, ctx: MoMParser.Read_real_funcContext):
         self.pending_operators.append(Operator.READ_REAL)
 
-    # Exit a parse tree produced by MoMParser#read_real_func.
+    # noinspection PyPep8Naming
     def exitRead_real_func(self, ctx: MoMParser.Read_real_funcContext):
         var = ctx.VARID().getText()
         self.checkRead(var, Type.REAL)
 
-    # Enter a parse tree produced by MoMParser#read_text_func.
+    # noinspection PyPep8Naming,PyUnusedLocal
     def enterRead_text_func(self, ctx: MoMParser.Read_text_funcContext):
         self.pending_operators.append(Operator.READ_TEXT)
 
-    # Exit a parse tree produced by MoMParser#read_text_func.
+    # noinspection PyPep8Naming
     def exitRead_text_func(self, ctx: MoMParser.Read_text_funcContext):
         var = ctx.VARID().getText()
         self.checkRead(var, Type.TEXT)
 
-    # Enter a parse tree produced by MoMParser#read_bool_func.
+    # noinspection PyPep8Naming,PyUnusedLocal
     def enterRead_bool_func(self, ctx: MoMParser.Read_bool_funcContext):
         self.pending_operators.append(Operator.READ_BOOL)
 
-    # Exit a parse tree produced by MoMParser#read_bool_func.
+    # noinspection PyPep8Naming
     def exitRead_bool_func(self, ctx: MoMParser.Read_bool_funcContext):
         var = ctx.VARID().getText()
         self.checkRead(var, Type.BOOLEAN)
 
-    # Enter a parse tree produced by MoMParser#open_sbracket.
+    # noinspection PyPep8Naming
     def enterOpen_sbracket(self, ctx: MoMParser.Open_sbracketContext):
         pass
 
-    # Exit a parse tree produced by MoMParser#open_sbracket.
+    # noinspection PyPep8Naming
     def exitOpen_sbracket(self, ctx: MoMParser.Open_sbracketContext):
         pass
 
-    # Enter a parse tree produced by MoMParser#close_sbracket.
+    # noinspection PyPep8Naming,PyUnusedLocal
     def enterClose_sbracket(self, ctx: MoMParser.Close_sbracketContext):
         check = self.pending_operands[-1]
         type = self.pending_types[-1]
@@ -1555,7 +1595,7 @@ class MoMListener(ParseTreeListener):
             self.pending_types.append(Type.INT)
             self.pending_operands.append(t)
 
-    # Exit a parse tree produced by MoMParser#close_sbracket.
+    # noinspection PyPep8Naming,PyUnusedLocal
     def exitClose_sbracket(self, ctx: MoMParser.Close_sbracketContext):
         dim = self.pending_dims.pop()
         self.pending_dims.append((dim[0], dim[1] + 1))

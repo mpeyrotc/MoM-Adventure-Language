@@ -4,6 +4,7 @@ import ErrorListener
 from antlr4 import *
 from grammar import MoMLexer
 from grammar import MoMParser
+import src.MasterTables as master_tables
 
 from src.grammar.MoMListener import MoMListener
 
@@ -22,7 +23,11 @@ if __name__ == "__main__":
         tree = parser.program()
 
         walker = ParseTreeWalker()
-        walker.walk(MoMListener(), tree)
+        listener = MoMListener()
+        walker.walk(listener, tree)
+
+        # start writing .obj file for virtual machine
+        print(master_tables.constants)
     except Exception as e:
         print(e.with_traceback())
         exit(1)

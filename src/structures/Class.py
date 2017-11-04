@@ -6,24 +6,13 @@ class Class:
     GLOBAL_REAL_TOP = 11_000
     GLOBAL_BOOLEAN_TOP = 12_000
     GLOBAL_TEXT_TOP = 13_000
-
     GLOBAL_OBJECT_TOP = 50_000
-    GLOBAL_OBJECT_BOTTOM = 59_999
-
-    CONST_INT_TOP = 22_000
-    CONST_REAL_TOP = 23_000
-    CONST_TEXT_TOP = 24_000
-    CONST_BOOLEAN_TOP = 25_000
 
     GLOBAL_INT_BOTTOM = 10_999
     GLOBAL_REAL_BOTTOM = 11_999
     GLOBAL_BOOLEAN_BOTTOM = 12_999
     GLOBAL_TEXT_BOTTOM = 13_999
-
-    CONST_INT_BOTTOM = 22_999
-    CONST_REAL_BOTTOM = 23_999
-    CONST_TEXT_BOTTOM = 24_999
-    CONST_BOOLEAN_BOTTOM = 25_100
+    GLOBAL_OBJECT_BOTTOM = 59_999
 
     def __init__(self, class_name: str, class_parent: str, class_specifications: set):
         self._class_name = class_name
@@ -35,10 +24,6 @@ class Class:
         self.cur_global_real = self.GLOBAL_REAL_TOP
         self.cur_global_boolean = self.GLOBAL_BOOLEAN_TOP
         self.cur_global_text = self.GLOBAL_TEXT_TOP
-        self.cur_const_int = self.CONST_INT_TOP
-        self.cur_const_real = self.CONST_REAL_TOP
-        self.cur_const_boolean = self.CONST_BOOLEAN_TOP
-        self.cur_const_text = self.CONST_TEXT_TOP
         self.cur_global_object = self.GLOBAL_OBJECT_TOP
         self.nothing_address = 99_999
 
@@ -50,10 +35,6 @@ class Class:
         self.cur_global_real = self.GLOBAL_REAL_TOP
         self.cur_global_boolean = self.GLOBAL_BOOLEAN_TOP
         self.cur_global_text = self.GLOBAL_TEXT_TOP
-        self.cur_const_int = self.CONST_INT_TOP
-        self.cur_const_real = self.CONST_REAL_TOP
-        self.cur_const_boolean = self.CONST_BOOLEAN_TOP
-        self.cur_const_text = self.CONST_TEXT_TOP
 
     def add_argument(self, arg_name: str, arg_type, is_array: bool, address: int, mem_size: int, dim=[], c_type="") -> None:
         """Add argument to variable dictionary along with its type.

@@ -5,3 +5,4 @@ They are identified by name, since they reside in the global scope of the progra
 enumerations = {}
 classes = {}
 specifications = {}
+constants = {}
