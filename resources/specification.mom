@@ -4,3 +4,13 @@ specification ComplexNumber {
     Nothing convert(Int angle);
     Real summary(Component[] c, Real r);
 };
+
+class Class is_a Component {
+    Class() {
+
+    };
+
+    Nothing main() {
+
+    };
+};

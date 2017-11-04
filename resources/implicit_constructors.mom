@@ -8,6 +8,10 @@ class Persona is_a Character {
     Persona() {
         Int a = 2 / 3;
     };
+
+    Nothing main() {
+
+    };
 };
 
 class Bob is_a Persona {

@@ -19,4 +19,8 @@ class Character is_a Component {
             return "MORE THAN THREE";
         };
     };
+
+    Nothing main() {
+
+    };
 };

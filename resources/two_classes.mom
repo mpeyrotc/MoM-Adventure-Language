@@ -6,6 +6,10 @@ class Card is_a Component {
         Int a = 2 * 3;
         return a;
     };
+
+    Nothing main() {
+
+    };
 };
 
 class Character is_a Component {

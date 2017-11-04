@@ -19,6 +19,10 @@ class Expressions is_a Component {
         this.integer = 2;
     };
 
+    Nothing main() {
+
+    };
+
     Nothing exp1() {
         Int b = 2;
         Int c = 3;

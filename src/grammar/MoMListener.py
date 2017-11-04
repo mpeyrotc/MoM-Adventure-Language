@@ -46,6 +46,7 @@ class MoMListener(ParseTreeListener):
     arguments = []
     argument_names = []
     in_signature = False
+    main_found = False
 
     current_structure = StructureType.CLASS
 
@@ -196,6 +197,10 @@ class MoMListener(ParseTreeListener):
 
     # noinspection PyPep8Naming,PyUnusedLocal
     def enterProgram(self, ctx: MoMParser.ProgramContext) -> None:
+        # Create quadrupole that points to main method.
+        quad = Quadrupole(Operation.GO_SUB, None, None, None)
+        self.quads.append(quad)
+
         # Register in tables the Component class, which is the base class of the language
         class_specifications = set()
         class_name = "Component"
@@ -253,8 +258,10 @@ class MoMListener(ParseTreeListener):
     # noinspection PyPep8Naming,PyUnusedLocal
     def exitProgram(self, ctx: MoMParser.ProgramContext) -> None:
         quad = Quadrupole(Operation.END, None, None, None)
-
         self.quads.append(quad)
+
+        if not self.main_found:
+            raise RuntimeError("Main method not found, please define program entry point.")
 
         for index, quad in enumerate(MoMListener.quads):
             print(str(index) + ") " + str(quad.operator) + ", " + str(quad.left_operand) + ", "
@@ -917,7 +924,10 @@ class MoMListener(ParseTreeListener):
 
                 self.current_method_instance = c_ref.methods[func_name]
             elif var_name in class_instance.variables:
-                c_ref = master_tables.classes[class_instance.variables[var_name]["type"]]
+                if not class_instance.variables[var_name]["type"] == Type.CLASS:
+                    raise TypeError("Funcion call not made from class reference.")
+
+                c_ref = master_tables.classes[class_instance.variables[var_name]["class_type"]]
                 if func_name not in c_ref.methods:
                     raise NameError("Method name `" + func_name + "` not defined for class: " + c_ref.name)
 
@@ -977,6 +987,10 @@ class MoMListener(ParseTreeListener):
 
         new_method = Method(method_name, get_type(self.current_type))
         new_method.start = len(self.quads)
+
+        if method_name == "main":
+            self.quads[0] = Quadrupole(Operation.GO_SUB, self.current_class, method_name, new_method.start)
+            self.main_found = True
 
         if method_name in master_tables.classes[self.current_class].methods:
             raise NameError("Method '" + method_name + "' redefined in class '"

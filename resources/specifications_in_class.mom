@@ -2,7 +2,7 @@ specification ComplexNumber {
     Int real();
     Int imaginary();
     Nothing convert(Int angle);
-    Real summary(Component[] c, Real r);
+    Real summary(Int c, Real r);
 };
 
 specification Card {
@@ -17,6 +17,10 @@ class Entity is_a Component {
     };
 
     Int lifeValue() {
+
+    };
+
+    Nothing main() {
 
     };
 };
@@ -44,7 +48,7 @@ class Character is_a Entity of_type Card, ComplexNumber {
     Nothing convert(Int angle){
     };
 
-    Real summary(Component[] c, Real r){
+    Real summary(Int c, Real r){
     };
 
     Text name(Int a_number) {

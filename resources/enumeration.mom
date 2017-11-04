@@ -1,3 +1,13 @@
 enumerate Days {
     MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY;
 };
+
+class Class is_a Component {
+    Class() {
+
+    };
+
+    Nothing main() {
+
+    };
+};

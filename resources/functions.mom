@@ -15,6 +15,10 @@ class Expressions is_a Component {
         return 0.0;
     };
 
+    Nothing main() {
+
+    };
+
     Nothing func4() {
         Write("This is function 4.");
     };

@@ -77,4 +77,8 @@ class Character is_a Component of_type Player {
 
         return "Father Mateo" + "!!!";
     };
+
+    Nothing main() {
+
+    };
 };

@@ -51,7 +51,7 @@ class Method:
         self.cur_temp_boolean = self.TEMP_BOOLEAN_TOP
         self.cur_temp_text = self.TEMP_TEXT_TOP
 
-    def add_argument(self, arg_name: str, arg_type, is_array: bool, address: int, mem_size: int, dim: [], p_type="") -> None:
+    def add_argument(self, arg_name: str, arg_type, is_array: bool, address: int, mem_size: int, dim=[], p_type="") -> None:
         """Add argument to variable dictionary along with its type.
 
         :param dim: Structure representing dimension
