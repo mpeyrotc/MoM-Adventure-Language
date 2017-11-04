@@ -27,7 +27,45 @@ if __name__ == "__main__":
         walker.walk(listener, tree)
 
         # start writing .obj file for virtual machine
-        print(master_tables.constants)
+        f = open("temp.obj", "w")
+
+        for constant in master_tables.constants:
+            address = master_tables.constants[constant]
+            f.write(str(address) + "," + str(constant) + "\n")
+
+        f.write("%%\n")
+
+        for class_name in master_tables.classes:
+            c = master_tables.classes[class_name]
+            f.write(class_name + "," + str(c.size) + "," + str(len(c.methods)) + "\n")
+
+            for method_name in c.methods:
+                m = c.methods[method_name]
+                f.write(method_name + "," + str(m.size) + "\n")
+
+        f.write("%%\n")
+
+        for quad in listener.quads:
+            op = str(int(quad.operator))
+
+            if quad.left_operand is None:
+                left = ""
+            else:
+                left = str(quad.left_operand)
+
+            if quad.right_operand is None:
+                right = ""
+            else:
+                right = str(quad.right_operand)
+
+            if quad.result is None:
+                destination = ""
+            else:
+                destination = str(quad.result)
+
+            f.write(op + "," + left + "," + right + "," + destination + "\n")
+
+        f.close()
     except Exception as e:
         print(e.with_traceback())
         exit(1)

@@ -82,4 +82,4 @@ class Class:
 
     @property
     def size(self):
-        return self.variables
+        return len(self.variables)

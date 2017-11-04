@@ -279,19 +279,9 @@ class MoMListener(ParseTreeListener):
         if not self.main_found:
             raise RuntimeError("Main method not found, please define program entry point.")
 
-        for index, quad in enumerate(MoMListener.quads):
-            print(str(index) + ") " + str(quad.operator) + ", " + str(quad.left_operand) + ", "
-                  + str(quad.right_operand) + ", " + str(quad.result))
-
-            # print("#######################################################")
-            #
-            # for class_name in master_tables.classes:
-            #     class_instance = master_tables.classes[class_name]
-            #
-            #     for method_name in class_instance.methods:
-            #         method_instance = class_instance.methods[method_name]
-            #
-            #         print("Name: " + method_instance.name + ", start: " + str(method_instance.start))
+        # for index, quad in enumerate(MoMListener.quads):
+        #     print(str(index) + ") " + str(quad.operator) + ", " + str(quad.left_operand) + ", "
+        #           + str(quad.right_operand) + ", " + str(quad.result))
 
     # noinspection PyPep8Naming,PyUnusedLocal
     def enterAfter_argument(self, ctx: MoMParser.After_argumentContext) -> None:
@@ -311,7 +301,7 @@ class MoMListener(ParseTreeListener):
                             str(expected_type["arg_type"]) +
                             ", instead got: " + str(argument_type))
 
-        quad = Quadrupole(Operation.PARAM, argument, None, "DESTINATION" + str(self.current_counter))
+        quad = Quadrupole(Operation.PARAM, argument, None, self.current_counter)
 
         self.quads.append(quad)
 
