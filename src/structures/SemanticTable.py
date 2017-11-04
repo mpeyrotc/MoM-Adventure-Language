@@ -55,7 +55,9 @@ class Operator(IntEnum):
     READ_REAL = 29
     READ_TEXT = 30
     READ_BOOL = 31
-
+    OPEN_SPAREN = 32
+    CLOSE_SPAREN = 33
+    VERIFY = 34
 
 class Operation(IntEnum):
     GO_TO_FALSE = 16

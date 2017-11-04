@@ -53,6 +53,7 @@ class MoMListener(ParseTreeListener):
     pending_types = list()
     pending_operators = list()
     pending_jumps = list()
+    pending_dims = list()
     quads = list()
 
     @staticmethod
@@ -183,6 +184,10 @@ class MoMListener(ParseTreeListener):
         quad = self.quads[end]
         quad.result = next_quad
 
+    def debug(self, quad: Quadrupole):
+        print(str(quad.operator) + ", " + str(quad.left_operand) + ", " + str(quad.right_operand) + ", " + str(
+            quad.result))
+
     def create_method_field(self, field_name: str, return_type: Type):
         c = master_tables.classes[self.current_class]
         address = self.get_global_address_by_type(c, return_type)
@@ -210,6 +215,7 @@ class MoMListener(ParseTreeListener):
         master_tables.classes[class_name].add_method(new_method)
 
         quad = Quadrupole(Operation.RETURN, None, None, None)
+
         self.quads.append(quad)
 
         # The basic methods for the base class are width and height
@@ -226,6 +232,7 @@ class MoMListener(ParseTreeListener):
 
         # create width method quadrupoles
         quad = Quadrupole(Operation.RETURN, None, None, master_tables.classes[class_name].cur_global_real)
+
         self.quads.append(quad)
 
         Method.cur_local_boolean = Method.LOCAL_BOOLEAN_TOP
@@ -240,11 +247,13 @@ class MoMListener(ParseTreeListener):
 
         # create height method quadrupoles
         quad = Quadrupole(Operation.RETURN, None, None, master_tables.classes[class_name].cur_global_real + 1)
+
         self.quads.append(quad)
 
     # noinspection PyPep8Naming,PyUnusedLocal
     def exitProgram(self, ctx: MoMParser.ProgramContext) -> None:
         quad = Quadrupole(Operation.END, None, None, None)
+
         self.quads.append(quad)
 
         for index, quad in enumerate(MoMListener.quads):
@@ -280,6 +289,7 @@ class MoMListener(ParseTreeListener):
                             ", instead got: " + str(argument_type))
 
         quad = Quadrupole(Operation.PARAM, argument, None, "DESTINATION" + str(self.current_counter))
+
         self.quads.append(quad)
 
     # noinspection PyPep8Naming
@@ -308,16 +318,18 @@ class MoMListener(ParseTreeListener):
 
     # noinspection PyPep8Naming
     def exitAssignation(self, ctx: MoMParser.AssignationContext) -> None:
-        isArray = 0
         if len(ctx.VARID()) == 0:
             # array assign
-            text = ctx.getText()
-            abre = text.find("[")
-            cierra = text.find("]")
-            # TODO: Elias checa que indexOf esté incializada correctamente, marca un warning
-            indexOf = int(text[abre + 1:cierra].strip())
-            var = text[:abre].strip()
-            isArray = 1
+            holder = self.pending_operands.pop()
+            type_holder = self.pending_types.pop()
+            destination = self.pending_operands.pop()
+            type_dest = self.pending_types.pop()
+            if type_holder != type_dest:
+                raise NameError("Cannot assign type " + get_name(type_holder) + " to type " + get_name(type_dest))
+            quad = Quadrupole(Operator.EQUAL, holder, None, destination)
+
+            self.quads.append(quad)
+            return
         elif len(ctx.VARID()) == 1:
             var = ctx.VARID()[0].getText()
         else:
@@ -329,17 +341,17 @@ class MoMListener(ParseTreeListener):
         # Look in local variables, if not, look in global variables
         if var in m.variables:
             destination = m.variables[var]["address"]
-            if isArray == 1:
-                destination += indexOf
             holder = self.pending_operands.pop()
+            self.pending_types.pop()
             quad = Quadrupole(Operator.EQUAL, holder, None, destination)
+
             self.quads.append(quad)
         elif var in c.variables:
             destination = c.variables[var]["address"]
-            if isArray == 1:
-                destination += indexOf
             holder = self.pending_operands.pop()
+            self.pending_types.pop()
             quad = Quadrupole(Operator.EQUAL, holder, None, destination)
+
             self.quads.append(quad)
         else:
             # if not present report error.
@@ -439,6 +451,7 @@ class MoMListener(ParseTreeListener):
                                     ", got " + str(class_method.return_type) + " instead.")
 
         quad = Quadrupole(Operation.END_CLASS, None, None, None)
+
         self.quads.append(quad)
 
     # noinspection PyPep8Naming
@@ -458,6 +471,7 @@ class MoMListener(ParseTreeListener):
 
         result = self.pending_operands.pop()
         quad = Quadrupole(Operation.GO_TO_FALSE, result, None, None)
+
         self.quads.append(quad)
         self.pending_jumps.append(len(self.quads) - 1)
 
@@ -481,6 +495,7 @@ class MoMListener(ParseTreeListener):
     # noinspection PyPep8Naming,PyUnusedLocal
     def exitEnter_else(self, ctx: MoMParser.Enter_elseContext) -> None:
         quad = Quadrupole(Operation.GO_TO, None, None, None)
+
         self.quads.append(quad)
         false = self.pending_jumps.pop()
         self.pending_jumps.append(len(self.quads) - 1)
@@ -534,7 +549,7 @@ class MoMListener(ParseTreeListener):
             else:
                 self.pending_types.append(t)
 
-        elif ctx.array_var() is not None:
+        else:
             # See array_var listener
             pass
 
@@ -596,6 +611,7 @@ class MoMListener(ParseTreeListener):
     def exitExit_con_def(self, ctx: MoMParser.Exit_con_defContext) -> None:
         address = master_tables.classes[self.current_class].variables[self.current_class]["address"]
         quad = Quadrupole(Operation.RETURN, None, None, address)
+
         self.quads.append(quad)
 
     # noinspection PyPep8Naming
@@ -623,6 +639,7 @@ class MoMListener(ParseTreeListener):
         while not c.name == "Component":
             p = master_tables.classes[c.parent]
             quad = Quadrupole(Operation.GO_SUB, self.current_class, c.parent, p.methods[p.name].start)
+
             self.quads.append(quad)
             c = p
 
@@ -680,6 +697,7 @@ class MoMListener(ParseTreeListener):
                     result = self.get_temp_address_by_type(m, result_type)
                     self.increment_temp_address_by_type(m, result_type)
                     quad = Quadrupole(operator, left_operand, right_operand, result)
+
                     self.quads.append(quad)
                     self.pending_operands.append(result)
                     self.pending_types.append(result_type)
@@ -732,6 +750,7 @@ class MoMListener(ParseTreeListener):
                     result = self.get_temp_address_by_type(m, result_type)
                     self.increment_temp_address_by_type(m, result_type)
                     quad = Quadrupole(operator, left_operand, right_operand, result)
+
                     self.quads.append(quad)
                     self.pending_operands.append(result)
                     self.pending_types.append(result_type)
@@ -765,6 +784,7 @@ class MoMListener(ParseTreeListener):
                     result = self.get_temp_address_by_type(m, result_type)
                     self.increment_temp_address_by_type(m, result_type)
                     quad = Quadrupole(operator, left_operand, right_operand, result)
+
                     self.quads.append(quad)
                     self.pending_operands.append(result)
                     self.pending_types.append(result_type)
@@ -790,6 +810,7 @@ class MoMListener(ParseTreeListener):
         end = self.pending_jumps.pop()
         go_back = self.pending_jumps.pop()
         quad = Quadrupole(Operation.GO_TO, None, None, go_back)
+
         self.quads.append(quad)
         self.fill(end, len(self.quads))
 
@@ -976,6 +997,7 @@ class MoMListener(ParseTreeListener):
     def exitExit_func_def(self, ctx: MoMParser.Exit_func_defContext) -> None:
         address = master_tables.classes[self.current_class].variables[self.current_method]["address"]
         quad = Quadrupole(Operation.RETURN, None, None, address)
+
         self.quads.append(quad)
 
     # noinspection PyPep8Naming
@@ -1089,7 +1111,9 @@ class MoMListener(ParseTreeListener):
                     raise TypeError("Cannot assign value of type " + str(src_type) + " to " + str(dest_type))
 
                 holder = self.pending_operands.pop()
+
                 quad = Quadrupole(Operator.EQUAL, holder, None, destination)
+
                 self.quads.append(quad)
 
     # noinspection PyPep8Naming
@@ -1111,8 +1135,10 @@ class MoMListener(ParseTreeListener):
                 r_value = self.pending_operands.pop()
                 address = master_tables.classes[self.current_class].variables[self.current_method]["address"]
                 quad = Quadrupole(Operator.EQUAL, r_value, None, address)
+
                 self.quads.append(quad)
                 quad = Quadrupole(Operation.RETURN, None, None, address)
+
                 self.quads.append(quad)
             else:
                 # Found single return
@@ -1120,6 +1146,7 @@ class MoMListener(ParseTreeListener):
                     raise TypeError("Wrong return type for method `" + m.name + "` in class: " + c.name)
 
                 quad = Quadrupole(Operation.RETURN, None, None, c.nothing_address)
+
                 self.quads.append(quad)
 
     # noinspection PyPep8Naming,PyUnusedLocal
@@ -1131,7 +1158,7 @@ class MoMListener(ParseTreeListener):
                 left_operand = self.pending_operands.pop()
                 left_type = self.pending_types.pop()
                 operator = self.pending_operators.pop()
-                result_type = semantic_table[int(left_type)][int(right_type)][int(operator)]
+                result_type = Type(semantic_table[int(left_type)][int(right_type)][int(operator)])
 
                 if result_type == Type.OTHER:
                     raise TypeError("Type mismatch for expression.")
@@ -1140,6 +1167,7 @@ class MoMListener(ParseTreeListener):
                     result = self.get_temp_address_by_type(m, result_type)
                     self.increment_temp_address_by_type(m, result_type)
                     quad = Quadrupole(operator, left_operand, right_operand, result)
+
                     self.quads.append(quad)
                     self.pending_operands.append(result)
                     self.pending_types.append(result_type)
@@ -1298,44 +1326,70 @@ class MoMListener(ParseTreeListener):
 
     # noinspection PyPep8Naming
     def enterArray_var(self, ctx: MoMParser.Array_varContext) -> None:
-        texto = ctx.getText()
-        abre = texto.find("[")
-        cierra = texto.find("]")
-        variable = texto[:abre].strip()
-        var_index = int(texto[abre + 1:cierra])
+        var = ctx.VARID().getText()
+        text = ctx.getText()
         c = master_tables.classes[self.current_class]
         m = c.methods[self.current_method]
 
         # Look in local variables, if not, look in global variables
-        # TODO: check value for type, depending on array declaration, INT type used to avoid errors
-        if variable in m.variables:
-            is_array = m.variables[variable]["is_array"]
-            mem_size = m.variables[variable]["mem_size"]
-            if is_array:
-                if 0 <= var_index < mem_size:
-                    self.pending_operands.append(m.variables[variable]["address"] + var_index)
-                    self.pending_types.append(Type.INT)
-                else:
-                    raise NameError("Out of bounds")
-            else:
-                raise NameError("Variable " + variable + " is not an array")
-        elif variable in c.variables:
-            is_array = c.variables[variable]["is_array"]
-            mem_size = c.variables[variable]["mem_size"]
-            if is_array:
-                if 0 <= var_index < mem_size:
-                    self.pending_operands.append(c.variables[variable]["address"] + var_index)
-                    self.pending_types.append(Type.INT)
-                else:
-                    raise NameError("Out of bounds")
-            else:
-                raise NameError("Variable " + variable + " is not an array")
+        if var in m.variables:
+            destination_base = m.variables[var]["address"]
+            is_array = m.variables[var]["is_array"]
+            dim = m.variables[var]["dim"]
+        elif var in c.variables:
+            destination_base = c.variables[var]["address"]
+            is_array = c.variables[var]["is_array"]
+            dim = c.variables[var]["dim"]
         else:
-            raise NameError("Variable ' " + variable + " is undefined.")
+            # if not present report error.
+            raise NameError("Variable ' " + var + " is undefined.")
+
+        # if there is nesting
+        self.pending_dims.append((var, 1))
+        self.pending_operators.append(Operator.OPEN_SPAREN)
+        original_dim = len(dim)
+
+        # count dimensions of accessed array
+        actual_dim = 0
+        stack_brackets = list()
+        for c in text:
+            if c == '[':
+                stack_brackets.append('[')
+            if c == ']':
+                stack_brackets.pop()
+                if (len(stack_brackets) == 0):
+                    actual_dim = actual_dim + 1
+
+        if original_dim != actual_dim:
+            raise NameError("Cannot convert var " + var + " of " + str(original_dim) + " dimensions to " + str(
+                actual_dim) + " dimensions")
 
     # noinspection PyPep8Naming
     def exitArray_var(self, ctx: MoMParser.Array_varContext):
-        pass
+        aux1 = self.pending_operands.pop()
+        type1 = self.pending_types.pop()
+        c = master_tables.classes[self.current_class]
+        m = c.methods[self.current_method]
+        t = self.get_temp_address_by_type(m, Type.INT)
+        self.increment_temp_address_by_type(m, Type.INT)
+
+        var = ctx.VARID().getText()
+        # Look in local variables, if not, look in global variables
+        if var in m.variables:
+            destination_base = m.variables[var]["address"]
+            type_arr = m.variables[var]["type"]
+        elif var in c.variables:
+            destination_base = c.variables[var]["address"]
+            type_arr = c.variables[var]["type"]
+
+        quad = Quadrupole(Operator.PLUS, aux1, "$" + str(destination_base), t)
+
+        self.quads.append(quad)
+
+        self.pending_operands.append("&" + str(t))
+        self.pending_types.append(type_arr)
+        self.pending_dims.pop()
+        self.pending_operators.pop()
 
     # noinspection PyPep8Naming
     def enterArray_arg(self, ctx: MoMParser.Array_argContext):
@@ -1354,7 +1408,9 @@ class MoMListener(ParseTreeListener):
     def exitWrite_func(self, ctx: MoMParser.Write_funcContext):
         op = self.pending_operators.pop()
         result = self.pending_operands.pop()
+        self.pending_types.pop()
         quad = Quadrupole(op, None, None, result)
+
         self.quads.append(quad)
 
     # function to generalize checking valid read for any type
@@ -1377,49 +1433,113 @@ class MoMListener(ParseTreeListener):
             raise NameError("Variable ' " + var + " is undefined.")
 
         # if type matches and is not an array, print it
-        print(type_var)
         if (type_var == check_type) & (not is_array):
             quad = Quadrupole(op, None, None, address)
+
             self.quads.append(quad)
         else:
             raise NameError("Type mismatch. " + var + " is not a " + check_type)
 
     # Enter a parse tree produced by MoMParser#read_int_func.
-    def enterRead_int_func(self, ctx:MoMParser.Read_int_funcContext):
+    def enterRead_int_func(self, ctx: MoMParser.Read_int_funcContext):
         self.pending_operators.append(Operator.READ_INT)
 
     # Exit a parse tree produced by MoMParser#read_int_func.
-    def exitRead_int_func(self, ctx:MoMParser.Read_int_funcContext):
+    def exitRead_int_func(self, ctx: MoMParser.Read_int_funcContext):
         var = ctx.VARID().getText()
         self.checkRead(var, Type.INT)
 
     # Enter a parse tree produced by MoMParser#read_real_func.
-    def enterRead_real_func(self, ctx:MoMParser.Read_real_funcContext):
+    def enterRead_real_func(self, ctx: MoMParser.Read_real_funcContext):
         self.pending_operators.append(Operator.READ_REAL)
 
     # Exit a parse tree produced by MoMParser#read_real_func.
-    def exitRead_real_func(self, ctx:MoMParser.Read_real_funcContext):
+    def exitRead_real_func(self, ctx: MoMParser.Read_real_funcContext):
         var = ctx.VARID().getText()
         self.checkRead(var, Type.REAL)
 
-
     # Enter a parse tree produced by MoMParser#read_text_func.
-    def enterRead_text_func(self, ctx:MoMParser.Read_text_funcContext):
+    def enterRead_text_func(self, ctx: MoMParser.Read_text_funcContext):
         self.pending_operators.append(Operator.READ_TEXT)
 
     # Exit a parse tree produced by MoMParser#read_text_func.
-    def exitRead_text_func(self, ctx:MoMParser.Read_text_funcContext):
+    def exitRead_text_func(self, ctx: MoMParser.Read_text_funcContext):
         var = ctx.VARID().getText()
         self.checkRead(var, Type.TEXT)
 
-
     # Enter a parse tree produced by MoMParser#read_bool_func.
-    def enterRead_bool_func(self, ctx:MoMParser.Read_bool_funcContext):
+    def enterRead_bool_func(self, ctx: MoMParser.Read_bool_funcContext):
         self.pending_operators.append(Operator.READ_BOOL)
 
     # Exit a parse tree produced by MoMParser#read_bool_func.
-    def exitRead_bool_func(self, ctx:MoMParser.Read_bool_funcContext):
+    def exitRead_bool_func(self, ctx: MoMParser.Read_bool_funcContext):
         var = ctx.VARID().getText()
         self.checkRead(var, Type.BOOLEAN)
 
+    # Enter a parse tree produced by MoMParser#open_sbracket.
+    def enterOpen_sbracket(self, ctx: MoMParser.Open_sbracketContext):
+        pass
 
+    # Exit a parse tree produced by MoMParser#open_sbracket.
+    def exitOpen_sbracket(self, ctx: MoMParser.Open_sbracketContext):
+        pass
+
+    # Enter a parse tree produced by MoMParser#close_sbracket.
+    def enterClose_sbracket(self, ctx: MoMParser.Close_sbracketContext):
+        check = self.pending_operands[-1]
+        type = self.pending_types[-1]
+        current_array = self.pending_dims[-1][0]
+        current_dim = self.pending_dims[-1][1] - 1
+
+        if type != Type.INT:
+            raise NameError("Non integer index [1]")
+
+        c = master_tables.classes[self.current_class]
+        m = c.methods[self.current_method]
+
+        # Look in local variables, if not, look in global variables
+        if current_array in m.variables:
+            dim_size = m.variables[current_array]["dim"][current_dim][0]
+            dim_m = m.variables[current_array]["dim"][current_dim][1]
+        elif current_array in c.variables:
+            dim_size = c.variables[current_array]["dim"][current_dim][0]
+            dim_m = c.variables[current_array]["dim"][current_dim][1]
+
+        quad = Quadrupole(Operator.VERIFY, check, 0, dim_size)
+
+        self.quads.append(quad)
+
+        aux = self.pending_operands.pop()
+        type = self.pending_types.pop()
+        t = self.get_temp_address_by_type(m, Type.INT)
+        self.increment_temp_address_by_type(m, Type.INT)
+        quad = Quadrupole(Operator.TIMES, aux, dim_m, t)
+
+        self.quads.append(quad)
+        self.pending_operands.append(t)
+        self.pending_types.append(Type.INT)
+        result_type = semantic_table[type][Type.INT][Operator.TIMES]
+        if result_type != Type.INT:
+            raise NameError("Non integer index [2]")
+
+        if current_dim > 0:
+            aux2 = self.pending_operands.pop()
+            type2 = self.pending_types.pop()
+            aux1 = self.pending_operands.pop()
+            type1 = self.pending_types.pop()
+            t = self.get_temp_address_by_type(m, Type.INT)
+            self.increment_temp_address_by_type(m, Type.INT)
+            quad = Quadrupole(Operator.PLUS, aux1, aux2, t)
+
+            self.quads.append(quad)
+            result_type = semantic_table[type1][type2][Operator.PLUS]
+            if result_type != Type.INT:
+                raise NameError("Non integer index [3]")
+
+            self.pending_types.append(Type.INT)
+            self.pending_operands.append(t)
+
+    # Exit a parse tree produced by MoMParser#close_sbracket.
+    def exitClose_sbracket(self, ctx: MoMParser.Close_sbracketContext):
+        dim = self.pending_dims.pop()
+        self.pending_dims.append((dim[0], dim[1] + 1))

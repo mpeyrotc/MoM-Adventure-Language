@@ -1,0 +1,14 @@
+class Character is_a Component {
+    Character() {
+        Int i = 0;
+        Int[10] arrA;
+        Int j = 0;
+        Int[5][10] arrB;
+        Int k = 0;
+        Int[5][10][2] arrC;
+
+        arrA[i + j * k] = j + arrB[i * j][k - i] * arrA[k];
+    };
+};
+
+

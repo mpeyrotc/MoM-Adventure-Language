@@ -21,8 +21,9 @@ class Character is_a Component of_type Player {
 
 
     Character() {
-
-        Text[4][5][4] arr;
+        arrNums[4] = 2;
+        Int[4][5][4] arr;
+        arr[arrNums[2]][2][3] = 3;
         Int a = 2;
         Text[20] arr2;
         Real x = 3.4;

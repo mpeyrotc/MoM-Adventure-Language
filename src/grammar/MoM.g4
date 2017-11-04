@@ -142,7 +142,11 @@ array_def       :   super_type OPEN_SBRACKET INTEGER CLOSE_SBRACKET (OPEN_SBRACK
                 ;
 vdim            :   super_type OPEN_SBRACKET INTEGER CLOSE_SBRACKET (OPEN_SBRACKET INTEGER CLOSE_SBRACKET)* VARID
                 ;
-array_var       :   ((THIS | CLASSID) PERIOD)? VARID OPEN_SBRACKET expression CLOSE_SBRACKET (OPEN_SBRACKET expression CLOSE_SBRACKET)*
+open_sbracket   :   //nothing
+                ;
+close_sbracket  :   // nothing
+                ;
+array_var       :   ((THIS | CLASSID) PERIOD)? VARID open_sbracket OPEN_SBRACKET expression  close_sbracket CLOSE_SBRACKET (open_sbracket OPEN_SBRACKET expression close_sbracket CLOSE_SBRACKET)*
                 ;
 array_arg       :   super_type (OPEN_SBRACKET CLOSE_SBRACKET)+
                 ;
