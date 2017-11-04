@@ -2,7 +2,9 @@
 
 They are identified by name, since they reside in the global scope of the program.
 """
+import collections
+
 enumerations = {}
 classes = {}
 specifications = {}
-constants = {}
+constants = collections.OrderedDict()
