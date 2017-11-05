@@ -37,11 +37,25 @@ if __name__ == "__main__":
 
         for class_name in master_tables.classes:
             c = master_tables.classes[class_name]
-            f.write(class_name + "," + str(c.size) + "," + str(len(c.methods)) + "\n")
+            f.write(class_name + "," + str(len(c.methods)) + ",")
+            f.write(str(c.cur_global_int - c.GLOBAL_INT_TOP) + "," +
+                    str(c.cur_global_real - c.GLOBAL_REAL_TOP) + "," +
+                    str(c.cur_global_text - c.GLOBAL_TEXT_TOP) + "," +
+                    str(c.cur_global_boolean - c.GLOBAL_BOOLEAN_TOP) + "," +
+                    str(c.cur_global_object - c.GLOBAL_OBJECT_TOP) + "\n")
 
             for method_name in c.methods:
                 m = c.methods[method_name]
-                f.write(method_name + "," + str(m.size) + "\n")
+                f.write(method_name + "," + str(m.size) + ",")
+                f.write(str(m.cur_local_int - m.LOCAL_INT_TOP) + "," +
+                        str(m.cur_local_real - m.LOCAL_REAL_TOP) + "," +
+                        str(m.cur_local_text - m.LOCAL_TEXT_TOP) + "," +
+                        str(m.cur_local_boolean - m.LOCAL_BOOLEAN_TOP) + "," +
+                        str(m.cur_local_object - m.LOCAL_OBJECT_TOP) + ",")
+                f.write(str(m.cur_temp_int - m.TEMP_INT_TOP) + "," +
+                        str(m.cur_temp_real - m.TEMP_REAL_TOP) + "," +
+                        str(m.cur_temp_text - m.TEMP_TEXT_TOP) + "," +
+                        str(m.cur_temp_boolean - m.TEMP_BOOLEAN_TOP) + "\n")
 
         f.write("%%\n")
 
