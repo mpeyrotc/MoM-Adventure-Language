@@ -31,6 +31,7 @@ constant		:	INTEGER
                 |   STRING
                 |   VARID
                 |   array_var
+                |   CAPITALID
                 |   TRUE
                 |   FALSE
                 |   function_call
@@ -146,11 +147,11 @@ open_sbracket   :   //nothing
                 ;
 close_sbracket  :   // nothing
                 ;
-array_var       :   ((THIS | CLASSID) PERIOD)? VARID open_sbracket OPEN_SBRACKET expression  close_sbracket CLOSE_SBRACKET (open_sbracket OPEN_SBRACKET expression close_sbracket CLOSE_SBRACKET)*
+array_var       :   ((THIS | CLASSID) PERIOD)? VARID open_sbracket OPEN_SBRACKET ss_exp  close_sbracket CLOSE_SBRACKET (open_sbracket OPEN_SBRACKET ss_exp close_sbracket CLOSE_SBRACKET)*
                 ;
 array_arg       :   super_type (OPEN_SBRACKET CLOSE_SBRACKET)+
                 ;
-write_func      :   PRINT OPEN_PAREN (s_exp) CLOSE_PAREN
+write_func      :   PRINT OPEN_PAREN (ss_exp) CLOSE_PAREN
                 ;
 read_int_func   :   READ_INT OPEN_PAREN VARID CLOSE_PAREN
                 ;

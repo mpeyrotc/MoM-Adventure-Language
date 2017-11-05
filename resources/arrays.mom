@@ -9,6 +9,10 @@ class Character is_a Component {
 
         arrA[i + j * k] = j + arrB[i * j][k - i] * arrA[k];
     };
+
+    Nothing main(){
+
+    };
 };
 
 
