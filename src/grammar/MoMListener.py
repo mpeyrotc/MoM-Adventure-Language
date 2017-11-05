@@ -280,9 +280,9 @@ class MoMListener(ParseTreeListener):
         if not self.main_found:
             raise RuntimeError("Main method not found, please define program entry point.")
 
-        # for index, quad in enumerate(MoMListener.quads):
-        #     print(str(index) + ") " + str(quad.operator) + ", " + str(quad.left_operand) + ", "
-        #           + str(quad.right_operand) + ", " + str(quad.result))
+        for index, quad in enumerate(MoMListener.quads):
+            print(str(index) + ") " + str(quad.operator) + ", " + str(quad.left_operand) + ", "
+            + str(quad.right_operand) + ", " + str(quad.result))
 
     # noinspection PyPep8Naming,PyUnusedLocal
     def enterAfter_argument(self, ctx: MoMParser.After_argumentContext) -> None:
@@ -1562,7 +1562,7 @@ class MoMListener(ParseTreeListener):
         type = self.pending_types.pop()
         t = self.get_temp_address_by_type(m, Type.INT)
         self.increment_temp_address_by_type(m, Type.INT)
-        quad = Quadrupole(Operator.TIMES, aux, dim_m, t)
+        quad = Quadrupole(Operator.TIMES, aux, "$" + str(dim_m), t)
 
         self.quads.append(quad)
         self.pending_operands.append(t)
@@ -1592,3 +1592,15 @@ class MoMListener(ParseTreeListener):
     def exitClose_sbracket(self, ctx: MoMParser.Close_sbracketContext):
         dim = self.pending_dims.pop()
         self.pending_dims.append((dim[0], dim[1] + 1))
+
+    # Enter a parse tree produced by MoMParser#write_line_func.
+    def enterWrite_line_func(self, ctx:MoMParser.Write_line_funcContext):
+        self.pending_operators.append(Operator.WRITE_LINE)
+
+    # Exit a parse tree produced by MoMParser#write_line_func.
+    def exitWrite_line_func(self, ctx:MoMParser.Write_line_funcContext):
+        op = self.pending_operators.pop()
+        result = self.pending_operands.pop()
+        self.pending_types.pop()
+        quad = Quadrupole(op, None, None, result)
+        self.quads.append(quad)

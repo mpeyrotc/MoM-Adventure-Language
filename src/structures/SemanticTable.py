@@ -58,6 +58,7 @@ class Operator(IntEnum):
     OPEN_SPAREN = 32
     CLOSE_SPAREN = 33
     VERIFY = 34
+    WRITE_LINE = 35
 
 class Operation(IntEnum):
     GO_TO_FALSE = 16
