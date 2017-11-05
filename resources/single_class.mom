@@ -3,7 +3,7 @@ class Character is_a Component {
     };
 
     Nothing main() {
-
+        Write("Hello World");
     };
 };
 

@@ -201,7 +201,7 @@ class MoMListener(ParseTreeListener):
         quad.result = next_quad
 
     @staticmethod
-    def debug(self, quad: Quadrupole):
+    def debug(quad: Quadrupole):
         print(str(quad.operator) + ", " + str(quad.left_operand) + ", " + str(quad.right_operand) + ", " + str(
             quad.result))
 
@@ -214,6 +214,7 @@ class MoMListener(ParseTreeListener):
     # noinspection PyPep8Naming,PyUnusedLocal
     def enterProgram(self, ctx: MoMParser.ProgramContext) -> None:
         # Create quadrupole that points to main method.
+        quad = Quadrupole(Operation.GO_CONSTRUCTOR, None, None, None)
         quad = Quadrupole(Operation.GO_SUB, None, None, None)
         self.quads.append(quad)
 
@@ -678,12 +679,12 @@ class MoMListener(ParseTreeListener):
         self.create_method_field(new_method.name, new_method.return_type)
 
         # Implicit calls to ancestor constructors
-        while not c.name == "Component":
-            p = master_tables.classes[c.parent]
-            quad = Quadrupole(Operation.GO_SUB, self.current_class, c.parent, p.methods[p.name].start)
-
-            self.quads.append(quad)
-            c = p
+        # while not c.name == "Component":
+        #     p = master_tables.classes[c.parent]
+        #     quad = Quadrupole(Operation.GO_SUB, self.current_class, c.parent, p.methods[p.name].start)
+        #
+        #     self.quads.append(quad)
+        #     c = p
 
     # noinspection PyPep8Naming
     def exitConstruct_def(self, ctx: MoMParser.Construct_defContext):
@@ -1024,7 +1025,9 @@ class MoMListener(ParseTreeListener):
         new_method.start = len(self.quads)
 
         if method_name == "main":
-            self.quads[0] = Quadrupole(Operation.GO_SUB, self.current_class, method_name, new_method.start)
+            self.quads[0] = Quadrupole(Operation.GO_CONSTRUCTOR, self.current_class, self.current_class,
+                                       master_tables.classes[self.current_class].methods[self.current_class].start)
+            self.quads[1] = Quadrupole(Operation.GO_SUB, self.current_class, method_name, new_method.start)
             self.main_found = True
 
         if method_name in master_tables.classes[self.current_class].methods:

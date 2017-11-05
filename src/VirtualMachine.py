@@ -26,7 +26,7 @@ def get_constant(address: int):
     if CONST_REAL_TOP <= address <= CONST_REAL_BOTTOM:
         return constants[1][address - CONST_REAL_TOP]
     if CONST_TEXT_TOP <= address <= CONST_TEXT_BOTTOM:
-        return constants[2][address - CONST_TEXT_TOP]
+        return constants[2][address - CONST_TEXT_TOP][1:-1]
     else:
         return constants[3][address - CONST_BOOLEAN_TOP]
 
@@ -47,7 +47,76 @@ def set_constant(address: int, value) -> None:
 
 
 def operation(op: int, left, right, dest):
-    pass
+    if op == 1:  # PLUS
+        pass
+    elif op == 2:  # MINUS
+        pass
+    elif op == 3:  # TIMES
+        pass
+    elif op == 4:  # DIVIDES
+        pass
+    elif op == 5:  # AND
+        pass
+    elif op == 6:  # OR
+        pass
+    elif op == 7:  # NOT
+        pass
+    elif op == 8:  # LESS_THAN
+        pass
+    elif op == 9:  # LESS_EQUAL
+        pass
+    elif op == 10:  # GREATER_THAN
+        pass
+    elif op == 11:  # GREATER_EQUAL
+        pass
+    elif op == 12:  # EQUAL_EQUAL
+        pass
+    elif op == 13:  # OPEN_PAREN
+        pass
+    elif op == 14:  # CLOSE_PAREN
+        pass
+    elif op == 15:  # EQUAL
+        pass
+    elif op == 16:  # GO_TO_FALSE
+        pass
+    elif op == 17:  # GO_TO_TRUE
+        pass
+    elif op == 18:  # GO_TO
+        pass
+    elif op == 19:  # RETURN
+        pass
+    elif op == 20:  # ERA
+        pass
+    elif op == 21:  # PARAM
+        pass
+    elif op == 22:  # GO_SUB
+        pass
+    elif op == 23:  # GO_CONSTRUCTOR
+        pass
+    elif op == 24:  # ERA_CONSTRUCTOR
+        pass
+    elif op == 25:  # END
+        pass
+    elif op == 26:  # END_CLASS
+        pass
+    elif op == 27:  # WRITE
+        print(get_constant(int(dest)))
+    elif op == 28:  # READ_INT
+        pass
+    elif op == 29:  # READ_REAL
+        pass
+    elif op == 30:  # READ_TEXT
+        pass
+    elif op == 31:  # READ_BOOL
+        pass
+    elif op == 32:  # OPEN_SPAREN
+        pass
+    elif op == 33:  # CLOSE_SPAREN
+        pass
+    elif op == 34:  # VERIFY
+        pass
+    else:
+        raise NameError("operation " + str(op) + " not recognized.")
 
 
 class Class:
