@@ -21,6 +21,7 @@ class Character is_a Component of_type Player {
 
 
     Character() {
+        WriteLine("Hello World.");
         arrNums[4] = 2;
         Int[4][5][4] arr;
         arr[arrNums[2]][2][3] = 3;

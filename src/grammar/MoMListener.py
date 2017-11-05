@@ -1592,3 +1592,15 @@ class MoMListener(ParseTreeListener):
     def exitClose_sbracket(self, ctx: MoMParser.Close_sbracketContext):
         dim = self.pending_dims.pop()
         self.pending_dims.append((dim[0], dim[1] + 1))
+
+    # Enter a parse tree produced by MoMParser#write_line_func.
+    def enterWrite_line_func(self, ctx:MoMParser.Write_line_funcContext):
+        self.pending_operators.append(Operator.WRITE_LINE)
+
+    # Exit a parse tree produced by MoMParser#write_line_func.
+    def exitWrite_line_func(self, ctx:MoMParser.Write_line_funcContext):
+        op = self.pending_operators.pop()
+        result = self.pending_operands.pop()
+        self.pending_types.pop()
+        quad = Quadrupole(op, None, None, result)
+        self.quads.append(quad)

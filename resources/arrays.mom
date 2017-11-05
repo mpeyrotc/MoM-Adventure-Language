@@ -11,7 +11,7 @@ class Character is_a Component {
     };
 
     Nothing main(){
-
+        WriteLine("Hello World.");
     };
 };
 

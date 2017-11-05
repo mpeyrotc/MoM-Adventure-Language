@@ -103,6 +103,7 @@ statute			:	function_call
                 |   while_loop
                 |   condition
                 |   write_func
+                |   write_line_func
                 |   vdim
                 |   read_int_func
                 |   read_real_func
@@ -153,6 +154,8 @@ array_arg       :   super_type (OPEN_SBRACKET CLOSE_SBRACKET)+
                 ;
 write_func      :   PRINT OPEN_PAREN (ss_exp) CLOSE_PAREN
                 ;
+write_line_func :   PRINT_LINE OPEN_PAREN (ss_exp) CLOSE_PAREN
+                ;
 read_int_func   :   READ_INT OPEN_PAREN VARID CLOSE_PAREN
                 ;
 read_real_func  :   READ_REAL OPEN_PAREN VARID CLOSE_PAREN
@@ -196,6 +199,7 @@ MAP				:	'Map' ;
 SIZE			:	'Size' ;
 NOTHING 		:	'Nothing' ;
 PRINT           :   'Write' ;
+PRINT_LINE      :   'WriteLine' ;
 READ_INT        :   'ReadInt' ;
 READ_REAL       :   'ReadReal' ;
 READ_TEXT       :   'ReadText' ;
