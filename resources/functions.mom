@@ -8,11 +8,13 @@ class Expressions is_a Component {
         Int b = 2;
         Real c = 3.0;
         Real a = b + c;
+        return 0;
     };
 
     Real func2(Int a, Real b, Real c) {
         Int d = func1();
-        return 0.0;
+        Real x = 2.0;
+        return x*x;
     };
 
     Nothing main() {
