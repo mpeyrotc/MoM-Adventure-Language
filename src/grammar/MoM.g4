@@ -10,7 +10,7 @@ advance_count   :   // nothing
                 ;
 arguments		:	ss_exp after_argument advance_count (COMMA ss_exp after_argument advance_count)*
                 ;
-assignation		:	((THIS | VARID) PERIOD)? (VARID | array_var) EQUALS (construct_call | ss_exp)
+assignation		:	(THIS PERIOD)? (VARID | array_var) EQUALS (construct_call | ss_exp)
                 ;
 block			:	statute SEMI_COLON
                 ;
@@ -148,7 +148,7 @@ open_sbracket   :   //nothing
                 ;
 close_sbracket  :   // nothing
                 ;
-array_var       :   ((THIS | CLASSID) PERIOD)? VARID open_sbracket OPEN_SBRACKET ss_exp  close_sbracket CLOSE_SBRACKET (open_sbracket OPEN_SBRACKET ss_exp close_sbracket CLOSE_SBRACKET)*
+array_var       :   (THIS PERIOD)? VARID open_sbracket OPEN_SBRACKET ss_exp  close_sbracket CLOSE_SBRACKET (open_sbracket OPEN_SBRACKET ss_exp close_sbracket CLOSE_SBRACKET)*
                 ;
 array_arg       :   super_type (OPEN_SBRACKET CLOSE_SBRACKET)+
                 ;
