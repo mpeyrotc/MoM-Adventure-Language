@@ -18,7 +18,12 @@ class Character is_a Component {
         arrA[i + j * k] = j + arrB[i * j][k - i] * arrA[k];
     };
 
+    Int test(){
+        return 5;
+    };
+
     Nothing main(){
+        Int h = test();
         WriteLine("Hello World.");
     };
 };

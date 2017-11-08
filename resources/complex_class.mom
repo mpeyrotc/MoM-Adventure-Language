@@ -5,10 +5,20 @@ specification Player {
 class Card is_a Component {
     Card() {
     };
+
+    Int test(){
+
+        return 5;
+    };
 };
 
 class Face is_a Component {
+
+    field<Card> card;
+
     Face() {
+        Int y = 0;
+        Int x = card.test();
     };
 };
 
@@ -80,6 +90,5 @@ class Character is_a Component of_type Player {
     };
 
     Nothing main() {
-
     };
 };

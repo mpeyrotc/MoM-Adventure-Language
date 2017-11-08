@@ -72,7 +72,7 @@ class TestGrammar(object):
         assert general_function("C:\\Users\\Elias Mera\\Documents\\MoM-Adventure-Language\\resources\\class_enum_specification.mom")
 
     def test_complex_class(self):
-        assert general_function("C:\\Users\\Elias Mera\\Documents\\MoM-Adventure-Language\\resources\\arrays.mom")
+        assert general_function("C:\\Users\\Elias Mera\\Documents\\MoM-Adventure-Language\\resources\\complex_class.mom")
 
     def test_types(self):
         assert general_function("resources/type_test.mom")

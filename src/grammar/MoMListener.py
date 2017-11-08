@@ -1008,7 +1008,19 @@ class MoMListener(ParseTreeListener):
                               self.current_method_instance.start)
             c = master_tables.classes[self.current_class]
         else:
-            quad = Quadrupole(Operation.GO_SUB, self.class_reference, self.current_method_instance.name,
+            var = ctx.VARID()[0].getText()
+            c = master_tables.classes[self.current_class]
+            m = c.methods[self.current_method]
+
+            # Look in local variables, if not, look in global variables
+            if var in m.variables:
+                address = m.variables[var]["address"]
+            elif var in c.variables:
+                address = c.variables[var]["address"]
+            else:
+                # if not present report error.
+                raise NameError("Variable ' " + var + " is undefined.")
+            quad = Quadrupole(Operation.GO_SUB, str(address)+":"+self.class_reference, self.current_method_instance.name,
                               self.current_method_instance.start)
             c = master_tables.classes[self.class_reference]
             self.class_reference = ""
