@@ -1,5 +1,7 @@
 in_constants = True
 in_classes = False
+main_called = False
+
 constants = [[], [], [], []]
 class_stack = list()
 method_stack = list()
@@ -9,8 +11,6 @@ current_class: str
 quadrupoles = []
 pc = list()
 pc.append(0)
-
-main_called = False
 
 CONST_INT_TOP = 22_000
 CONST_REAL_TOP = 23_000
