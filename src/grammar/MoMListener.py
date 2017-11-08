@@ -215,7 +215,8 @@ class MoMListener(ParseTreeListener):
     def enterProgram(self, ctx: MoMParser.ProgramContext) -> None:
         # Create quadrupole that points to main method.
         quad = Quadrupole(Operation.GO_CONSTRUCTOR, None, None, None)
-        quad = Quadrupole(Operation.GO_SUB, None, None, None)
+        self.quads.append(quad)
+        quad = Quadrupole(Operation.GO_MAIN, None, None, None)
         self.quads.append(quad)
 
         # Register in tables the Component class, which is the base class of the language
@@ -702,12 +703,12 @@ class MoMListener(ParseTreeListener):
         self.create_method_field(new_method.name, new_method.return_type)
 
         # Implicit calls to ancestor constructors
-        # while not c.name == "Component":
-        #     p = master_tables.classes[c.parent]
-        #     quad = Quadrupole(Operation.GO_SUB, self.current_class, c.parent, p.methods[p.name].start)
-        #
-        #     self.quads.append(quad)
-        #     c = p
+        while not c.name == "Component":
+            p = master_tables.classes[c.parent]
+            quad = Quadrupole(Operation.GO_SUB, self.current_class, c.parent, p.methods[p.name].start)
+
+            self.quads.append(quad)
+            c = p
 
     # noinspection PyPep8Naming
     def exitConstruct_def(self, ctx: MoMParser.Construct_defContext):
@@ -1050,7 +1051,7 @@ class MoMListener(ParseTreeListener):
         if method_name == "main":
             self.quads[0] = Quadrupole(Operation.GO_CONSTRUCTOR, self.current_class, self.current_class,
                                        master_tables.classes[self.current_class].methods[self.current_class].start)
-            self.quads[1] = Quadrupole(Operation.GO_SUB, self.current_class, method_name, new_method.start)
+            self.quads[1] = Quadrupole(Operation.GO_MAIN, self.current_class, method_name, new_method.start)
             self.main_found = True
 
         if method_name in master_tables.classes[self.current_class].methods:

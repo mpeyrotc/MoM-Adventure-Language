@@ -60,6 +60,7 @@ class Operator(IntEnum):
     VERIFY = 34
     WRITE_LINE = 35
 
+
 class Operation(IntEnum):
     GO_TO_FALSE = 16
     GO_TO_TRUE = 17
@@ -72,6 +73,7 @@ class Operation(IntEnum):
     ERA_CONSTRUCTOR = 24
     END = 25
     END_CLASS = 26
+    GO_MAIN = 36
 
 
 num_types = 7

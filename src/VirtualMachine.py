@@ -3,14 +3,40 @@ in_classes = False
 main_called = False
 
 constants = [[], [], [], []]
-class_stack = list()
-method_stack = list()
 
+class_stack = list()
 classes = {}
 current_class: str
+# noinspection SpellCheckingInspection
 quadrupoles = []
-pc = list()
-pc.append(0)
+
+
+class Class:
+    methods = {}
+    name = ""
+    size = []
+
+
+class Method:
+    name = ""
+    size = []
+
+
+class ClassInstance:
+    name = ""
+    memory = [[], [], [], [], []]
+    method_stack = list()
+    pc = list()
+    classes = {}
+
+
+class MethodInstance:
+    local_memory = [[], [], [], [], []]
+    temporal_memory = [[], [], [], []]
+
+
+new_class = None
+
 
 CONST_INT_TOP = 22_000
 CONST_REAL_TOP = 23_000
@@ -198,9 +224,9 @@ def get_raw_value(left: str, right: str):
     elif is_global(int(left)):
         left_value = get_global(class_stack[-1], int(left))
     elif is_local(int(left)):
-        left_value = get_local(method_stack[-1], int(left))
+        left_value = get_local(class_stack[-1].method_stack[-1], int(left))
     elif is_temporal(int(left)):
-        left_value = get_local(method_stack[-1], int(left))
+        left_value = get_local(class_stack[-1].method_stack[-1], int(left))
     else:
         raise IndexError("No memory location defined.")
 
@@ -209,16 +235,17 @@ def get_raw_value(left: str, right: str):
     elif is_global(int(right)):
         right_value = get_global(class_stack[-1], int(right))
     elif is_local(int(right)):
-        right_value = get_local(method_stack[-1], int(right))
+        right_value = get_local(class_stack[-1].method_stack[-1], int(right))
     elif is_temporal(int(right)):
-        right_value = get_local(method_stack[-1], int(right))
+        right_value = get_local(class_stack[-1].method_stack[-1], int(right))
     else:
         raise IndexError("No memory location defined.")
 
     return left_value, right_value
 
 
-def operation(pc, op: int, left, right, dest):
+# noinspection PyShadowingNames
+def operation(op: int, left, right, dest):
     global main_called
 
     if op == 1:  # PLUS
@@ -235,9 +262,9 @@ def operation(pc, op: int, left, right, dest):
         if is_global(int(dest)):
             set_global(class_stack[-1], int(dest), left_value + right_value)
         elif is_local(int(dest)):
-            set_local(method_stack[-1], int(dest), left_value + right_value)
+            set_local(class_stack[-1].method_stack[-1], int(dest), left_value + right_value)
         elif is_temporal(int(dest)):
-            set_temporal(method_stack[-1], int(dest), left_value + right_value)
+            set_temporal(class_stack[-1].method_stack[-1], int(dest), left_value + right_value)
     elif op == 2:  # MINUS
         left_value, right_value = get_raw_value(left, right)
         left_value = do_cast(int(left), left_value)
@@ -246,9 +273,9 @@ def operation(pc, op: int, left, right, dest):
         if is_global(int(dest)):
             set_global(class_stack[-1], int(dest), left_value - right_value)
         elif is_local(int(dest)):
-            set_local(method_stack[-1], int(dest), left_value - right_value)
+            set_local(class_stack[-1].method_stack[-1], int(dest), left_value - right_value)
         elif is_temporal(int(dest)):
-            set_temporal(method_stack[-1], int(dest), left_value - right_value)
+            set_temporal(class_stack[-1].method_stack[-1], int(dest), left_value - right_value)
     elif op == 3:  # TIMES
         left_value, right_value = get_raw_value(left, right)
         left_value = do_cast(int(left), left_value)
@@ -257,9 +284,9 @@ def operation(pc, op: int, left, right, dest):
         if is_global(int(dest)):
             set_global(class_stack[-1], int(dest), left_value * right_value)
         elif is_local(int(dest)):
-            set_local(method_stack[-1], int(dest), left_value * right_value)
+            set_local(class_stack[-1].method_stack[-1], int(dest), left_value * right_value)
         elif is_temporal(int(dest)):
-            set_temporal(method_stack[-1], int(dest), left_value * right_value)
+            set_temporal(class_stack[-1].method_stack[-1], int(dest), left_value * right_value)
     elif op == 4:  # DIVIDES
         left_value, right_value = get_raw_value(left, right)
         left_value = do_cast(int(left), left_value)
@@ -268,9 +295,9 @@ def operation(pc, op: int, left, right, dest):
         if is_global(int(dest)):
             set_global(class_stack[-1], int(dest), left_value / right_value)
         elif is_local(int(dest)):
-            set_local(method_stack[-1], int(dest), left_value / right_value)
+            set_local(class_stack[-1].method_stack[-1], int(dest), left_value / right_value)
         elif is_temporal(int(dest)):
-            set_temporal(method_stack[-1], int(dest), left_value / right_value)
+            set_temporal(class_stack[-1].method_stack[-1], int(dest), left_value / right_value)
     elif op == 5:  # AND
         left_value, right_value = get_raw_value(left, right)
         left_value = do_cast(int(left), left_value)
@@ -279,9 +306,9 @@ def operation(pc, op: int, left, right, dest):
         if is_global(int(dest)):
             set_global(class_stack[-1], int(dest), left_value and right_value)
         elif is_local(int(dest)):
-            set_local(method_stack[-1], int(dest), left_value and right_value)
+            set_local(class_stack[-1].method_stack[-1], int(dest), left_value and right_value)
         elif is_temporal(int(dest)):
-            set_temporal(method_stack[-1], int(dest), left_value and right_value)
+            set_temporal(class_stack[-1].method_stack[-1], int(dest), left_value and right_value)
     elif op == 6:  # OR
         left_value, right_value = get_raw_value(left, right)
         left_value = do_cast(int(left), left_value)
@@ -290,9 +317,9 @@ def operation(pc, op: int, left, right, dest):
         if is_global(int(dest)):
             set_global(class_stack[-1], int(dest), left_value or right_value)
         elif is_local(int(dest)):
-            set_local(method_stack[-1], int(dest), left_value or right_value)
+            set_local(class_stack[-1].method_stack[-1], int(dest), left_value or right_value)
         elif is_temporal(int(dest)):
-            set_temporal(method_stack[-1], int(dest), left_value or right_value)
+            set_temporal(class_stack[-1].method_stack[-1], int(dest), left_value or right_value)
     elif op == 7:  # NOT
         pass
     elif op == 8:  # LESS_THAN
@@ -303,9 +330,9 @@ def operation(pc, op: int, left, right, dest):
         if is_global(int(dest)):
             set_global(class_stack[-1], int(dest), left_value < right_value)
         elif is_local(int(dest)):
-            set_local(method_stack[-1], int(dest), left_value < right_value)
+            set_local(class_stack[-1].method_stack[-1], int(dest), left_value < right_value)
         elif is_temporal(int(dest)):
-            set_temporal(method_stack[-1], int(dest), left_value < right_value)
+            set_temporal(class_stack[-1].method_stack[-1], int(dest), left_value < right_value)
     elif op == 9:  # LESS_EQUAL
         left_value, right_value = get_raw_value(left, right)
         left_value = do_cast(int(left), left_value)
@@ -314,9 +341,9 @@ def operation(pc, op: int, left, right, dest):
         if is_global(int(dest)):
             set_global(class_stack[-1], int(dest), left_value <= right_value)
         elif is_local(int(dest)):
-            set_local(method_stack[-1], int(dest), left_value <= right_value)
+            set_local(class_stack[-1].method_stack[-1], int(dest), left_value <= right_value)
         elif is_temporal(int(dest)):
-            set_temporal(method_stack[-1], int(dest), left_value <= right_value)
+            set_temporal(class_stack[-1].method_stack[-1], int(dest), left_value <= right_value)
     elif op == 10:  # GREATER_THAN
         left_value, right_value = get_raw_value(left, right)
         left_value = do_cast(int(left), left_value)
@@ -325,9 +352,9 @@ def operation(pc, op: int, left, right, dest):
         if is_global(int(dest)):
             set_global(class_stack[-1], int(dest), left_value > right_value)
         elif is_local(int(dest)):
-            set_local(method_stack[-1], int(dest), left_value > right_value)
+            set_local(class_stack[-1].method_stack[-1], int(dest), left_value > right_value)
         elif is_temporal(int(dest)):
-            set_temporal(method_stack[-1], int(dest), left_value > right_value)
+            set_temporal(class_stack[-1].method_stack[-1], int(dest), left_value > right_value)
     elif op == 11:  # GREATER_EQUAL
         left_value, right_value = get_raw_value(left, right)
         left_value = do_cast(int(left), left_value)
@@ -336,9 +363,9 @@ def operation(pc, op: int, left, right, dest):
         if is_global(int(dest)):
             set_global(class_stack[-1], int(dest), left_value >= right_value)
         elif is_local(int(dest)):
-            set_local(method_stack[-1], int(dest), left_value >= right_value)
+            set_local(class_stack[-1].method_stack[-1], int(dest), left_value >= right_value)
         elif is_temporal(int(dest)):
-            set_temporal(method_stack[-1], int(dest), left_value >= right_value)
+            set_temporal(class_stack[-1].method_stack[-1], int(dest), left_value >= right_value)
     elif op == 12:  # EQUAL_EQUAL
         left_value, right_value = get_raw_value(left, right)
         left_value = do_cast(int(left), left_value)
@@ -347,9 +374,9 @@ def operation(pc, op: int, left, right, dest):
         if is_global(int(dest)):
             set_global(class_stack[-1], int(dest), left_value == right_value)
         elif is_local(int(dest)):
-            set_local(method_stack[-1], int(dest), left_value == right_value)
+            set_local(class_stack[-1].method_stack[-1], int(dest), left_value == right_value)
         elif is_temporal(int(dest)):
-            set_temporal(method_stack[-1], int(dest), left_value == right_value)
+            set_temporal(class_stack[-1].method_stack[-1], int(dest), left_value == right_value)
     elif op == 13:  # OPEN_PAREN
         pass
     elif op == 14:  # CLOSE_PAREN
@@ -360,18 +387,18 @@ def operation(pc, op: int, left, right, dest):
         elif is_global(int(left)):
             left_value = get_global(class_stack[-1], int(left))
         elif is_local(int(left)):
-            left_value = get_local(method_stack[-1], int(left))
+            left_value = get_local(class_stack[-1].method_stack[-1], int(left))
         elif is_temporal(int(left)):
-            left_value = get_temporal(method_stack[-1], int(left))
+            left_value = get_temporal(class_stack[-1].method_stack[-1], int(left))
         else:
             raise IndexError("No memory location defined.")
 
         if is_global(int(dest)):
             set_global(class_stack[-1], int(dest), left_value)
         elif is_local(int(dest)):
-            set_local(method_stack[-1], int(dest), left_value)
+            set_local(class_stack[-1].method_stack[-1], int(dest), left_value)
         elif is_temporal(int(dest)):
-            set_temporal(method_stack[-1], int(dest), left_value)
+            set_temporal(class_stack[-1].method_stack[-1], int(dest), left_value)
     elif op == 16:  # GO_TO_FALSE
         pass
     elif op == 17:  # GO_TO_TRUE
@@ -379,20 +406,37 @@ def operation(pc, op: int, left, right, dest):
     elif op == 18:  # GO_TO
         pass
     elif op == 19:  # RETURN
-        pc.pop()
-        method_stack.pop()
-        if len(method_stack) == 0 and main_called:
-            exit(22)
+        class_stack[-1].pc.pop()
+        class_stack[-1].method_stack.pop()
+        if len(class_stack[-1].method_stack) == 0:
+            if main_called:
+                exit(22)
+            else:
+                class_stack.pop()
     elif op == 20:  # ERA
         pass
     elif op == 21:  # PARAM
         pass
     elif op == 22:  # GO_SUB
-        main_called = True
+        if ":" in left:  # composition call
+            class_var = int(left[:left.find(":")])
+            # noinspection PyShadowingNames
+            left = left[left.find(":") + 1:]
+
+            if is_local(class_var):
+                if class_var not in class_stack[-1].method_stack[-1].classes:
+                    raise RuntimeError("No class instance found.")
+
+                class_stack.append(class_stack[-1].method_stack[-1].classes[class_var])
+            else:
+                if class_var not in class_stack[-1].classes:
+                    raise RuntimeError("No class instance found.")
+
+                class_stack.append(class_stack[-1].classes[class_var])
 
         mi = MethodInstance()
-        pc.append(int(dest) - 1)
-        method_stack.append(mi)
+        class_stack[-1].pc.append(int(dest) - 1)
+        class_stack[-1].method_stack.append(mi)
 
         for j, s in enumerate(classes[left].methods[right].size):
             for k in range(s):
@@ -402,27 +446,51 @@ def operation(pc, op: int, left, right, dest):
                     mi.temporal_memory[j - 5].append(-1)
 
     elif op == 23:  # GO_CONSTRUCTOR
-        # Create class instance
-        ci = ClassInstance()
-        ci.name = left
+        if len(class_stack) == 0:
+            # Create class instance
+            ci = ClassInstance()
+            ci.name = left
 
-        for j, s in enumerate(classes[ci.name].size):
-            for k in range(s):
-                ci.memory[j].append(-1)
+            for j, s in enumerate(classes[ci.name].size):
+                for k in range(s):
+                    ci.memory[j].append(-1)
 
-        class_stack.append(ci)
+            class_stack.append(ci)
 
-        # Call constructor
-        mi = MethodInstance()
-        pc.append(int(dest) - 1)
-        method_stack.append(mi)
+            # Call constructor
+            mi = MethodInstance()
+            # Define pc for constructor
+            ci.pc.append(int(dest) - 1)
+            ci.method_stack.append(mi)
 
-        for j, s in enumerate(classes[left].methods[right].size):
-            for k in range(s):
-                if j <= 4:
-                    mi.local_memory[j].append(-1)
-                else:
-                    mi.temporal_memory[j - 5].append(-1)
+            for j, s in enumerate(classes[left].methods[right].size):
+                for k in range(s):
+                    if j <= 4:
+                        mi.local_memory[j].append(-1)
+                    else:
+                        mi.temporal_memory[j - 5].append(-1)
+        else:
+            ci_child = ClassInstance()
+            ci_child.name = left
+
+            for j, s in enumerate(classes[ci_child.name].size):
+                for k in range(s):
+                    ci_child.memory[j].append(-1)
+
+            # Call constructor
+            mi = MethodInstance()
+            # Define pc for constructor
+            ci_child.pc.append(int(dest) - 1)
+            ci_child.method_stack.append(mi)
+
+            for j, s in enumerate(classes[left].methods[right].size):
+                for k in range(s):
+                    if j <= 4:
+                        mi.local_memory[j].append(-1)
+                    else:
+                        mi.temporal_memory[j - 5].append(-1)
+
+            new_class = ci_child
 
     elif op == 24:  # ERA_CONSTRUCTOR
         pass
@@ -491,29 +559,23 @@ def operation(pc, op: int, left, right, dest):
         pass
     elif op == 34:  # VERIFY
         pass
+    elif op == 35:  # WRITE_LINE
+        pass
+    elif op == 36:  # GO_MAIN
+        main_called = True
+
+        mi = MethodInstance()
+        class_stack[-1].pc.append(int(dest) - 1)
+        class_stack[-1].method_stack.append(mi)
+
+        for j, s in enumerate(classes[left].methods[right].size):
+            for k in range(s):
+                if j <= 4:
+                    mi.local_memory[j].append(-1)
+                else:
+                    mi.temporal_memory[j - 5].append(-1)
     else:
         raise NameError("operation " + str(op) + " not recognized.")
-
-
-class Class:
-    methods = {}
-    name = ""
-    size = []
-
-
-class Method:
-    name = ""
-    size = []
-
-
-class ClassInstance:
-    name = ""
-    memory = [[], [], [], [], []]
-
-
-class MethodInstance:
-    local_memory = [[], [], [], [], []]
-    temporal_memory = [[], [], [], []]
 
 
 if __name__ == "__main__":
@@ -553,7 +615,5 @@ if __name__ == "__main__":
             else:
                 quadrupoles.append(line.split(","))
 
-    while True:
-        op, left, right, destination = quadrupoles[pc[-1]]
-        operation(pc, int(op), left, right, destination)
-        pc[-1] += 1
+        op, left, right, destination = quadrupoles[0]
+        operation(int(op), left, right, destination)
