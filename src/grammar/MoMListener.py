@@ -211,6 +211,12 @@ class MoMListener(ParseTreeListener):
         c.add_argument(field_name, return_type, False, address, 1, [])
         self.increment_global_address_by_type(c, return_type, 1)
 
+    def create_method_field_aux(self, name: str, field_name: str, return_type: Type):
+        c = master_tables.classes[name]
+        address = self.get_global_address_by_type(c, return_type)
+        c.add_argument(field_name, return_type, False, address, 1, [])
+        self.increment_global_address_by_type(c, return_type, 1)
+
     # noinspection PyPep8Naming,PyUnusedLocal
     def enterProgram(self, ctx: MoMParser.ProgramContext) -> None:
         # Create quadrupole that points to main method.
@@ -236,6 +242,7 @@ class MoMListener(ParseTreeListener):
         new_method = Method(method_name, Type.CLASS)
         new_method.start = len(self.quads)
         master_tables.classes[class_name].add_method(new_method)
+        self.create_method_field_aux(class_name, new_method.name, new_method.return_type)
 
         quad = Quadrupole(Operation.RETURN, None, None, None)
 
@@ -252,6 +259,7 @@ class MoMListener(ParseTreeListener):
         new_method = Method(method_name, get_type(return_type))
         new_method.start = len(self.quads)
         master_tables.classes[class_name].add_method(new_method)
+        self.create_method_field_aux(class_name, new_method.name, new_method.return_type)
 
         # create width method quadrupoles
         quad = Quadrupole(Operation.RETURN, None, None, master_tables.classes[class_name].cur_global_real)
@@ -267,6 +275,7 @@ class MoMListener(ParseTreeListener):
         new_method = Method(method_name, get_type(return_type))
         new_method.start = len(self.quads)
         master_tables.classes[class_name].add_method(new_method)
+        self.create_method_field_aux(class_name, new_method.name, new_method.return_type)
 
         # create height method quadrupoles
         quad = Quadrupole(Operation.RETURN, None, None, master_tables.classes[class_name].cur_global_real + 1)
@@ -625,15 +634,8 @@ class MoMListener(ParseTreeListener):
     # noinspection PyPep8Naming
     def enterConstruct_call(self, ctx: MoMParser.Construct_callContext) -> None:
         method_name = ctx.CLASSID().getText()
-        class_instance = master_tables.classes[self.current_class]
 
         found = False
-        if method_name in class_instance.methods:
-            self.current_counter = 0
-            self.current_method_instance = class_instance.methods[method_name]
-            self.constructor_called = ""
-            found = True
-
         for class_name in master_tables.classes:
             if method_name in master_tables.classes[class_name].methods:
                 self.current_counter = 0
@@ -653,14 +655,9 @@ class MoMListener(ParseTreeListener):
                                         str(self.current_method_instance.num_of_params) +
                                         ", got " + str(self.current_counter) + " instead.")
 
-        if self.constructor_called == "":
-            quad = Quadrupole(Operation.GO_CONSTRUCTOR, self.current_class, self.current_method_instance.name,
-                              self.current_method_instance.start)
-            c = master_tables.classes[self.current_class]
-        else:
-            quad = Quadrupole(Operation.GO_CONSTRUCTOR, self.constructor_called, self.current_method_instance.name,
-                              self.current_method_instance.start)
-            c = master_tables.classes[self.constructor_called]
+        quad = Quadrupole(Operation.GO_CONSTRUCTOR, self.constructor_called, self.current_method_instance.name,
+                          self.current_method_instance.start)
+        c = master_tables.classes[self.constructor_called]
 
         self.quads.append(quad)
         var = self.current_method_instance.name
