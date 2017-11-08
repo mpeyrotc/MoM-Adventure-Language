@@ -382,23 +382,28 @@ def operation(op: int, left, right, dest):
     elif op == 14:  # CLOSE_PAREN
         pass
     elif op == 15:  # EQUAL
-        if is_constant(int(left)):
-            left_value = get_constant(int(left))
-        elif is_global(int(left)):
-            left_value = get_global(class_stack[-1], int(left))
-        elif is_local(int(left)):
-            left_value = get_local(class_stack[-1].method_stack[-1], int(left))
-        elif is_temporal(int(left)):
-            left_value = get_temporal(class_stack[-1].method_stack[-1], int(left))
-        else:
-            raise IndexError("No memory location defined.")
+        if new_class is None:
+            if is_constant(int(left)):
+                left_value = get_constant(int(left))
+            elif is_global(int(left)):
+                left_value = get_global(class_stack[-1], int(left))
+            elif is_local(int(left)):
+                left_value = get_local(class_stack[-1].method_stack[-1], int(left))
+            elif is_temporal(int(left)):
+                left_value = get_temporal(class_stack[-1].method_stack[-1], int(left))
+            else:
+                raise IndexError("No memory location defined.")
 
-        if is_global(int(dest)):
-            set_global(class_stack[-1], int(dest), left_value)
-        elif is_local(int(dest)):
-            set_local(class_stack[-1].method_stack[-1], int(dest), left_value)
-        elif is_temporal(int(dest)):
-            set_temporal(class_stack[-1].method_stack[-1], int(dest), left_value)
+            if is_global(int(dest)):
+                set_global(class_stack[-1], int(dest), left_value)
+            elif is_local(int(dest)):
+                set_local(class_stack[-1].method_stack[-1], int(dest), left_value)
+            elif is_temporal(int(dest)):
+                set_temporal(class_stack[-1].method_stack[-1], int(dest), left_value)
+        else:
+            class_stack[-1].classes[int(dest)] = new_class
+            new_class = None
+
     elif op == 16:  # GO_TO_FALSE
         pass
     elif op == 17:  # GO_TO_TRUE
@@ -490,6 +495,7 @@ def operation(op: int, left, right, dest):
                     else:
                         mi.temporal_memory[j - 5].append(-1)
 
+            global new_class
             new_class = ci_child
 
     elif op == 24:  # ERA_CONSTRUCTOR
@@ -504,9 +510,9 @@ def operation(op: int, left, right, dest):
         elif is_global(int(dest)):
             value = get_global(class_stack[-1], int(dest))
         elif is_local(int(dest)):
-            value = get_local(method_stack[-1], int(dest))
+            value = get_local(class_stack[-1].method_stack[-1], int(dest))
         elif is_temporal(int(dest)):
-            value = get_temporal(method_stack[-1], int(dest))
+            value = get_temporal(class_stack[-1].method_stack[-1], int(dest))
         else:
             raise TypeError("Type cannot be printed.")
 
@@ -523,36 +529,36 @@ def operation(op: int, left, right, dest):
         if is_global(int(dest)):
             set_global(class_stack[-1], int(dest), int(new_value))
         elif is_local(int(dest)):
-            set_local(method_stack[-1], int(dest), int(new_value))
+            set_local(class_stack[-1].method_stack[-1], int(dest), int(new_value))
         elif is_temporal(int(dest)):
-            set_temporal(method_stack[-1], int(dest), int(new_value))
+            set_temporal(class_stack[-1].method_stack[-1], int(dest), int(new_value))
     elif op == 29:  # READ_REAL
         new_value = input()
 
         if is_global(int(dest)):
             set_global(class_stack[-1], int(dest), float(new_value))
         elif is_local(int(dest)):
-            set_local(method_stack[-1], int(dest), float(new_value))
+            set_local(class_stack[-1].method_stack[-1], int(dest), float(new_value))
         elif is_temporal(int(dest)):
-            set_temporal(method_stack[-1], int(dest), float(new_value))
+            set_temporal(class_stack[-1].method_stack[-1], int(dest), float(new_value))
     elif op == 30:  # READ_TEXT
         new_value = input()
 
         if is_global(int(dest)):
             set_global(class_stack[-1], int(dest), new_value)
         elif is_local(int(dest)):
-            set_local(method_stack[-1], int(dest), new_value)
+            set_local(class_stack[-1].method_stack[-1], int(dest), new_value)
         elif is_temporal(int(dest)):
-            set_temporal(method_stack[-1], int(dest), new_value)
+            set_temporal(class_stack[-1].method_stack[-1], int(dest), new_value)
     elif op == 31:  # READ_BOOL
         new_value = input()
 
         if is_global(int(dest)):
             set_global(class_stack[-1], int(dest), new_value.lower() == "true")
         elif is_local(int(dest)):
-            set_local(method_stack[-1], int(dest), new_value.lower() == "true")
+            set_local(class_stack[-1].method_stack[-1], int(dest), new_value.lower() == "true")
         elif is_temporal(int(dest)):
-            set_temporal(method_stack[-1], int(dest), new_value.lower() == "true")
+            set_temporal(class_stack[-1].method_stack[-1], int(dest), new_value.lower() == "true")
     elif op == 32:  # OPEN_SPAREN
         pass
     elif op == 33:  # CLOSE_SPAREN
