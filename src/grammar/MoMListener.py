@@ -215,6 +215,7 @@ class MoMListener(ParseTreeListener):
     def enterProgram(self, ctx: MoMParser.ProgramContext) -> None:
         # Create quadrupole that points to main method.
         quad = Quadrupole(Operation.GO_CONSTRUCTOR, None, None, None)
+        self.quads.append(quad)
         quad = Quadrupole(Operation.GO_SUB, None, None, None)
         self.quads.append(quad)
 
@@ -332,7 +333,7 @@ class MoMListener(ParseTreeListener):
 
     # noinspection PyPep8Naming
     def exitAssignation(self, ctx: MoMParser.AssignationContext) -> None:
-        if len(ctx.VARID()) == 0:
+        if ctx.VARID() is None:
             # array assign
             holder = self.pending_operands.pop()
             type_holder = self.pending_types.pop()
@@ -344,10 +345,8 @@ class MoMListener(ParseTreeListener):
 
             self.quads.append(quad)
             return
-        elif len(ctx.VARID()) == 1:
-            var = ctx.VARID()[0].getText()
         else:
-            var = ctx.VARID()[1].getText()
+            var = ctx.VARID().getText()
 
         c = master_tables.classes[self.current_class]
         m = c.methods[self.current_method]
