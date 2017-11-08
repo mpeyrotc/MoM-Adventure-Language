@@ -1,3 +1,11 @@
+enumerate Days {
+    MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY;
+};
+
+enumerate Months {
+    JAN, FEB, MARCH, APRIL, MAY;
+};
+
 class Character is_a Component {
     Character() {
         Int i = 0;
@@ -6,7 +14,7 @@ class Character is_a Component {
         Int[5][10] arrB;
         Int k = 0;
         Int[5][10][2] arrC;
-
+        k = MONDAY - TUESDAY + MAY;
         arrA[i + j * k] = j + arrB[i * j][k - i] * arrA[k];
     };
 

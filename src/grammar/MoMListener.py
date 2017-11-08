@@ -591,7 +591,30 @@ class MoMListener(ParseTreeListener):
                 self.pending_types.append(get_type(t))
             else:
                 self.pending_types.append(t)
+        elif ctx.CAPITALID() is not None:
+            # it's an enum
+            name = ctx.CAPITALID().getText()
+            was_found = False
+            for enum in master_tables.enumerations:
+                if name in master_tables.enumerations[enum].values:
+                    was_found = True
+                    pos = master_tables.enumerations[enum].values.get(name)
+                    break
 
+            if was_found:
+                # creates a constant variable for that enum
+                num = int(pos)
+                if num in master_tables.constants:
+                    address = master_tables.constants[num]
+                else:
+                    address = self.get_const_address_by_type(Type.INT)
+                    self.increment_const_address_by_type(Type.INT)
+                    master_tables.constants[num] = address
+
+                self.pending_operands.append(address)
+                self.pending_types.append(Type.INT)
+            else:
+                raise NameError("Enum not found")
         else:
             # See array_var listener
             pass

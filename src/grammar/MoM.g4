@@ -65,7 +65,7 @@ plus_op         :   // nothing
                 ;
 minus_op        :   // nothing
                 ;
-expression		:	term exit_term ((PLUS plus_op | MINUS minus_op | condition) term exit_term)*
+expression		:	term exit_term ((PLUS plus_op | MINUS minus_op) term exit_term)*
                 ;
 open_paren      :   // nothing
                 ;
