@@ -402,7 +402,11 @@ def operation(op: int, left, right, dest):
             elif is_temporal(int(dest)):
                 set_temporal(class_stack[-1].method_stack[-1], int(dest), left_value)
         else:
-            class_stack[-1].classes[int(dest)] = new_class
+            if is_local(int(dest)):
+                class_stack[-1].method_stack[-1].classes[int(dest)] = new_class
+            else:
+                class_stack[-1].classes[int(dest)] = new_class
+
             new_class = None
 
     elif op == 16:  # GO_TO_FALSE
@@ -586,6 +590,7 @@ def operation(op: int, left, right, dest):
         raise NameError("operation " + str(op) + " not recognized.")
 
     class_stack[-1].pc[-1] += 1
+    print("QUAD: " + str(class_stack[-1].pc[-1]))
     op, left, right, destination = quadrupoles[class_stack[-1].pc[-1]]
     operation(int(op), left, right, destination)
 

@@ -698,12 +698,11 @@ class MoMListener(ParseTreeListener):
         self.create_method_field(new_method.name, new_method.return_type)
 
         # Implicit calls to ancestor constructors
-        while not c.name == "Component":
+        if not c.name == "Component":
             p = master_tables.classes[c.parent]
             quad = Quadrupole(Operation.GO_SUB, self.current_class, c.parent, p.methods[p.name].start)
 
             self.quads.append(quad)
-            c = p
 
     # noinspection PyPep8Naming
     def exitConstruct_def(self, ctx: MoMParser.Construct_defContext):
