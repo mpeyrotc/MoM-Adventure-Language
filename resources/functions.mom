@@ -11,14 +11,13 @@ class Expressions is_a Component {
         return 0;
     };
 
-    Real func2(Int a, Real b, Real c) {
-        Int d = func1();
-        Real x = 2.0;
-        return x*x;
+    Nothing func2(Int a, Int b, Int c) {
+        Write(a + b + c);
     };
 
     Nothing main() {
-
+        func2(100, 2, 1218);
+        func2(1, 1, 1);
     };
 
     Nothing func4() {
@@ -26,7 +25,6 @@ class Expressions is_a Component {
     };
 
     Int func3(Real a) {
-        Real b = func2(1, a, 6.0) + 3;
         return 0;
     };
 
@@ -34,7 +32,4 @@ class Expressions is_a Component {
         this.func4();
     };
 
-    Real area() {
-        return getWidth() + getHeight();
-    };
 };

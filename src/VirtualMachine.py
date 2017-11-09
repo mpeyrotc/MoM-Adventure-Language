@@ -3,6 +3,7 @@ in_classes = False
 main_called = False
 
 constants = [[], [], [], []]
+params = []
 
 class_stack = list()
 classes = {}
@@ -39,7 +40,6 @@ class MethodInstance:
 
 
 new_class = list()
-
 
 CONST_INT_TOP = 22_000
 CONST_REAL_TOP = 23_000
@@ -96,6 +96,51 @@ def is_global(address: int) -> bool:
 
 def is_constant(address: int) -> bool:
     return CONST_INT_TOP <= address <= CONST_BOOLEAN_BOTTOM
+
+
+def get_type(address: int) -> str:
+    if is_constant(int(address)):
+        if CONST_INT_TOP <= address <= CONST_INT_BOTTOM:
+            return "Int"
+        if CONST_REAL_TOP <= address <= CONST_REAL_BOTTOM:
+            return "Real"
+        if CONST_TEXT_TOP <= address <= CONST_TEXT_BOTTOM:
+            return "Text"
+        else:
+            return "Bool"
+    elif is_global(int(address)):
+        if GLOBAL_INT_TOP <= address <= GLOBAL_INT_BOTTOM:
+            return "Int"
+        if GLOBAL_REAL_TOP <= address <= GLOBAL_REAL_BOTTOM:
+            return "Real"
+        if GLOBAL_TEXT_TOP <= address <= GLOBAL_TEXT_BOTTOM:
+            return "Text"
+        if GLOBAL_BOOLEAN_TOP <= address <= GLOBAL_BOOLEAN_BOTTOM:
+            return "Bool"
+        else:
+            return "Obj"
+    elif is_local(int(address)):
+        if LOCAL_INT_TOP <= address <= LOCAL_INT_BOTTOM:
+            return "Int"
+        if LOCAL_REAL_TOP <= address <= LOCAL_REAL_BOTTOM:
+            return "Real"
+        if LOCAL_TEXT_TOP <= address <= LOCAL_TEXT_BOTTOM:
+            return "Text"
+        if LOCAL_BOOLEAN_TOP <= address <= LOCAL_BOOLEAN_BOTTOM:
+            return "Bool"
+        else:
+            return "Obj"
+    elif is_temporal(int(address)):
+        if TEMP_INT_TOP <= address <= TEMP_INT_BOTTOM:
+            return "Int"
+        if TEMP_REAL_TOP <= address <= TEMP_REAL_BOTTOM:
+            return "Real"
+        if TEMP_TEXT_TOP <= address <= TEMP_TEXT_BOTTOM:
+            return "Text"
+        else:
+            return "Bool"
+    else:
+        raise IndexError("No memory location defined.")
 
 
 def get_constant(address: int):
@@ -229,7 +274,7 @@ def get_raw_value(left: str, right: str):
     elif is_local(int(left)):
         left_value = get_local(class_stack[-1].method_stack[-1], int(left))
     elif is_temporal(int(left)):
-        left_value = get_local(class_stack[-1].method_stack[-1], int(left))
+        left_value = get_temporal(class_stack[-1].method_stack[-1], int(left))
     else:
         raise IndexError("No memory location defined.")
 
@@ -240,7 +285,7 @@ def get_raw_value(left: str, right: str):
     elif is_local(int(right)):
         right_value = get_local(class_stack[-1].method_stack[-1], int(right))
     elif is_temporal(int(right)):
-        right_value = get_local(class_stack[-1].method_stack[-1], int(right))
+        right_value = get_temporal(class_stack[-1].method_stack[-1], int(right))
     else:
         raise IndexError("No memory location defined.")
 
@@ -249,7 +294,7 @@ def get_raw_value(left: str, right: str):
 
 # noinspection PyShadowingNames
 def operation(op: int, left, right, dest):
-    global main_called, new_class
+    global main_called, new_class, params
 
     if op == 1:  # PLUS
         left_value, right_value = get_raw_value(left, right)
@@ -385,7 +430,8 @@ def operation(op: int, left, right, dest):
     elif op == 14:  # CLOSE_PAREN
         pass
     elif op == 15:  # EQUAL
-        if len(new_class) == 0 or (not LOCAL_OBJECT_TOP <= int(dest) <= LOCAL_OBJECT_BOTTOM or GLOBAL_OBJECT_TOP <= int(dest) <= GLOBAL_OBJECT_BOTTOM):
+        if len(new_class) == 0 or (not LOCAL_OBJECT_TOP <= int(dest) <= LOCAL_OBJECT_BOTTOM or GLOBAL_OBJECT_TOP <= int(
+                dest) <= GLOBAL_OBJECT_BOTTOM):
             if is_constant(int(left)):
                 left_value = get_constant(int(left))
             elif is_global(int(left)):
@@ -426,7 +472,7 @@ def operation(op: int, left, right, dest):
     elif op == 20:  # ERA
         pass
     elif op == 21:  # PARAM
-        pass
+        params.append(int(left))
     elif op == 22:  # GO_SUB
         if ":" in left:  # composition call
             class_var = int(left[:left.find(":")])
@@ -453,6 +499,37 @@ def operation(op: int, left, right, dest):
                     mi.local_memory[j].append(-1)
                 else:
                     mi.temporal_memory[j - 5].append(-1)
+
+        if len(params) > 0:
+            c_i = c_r = c_t = c_b = 0
+            for param_dir in params:
+                dir_type = get_type(param_dir)
+                if is_constant(int(param_dir)):
+                    left_value = get_constant(int(param_dir))
+                elif is_global(int(param_dir)):
+                    left_value = get_global(class_stack[-1], int(param_dir))
+                elif is_local(int(param_dir)):
+                    left_value = get_local(class_stack[-1].method_stack[-1], int(param_dir))
+                elif is_temporal(int(param_dir)):
+                    left_value = get_temporal(class_stack[-1].method_stack[-1], int(param_dir))
+                else:
+                    raise IndexError("No memory location defined.")
+
+                if dir_type == "Int":
+                    class_stack[-1].method_stack[-1].local_memory[0][c_i] = left_value
+                    c_i += 1
+                elif dir_type == "Real":
+                    class_stack[-1].method_stack[-1].local_memory[1][c_r] = left_value
+                    c_r += 1
+                elif dir_type == "Text":
+                    class_stack[-1].method_stack[-1].local_memory[2][c_t] = left_value
+                    c_t += 1
+                elif dir_type == "Bool":
+                    class_stack[-1].method_stack[-1].local_memory[3][c_b] = left_value
+                    c_b += 1
+                else:
+                    raise NameError("Object as argument not supported")
+            params = []
 
     elif op == 23:  # GO_CONSTRUCTOR
         if len(class_stack) == 0:
@@ -589,7 +666,7 @@ def operation(op: int, left, right, dest):
         raise NameError("operation " + str(op) + " not recognized.")
 
     class_stack[-1].pc[-1] += 1
-    #print("QUAD: " + str(class_stack[-1].pc[-1]))
+    # print("QUAD: " + str(class_stack[-1].pc[-1]))
     op, left, right, destination = quadrupoles[class_stack[-1].pc[-1]]
     operation(int(op), left, right, destination)
 
