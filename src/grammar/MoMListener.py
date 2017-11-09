@@ -429,8 +429,10 @@ class MoMListener(ParseTreeListener):
         for var_n in variables:
             v = variables[var_n]
             if var_n not in methods:
+                t = self.get_global_address_by_type(master_tables.classes[class_name], v["type"])
+                self.increment_global_address_by_type(master_tables.classes[class_name], v["type"], v["mem_size"])
                 master_tables.classes[class_name].add_argument(v["name"], v["type"], v["is_array"],
-                                                               v["address"], v["mem_size"], v["dim"], v["class_type"])
+                                                               t, v["mem_size"], v["dim"], v["class_type"])
 
         for method_n in methods:
             method = methods[method_n]

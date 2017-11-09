@@ -3,7 +3,9 @@ class Number is_a Component {
 
     Number() {
         Int z = 2;
+        aaa = 111;
         Write("TESSSSSS");
+        Component slkdhfjs = new Component();
     };
 
     Nothing f3() {
@@ -12,9 +14,12 @@ class Number is_a Component {
 };
 
 class Complex is_a Number {
-
+    field<Int> bbb;
 
     Complex() {
+        Number jksdlhjdfsjk = new Number();
+        jksdlhjdfsjk.f3();
+        bbb = 222;
         Write("TUUUUUUU!!!");
     };
 
@@ -41,7 +46,6 @@ class Character is_a Complex {
     Nothing main() {
         Complex temp = new Complex();
         Int num = 0;
-        aaa = 111;
         Text b = "HAHA";
         Text c = "!!!";
         Boolean d = TRUE && FALSE;
@@ -54,7 +58,8 @@ class Character is_a Complex {
         ReadInt(num);
         Write(num + 3.3);
         temp.f();
-        Write(a);
         Write(aaa);
+        Write(bbb);
+        Write(ccc);
     };
 };

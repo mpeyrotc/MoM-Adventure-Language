@@ -38,7 +38,7 @@ class MethodInstance:
     classes = {}
 
 
-new_class = None
+new_class = list()
 
 
 CONST_INT_TOP = 22_000
@@ -385,7 +385,7 @@ def operation(op: int, left, right, dest):
     elif op == 14:  # CLOSE_PAREN
         pass
     elif op == 15:  # EQUAL
-        if new_class is None:
+        if len(new_class) == 0 or (not LOCAL_OBJECT_TOP <= int(dest) <= LOCAL_OBJECT_BOTTOM or GLOBAL_OBJECT_TOP <= int(dest) <= GLOBAL_OBJECT_BOTTOM):
             if is_constant(int(left)):
                 left_value = get_constant(int(left))
             elif is_global(int(left)):
@@ -405,11 +405,9 @@ def operation(op: int, left, right, dest):
                 set_temporal(class_stack[-1].method_stack[-1], int(dest), left_value)
         else:
             if is_local(int(dest)):
-                class_stack[-1].method_stack[-1].classes[int(dest)] = new_class
+                class_stack[-1].method_stack[-1].classes[int(dest)] = new_class.pop()
             else:
-                class_stack[-1].classes[int(dest)] = new_class
-
-            new_class = None
+                class_stack[-1].classes[int(dest)] = new_class.pop()
 
     elif op == 16:  # GO_TO_FALSE
         pass
@@ -436,7 +434,6 @@ def operation(op: int, left, right, dest):
             left = left[left.find(":") + 1:]
             if is_local(class_var):
                 if class_var not in class_stack[-1].method_stack[-1].classes:
-                    print("CLASS: " + str(class_stack[-1].method_stack[-1].classes))
                     raise RuntimeError("No class instance found.")
 
                 class_stack.append(class_stack[-1].method_stack[-1].classes[class_var])
@@ -458,7 +455,6 @@ def operation(op: int, left, right, dest):
                     mi.temporal_memory[j - 5].append(-1)
 
     elif op == 23:  # GO_CONSTRUCTOR
-        print("ENTERED")
         if len(class_stack) == 0:
             # Create class instance
             ci = ClassInstance()
@@ -505,7 +501,7 @@ def operation(op: int, left, right, dest):
                     else:
                         mi.temporal_memory[j - 5].append(-1)
 
-            new_class = ci_child
+            new_class.append(ci_child)
 
     elif op == 24:  # ERA_CONSTRUCTOR
         pass
