@@ -33,6 +33,7 @@ class ClassInstance:
 class MethodInstance:
     local_memory = [[], [], [], [], []]
     temporal_memory = [[], [], [], []]
+    classes = {}
 
 
 new_class = None
@@ -246,7 +247,7 @@ def get_raw_value(left: str, right: str):
 
 # noinspection PyShadowingNames
 def operation(op: int, left, right, dest):
-    global main_called
+    global main_called, new_class
 
     if op == 1:  # PLUS
         left_value, right_value = get_raw_value(left, right)
@@ -413,7 +414,7 @@ def operation(op: int, left, right, dest):
     elif op == 19:  # RETURN
         class_stack[-1].pc.pop()
         class_stack[-1].method_stack.pop()
-        if len(class_stack[-1].method_stack) == 0:
+        if len(class_stack[-1].pc) == 0:
             if main_called:
                 exit(22)
             else:
@@ -465,7 +466,9 @@ def operation(op: int, left, right, dest):
             # Call constructor
             mi = MethodInstance()
             # Define pc for constructor
+            ci.pc.append(0)
             ci.pc.append(int(dest) - 1)
+            ci.method_stack.append(mi)
             ci.method_stack.append(mi)
 
             for j, s in enumerate(classes[left].methods[right].size):
@@ -495,7 +498,6 @@ def operation(op: int, left, right, dest):
                     else:
                         mi.temporal_memory[j - 5].append(-1)
 
-            global new_class
             new_class = ci_child
 
     elif op == 24:  # ERA_CONSTRUCTOR
@@ -582,6 +584,10 @@ def operation(op: int, left, right, dest):
                     mi.temporal_memory[j - 5].append(-1)
     else:
         raise NameError("operation " + str(op) + " not recognized.")
+
+    class_stack[-1].pc[-1] += 1
+    op, left, right, destination = quadrupoles[class_stack[-1].pc[-1]]
+    operation(int(op), left, right, destination)
 
 
 if __name__ == "__main__":

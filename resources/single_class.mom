@@ -1,3 +1,13 @@
+class Complex is_a Component {
+    Complex() {
+
+    };
+
+    Nothing f() {
+        Write("IN COMPLEX");
+    };
+};
+
 class Character is_a Component {
     field<Int> a;
 
@@ -5,7 +15,24 @@ class Character is_a Component {
         a = 2;
     };
 
+    Nothing f() {
+        Write(a);
+    };
+
     Nothing main() {
-        Component b = new Component();
+        Complex temp = new Complex();
+        Int num = 0;
+        Text b = "HAHA";
+        Text c = "!!!";
+        Boolean d = TRUE && FALSE;
+        Write(a);
+        Write(3 + 5);
+        Write(3 + 2.3);
+        Write(b + c);
+        Write("HOHOHO");
+        Write(d);
+        ReadInt(num);
+        Write(num + 3.3);
+        temp.f();
     };
 };
