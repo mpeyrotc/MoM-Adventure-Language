@@ -74,6 +74,7 @@ class Operation(IntEnum):
     END = 25
     END_CLASS = 26
     GO_MAIN = 36
+    RETRIEVE = 37
 
 
 num_types = 7
