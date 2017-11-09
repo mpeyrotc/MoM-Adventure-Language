@@ -1004,7 +1004,19 @@ class MoMListener(ParseTreeListener):
         if self.class_reference == "":
             quad = Quadrupole(Operation.GO_SUB, self.current_class, self.current_method_instance.name,
                               self.current_method_instance.start)
-            c = master_tables.classes[self.current_class]
+            self.quads.append(quad)
+
+            if not self.current_method_instance.return_type == Type.NOTHING:
+                m = master_tables.classes[self.current_class].methods[self.current_method_instance.name]
+                result = self.get_temp_address_by_type(m, self.current_method_instance.return_type)
+                self.increment_temp_address_by_type(m, self.current_method_instance.return_type)
+                # noinspection SpellCheckingInspection
+                addr = master_tables.classes[self.current_class].variables[self.current_method_instance.name]["address"]
+
+                quad = Quadrupole(Operator.EQUAL, addr, None, result)
+                self.quads.append(quad)
+                self.pending_operands.append(result)
+                self.pending_types.append(self.current_method_instance.return_type)
         else:
             var = ctx.VARID()[0].getText()
             c = master_tables.classes[self.current_class]
@@ -1022,13 +1034,20 @@ class MoMListener(ParseTreeListener):
                               self.current_method_instance.start)
             c = master_tables.classes[self.class_reference]
             self.class_reference = ""
+            self.quads.append(quad)
 
-        self.quads.append(quad)
+            if not self.current_method_instance.return_type == Type.NOTHING:
+                m = master_tables.classes[self.current_class].methods[self.current_method]
+                result = self.get_temp_address_by_type(m, self.current_method_instance.return_type)
+                self.increment_temp_address_by_type(m, self.current_method_instance.return_type)
 
-        var = self.current_method_instance.name
-        t = c.variables[var]["type"]
-        self.pending_operands.append(c.variables[var]["address"])
-        self.pending_types.append(t)
+                quad = Quadrupole(Operation.RETRIEVE, str(address) + ":" + str(c.variables[self.current_method_instance.name]["address"]),
+                                  self.current_method_instance.name,
+                                  result)
+
+                self.quads.append(quad)
+                self.pending_operands.append(result)
+                self.pending_types.append(self.current_method_instance.return_type)
 
     # noinspection PyPep8Naming
     def enterFunction_def(self, ctx: MoMParser.Function_defContext) -> None:

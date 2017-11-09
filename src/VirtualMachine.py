@@ -143,6 +143,7 @@ def get_local(mi, address: int):
     if LOCAL_BOOLEAN_TOP <= address <= LOCAL_BOOLEAN_BOTTOM:
         return mi.local_memory[3][address - LOCAL_BOOLEAN_TOP]
     else:
+        print(address)
         return mi.local_memory[4][address - LOCAL_OBJECT_TOP]
 
 
@@ -229,7 +230,7 @@ def get_raw_value(left: str, right: str):
     elif is_local(int(left)):
         left_value = get_local(class_stack[-1].method_stack[-1], int(left))
     elif is_temporal(int(left)):
-        left_value = get_local(class_stack[-1].method_stack[-1], int(left))
+        left_value = get_temporal(class_stack[-1].method_stack[-1], int(left))
     else:
         raise IndexError("No memory location defined.")
 
@@ -240,7 +241,7 @@ def get_raw_value(left: str, right: str):
     elif is_local(int(right)):
         right_value = get_local(class_stack[-1].method_stack[-1], int(right))
     elif is_temporal(int(right)):
-        right_value = get_local(class_stack[-1].method_stack[-1], int(right))
+        right_value = get_temporal(class_stack[-1].method_stack[-1], int(right))
     else:
         raise IndexError("No memory location defined.")
 
@@ -585,6 +586,27 @@ def operation(op: int, left, right, dest):
                     mi.local_memory[j].append(-1)
                 else:
                     mi.temporal_memory[j - 5].append(-1)
+    elif op == 37:  # RETRIEVE
+        class_var = int(left[:left.find(":")])
+        # noinspection PyShadowingNames
+        left = left[left.find(":") + 1:]
+
+        if is_local(class_var):
+            if class_var not in class_stack[-1].method_stack[-1].classes:
+                raise RuntimeError("No class instance found.")
+
+            var = get_global(class_stack[-1].method_stack[-1].classes[class_var], int(left))
+            #l, _ = get_raw_value(var, var)
+            set_temporal(class_stack[-1].method_stack[-1], int(dest), var)
+        else:
+            if class_var not in class_stack[-1].classes:
+                raise RuntimeError("No class instance found.")
+
+            raise RuntimeError("SHOULD NEVER BE CALLED")
+
+        # quad = Quadrupole(Operation.RETRIEVE, str(address) + ":" + self.class_reference,
+        #                   self.current_method_instance.name,
+        #                   result)
     else:
         raise NameError("operation " + str(op) + " not recognized.")
 

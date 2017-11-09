@@ -2,7 +2,6 @@ class Number is_a Component {
     field<Int> aaa;
 
     Number() {
-        Int z = 2;
         aaa = 111;
         Write("TESSSSSS");
         Component slkdhfjs = new Component();
@@ -10,6 +9,10 @@ class Number is_a Component {
 
     Nothing f3() {
         Write("NUMBER");
+    };
+
+    Real funName3() {
+        return 0.5;
     };
 };
 
@@ -28,6 +31,19 @@ class Complex is_a Number {
         Write("IN COMPLEX");
         n.f3();
     };
+
+    Text funName() {
+        return "Alice";
+    };
+
+    Real funName2() {
+        Int b = 30;
+        Number n = new Number();
+        Write(b);
+        Real d = n.funName3();
+
+        return b * d;
+    };
 };
 
 class Character is_a Complex {
@@ -41,6 +57,16 @@ class Character is_a Complex {
 
     Nothing f2() {
         Write(a);
+    };
+
+    Int aNumber() {
+        Int result = 1200 * 10;
+        result = result + 345;
+        return result;
+    };
+
+    Int bNumber() {
+        return 1200 * 10;
     };
 
     Nothing main() {
@@ -61,5 +87,11 @@ class Character is_a Complex {
         Write(aaa);
         Write(bbb);
         Write(ccc);
+        Int z = aNumber();
+        Write(z);
+        Write(aNumber());
+        Write(bNumber());
+        Write(temp.funName());
+        Write(temp.funName2());
     };
 };
