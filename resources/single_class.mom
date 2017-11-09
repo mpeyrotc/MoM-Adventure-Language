@@ -3,7 +3,7 @@ class Number is_a Component {
 
     Number() {
         Int z = 2;
-        Write(2 + 3);
+        Write("TESSSSSS");
     };
 
     Nothing f3() {
@@ -15,7 +15,7 @@ class Complex is_a Number {
 
 
     Complex() {
-
+        Write("TUUUUUUU!!!");
     };
 
     Nothing f() {

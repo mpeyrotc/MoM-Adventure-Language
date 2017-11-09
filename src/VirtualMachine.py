@@ -10,6 +10,8 @@ current_class: str
 # noinspection SpellCheckingInspection
 quadrupoles = []
 
+counter = 0
+
 
 class Class:
     methods = {}
@@ -432,9 +434,9 @@ def operation(op: int, left, right, dest):
             class_var = int(left[:left.find(":")])
             # noinspection PyShadowingNames
             left = left[left.find(":") + 1:]
-
             if is_local(class_var):
                 if class_var not in class_stack[-1].method_stack[-1].classes:
+                    print("CLASS: " + str(class_stack[-1].method_stack[-1].classes))
                     raise RuntimeError("No class instance found.")
 
                 class_stack.append(class_stack[-1].method_stack[-1].classes[class_var])
@@ -456,6 +458,7 @@ def operation(op: int, left, right, dest):
                     mi.temporal_memory[j - 5].append(-1)
 
     elif op == 23:  # GO_CONSTRUCTOR
+        print("ENTERED")
         if len(class_stack) == 0:
             # Create class instance
             ci = ClassInstance()
@@ -590,7 +593,7 @@ def operation(op: int, left, right, dest):
         raise NameError("operation " + str(op) + " not recognized.")
 
     class_stack[-1].pc[-1] += 1
-    print("QUAD: " + str(class_stack[-1].pc[-1]))
+    #print("QUAD: " + str(class_stack[-1].pc[-1]))
     op, left, right, destination = quadrupoles[class_stack[-1].pc[-1]]
     operation(int(op), left, right, destination)
 
