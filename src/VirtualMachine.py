@@ -251,7 +251,7 @@ def do_cast(address: int, value: str):
                             LOCAL_INT_TOP <= address <= LOCAL_INT_BOTTOM or \
                             GLOBAL_INT_TOP <= address <= GLOBAL_INT_BOTTOM or \
                             TEMP_INT_TOP <= address <= TEMP_INT_BOTTOM:
-        return int(value)
+        return int(float(value))
 
     if CONST_REAL_TOP <= address <= CONST_REAL_BOTTOM or LOCAL_REAL_TOP <= address <= LOCAL_REAL_BOTTOM or \
                             GLOBAL_REAL_TOP <= address <= GLOBAL_REAL_BOTTOM or \
@@ -519,7 +519,6 @@ def operation(op: int, left, right, dest):
                     mi.temporal_memory[j - 5].append(-1)
 
         if len(params) > 0:
-            print(params)
             c_i = c_r = c_t = c_b = 0
             for param_dir in params:
                 dir_type = get_type(param_dir)
@@ -677,7 +676,6 @@ def operation(op: int, left, right, dest):
             value = get_temporal(class_stack[-1].method_stack[-1], int(dest))
         else:
             raise TypeError("Type cannot be printed.")
-
         value = do_cast(int(dest), str(value))
 
         if type(value) is str:

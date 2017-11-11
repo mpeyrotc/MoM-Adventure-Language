@@ -296,6 +296,10 @@ class MoMListener(ParseTreeListener):
 
     # noinspection PyPep8Naming,PyUnusedLocal
     def enterAfter_argument(self, ctx: MoMParser.After_argumentContext) -> None:
+        pass
+
+    # noinspection PyPep8Naming
+    def exitAfter_argument(self, ctx: MoMParser.After_argumentContext):
         argument = self.pending_operands.pop()
         argument_type = self.pending_types.pop()
         expected_type = self.current_method_instance.argument_types[self.current_counter]
@@ -311,14 +315,10 @@ class MoMListener(ParseTreeListener):
                                                                             "Argument should be of type " +
                             str(expected_type["arg_type"]) +
                             ", instead got: " + str(argument_type))
-
+        print(argument_type)
         quad = Quadrupole(Operation.PARAM, argument, None, self.current_counter)
 
         self.quads.append(quad)
-
-    # noinspection PyPep8Naming
-    def exitAfter_argument(self, ctx: MoMParser.After_argumentContext):
-        pass
 
     # noinspection PyPep8Naming
     def enterAdvance_count(self, ctx: MoMParser.Advance_countContext):
@@ -529,6 +529,7 @@ class MoMListener(ParseTreeListener):
     def enterConstant(self, ctx: MoMParser.ConstantContext) -> None:
         if ctx.INTEGER() is not None:
             num = int(ctx.getText())
+
             if num in master_tables.constants:
                 address = master_tables.constants[num]
             else:
