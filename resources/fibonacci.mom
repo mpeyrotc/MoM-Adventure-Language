@@ -1,0 +1,26 @@
+class Math is_a Component {
+    Math() {
+
+    };
+
+    Int fib2(Int limit) {
+        Int temp = 0;
+        Int temp2 = 0;
+
+        if(limit == 0) {
+            return 0;
+        } else {
+          if(limit == 1) {
+            return 1;
+          } else {
+            temp = fib2(limit - 1);
+            temp2 = fib2(limit - 2);
+            return temp + temp2;
+          };
+        };
+    };
+
+    Nothing main() {
+        Write(fib2(6));
+    };
+};

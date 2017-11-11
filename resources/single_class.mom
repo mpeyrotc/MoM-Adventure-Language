@@ -3,12 +3,10 @@ class Number is_a Component {
 
     Number() {
         aaa = 111;
-        Write("TESSSSSS");
-        Component slkdhfjs = new Component();
     };
 
     Nothing f3() {
-        Write("NUMBER");
+        WriteLine("NUMBER");
     };
 
     Real funName3() {
@@ -20,15 +18,12 @@ class Complex is_a Number {
     field<Int> bbb;
 
     Complex() {
-        Number jksdlhjdfsjk = new Number();
-        jksdlhjdfsjk.f3();
         bbb = 222;
-        Write("TUUUUUUU!!!");
     };
 
     Nothing f() {
         Number n = new Number();
-        Write("IN COMPLEX");
+        WriteLine("IN COMPLEX");
         n.f3();
     };
 
@@ -39,10 +34,14 @@ class Complex is_a Number {
     Real funName2() {
         Int b = 30;
         Number n = new Number();
-        Write(b);
+        WriteLine(b);
         Real d = n.funName3();
 
         return b * d;
+    };
+
+    Int sum(Int a, Int b) {
+        return a + b;
     };
 };
 
@@ -71,27 +70,7 @@ class Character is_a Complex {
 
     Nothing main() {
         Complex temp = new Complex();
-        Int num = 0;
-        Text b = "HAHA";
-        Text c = "!!!";
-        Boolean d = TRUE && FALSE;
-        Write(a);
-        Write(3 + 5);
-        Write(3 + 2.3);
-        Write(b + c);
-        Write("HOHOHO");
-        Write(d);
-        ReadInt(num);
-        Write(num + 3.3);
-        temp.f();
-        Write(aaa);
-        Write(bbb);
-        Write(ccc);
-        Int z = aNumber();
-        Write(z);
-        Write(aNumber());
-        Write(bNumber());
-        Write(temp.funName());
-        Write(temp.funName2());
+        Int res = temp.sum(2, 3) * temp.sum(6, 0) / (1 * temp.sum(1, 1));
+        WriteLine(res);
     };
 };

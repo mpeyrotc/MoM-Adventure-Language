@@ -26,17 +26,19 @@ class Method:
 
 
 class ClassInstance:
-    name = ""
-    memory = [[], [], [], [], []]
-    method_stack = list()
-    pc = list()
-    classes = {}
+    def __init__(self):
+        self.memory = [[], [], [], [], []]
+        self.method_stack = list()
+        self.pc = list()
+        self.classes = {}
+        self.name = ""
 
 
 class MethodInstance:
-    local_memory = [[], [], [], [], []]
-    temporal_memory = [[], [], [], []]
-    classes = {}
+    def __init__(self):
+        self.local_memory = [[], [], [], [], []]
+        self.temporal_memory = [[], [], [], []]
+        self.classes = {}
 
 
 new_class = list()
@@ -267,28 +269,33 @@ def do_cast(address: int, value: str):
     return value
 
 
-def get_raw_value(left: str, right: str):
-    if is_constant(int(left)):
-        left_value = get_constant(int(left))
-    elif is_global(int(left)):
-        left_value = get_global(class_stack[-1], int(left))
-    elif is_local(int(left)):
-        left_value = get_local(class_stack[-1].method_stack[-1], int(left))
-    elif is_temporal(int(left)):
-        left_value = get_temporal(class_stack[-1].method_stack[-1], int(left))
-    else:
-        raise IndexError("No memory location defined.")
+def get_raw_value(left_arg: str, right_arg: str):
+    left_value = None
+    right_value = None
 
-    if is_constant(int(right)):
-        right_value = get_constant(int(right))
-    elif is_global(int(right)):
-        right_value = get_global(class_stack[-1], int(right))
-    elif is_local(int(right)):
-        right_value = get_local(class_stack[-1].method_stack[-1], int(right))
-    elif is_temporal(int(right)):
-        right_value = get_temporal(class_stack[-1].method_stack[-1], int(right))
-    else:
-        raise IndexError("No memory location defined.")
+    if not left_arg == "":
+        if is_constant(int(left_arg)):
+            left_value = get_constant(int(left_arg))
+        elif is_global(int(left_arg)):
+            left_value = get_global(class_stack[-1], int(left_arg))
+        elif is_local(int(left_arg)):
+            left_value = get_local(class_stack[-1].method_stack[-1], int(left_arg))
+        elif is_temporal(int(left_arg)):
+            left_value = get_temporal(class_stack[-1].method_stack[-1], int(left_arg))
+        else:
+            raise IndexError("No memory location defined.")
+
+    if not right_arg == "":
+        if is_constant(int(right_arg)):
+            right_value = get_constant(int(right_arg))
+        elif is_global(int(right_arg)):
+            right_value = get_global(class_stack[-1], int(right_arg))
+        elif is_local(int(right_arg)):
+            right_value = get_local(class_stack[-1].method_stack[-1], int(right_arg))
+        elif is_temporal(int(right_arg)):
+            right_value = get_temporal(class_stack[-1].method_stack[-1], int(right_arg))
+        else:
+            raise IndexError("No memory location defined.")
 
     return left_value, right_value
 
@@ -370,6 +377,7 @@ def operation(op: int, left, right, dest):
         elif is_temporal(int(dest)):
             set_temporal(class_stack[-1].method_stack[-1], int(dest), left_value or right_value)
     elif op == 7:  # NOT
+        # TODO: implement in listener and here.
         pass
     elif op == 8:  # LESS_THAN
         left_value, right_value = get_raw_value(left, right)
@@ -431,6 +439,7 @@ def operation(op: int, left, right, dest):
     elif op == 14:  # CLOSE_PAREN
         pass
     elif op == 15:  # EQUAL
+        # print(left, dest)
         if len(new_class) == 0 or (not LOCAL_OBJECT_TOP <= int(dest) <= LOCAL_OBJECT_BOTTOM or GLOBAL_OBJECT_TOP <= int(
                 dest) <= GLOBAL_OBJECT_BOTTOM):
             if is_constant(int(left)):
@@ -455,24 +464,32 @@ def operation(op: int, left, right, dest):
                 class_stack[-1].method_stack[-1].classes[int(dest)] = new_class.pop()
             else:
                 class_stack[-1].classes[int(dest)] = new_class.pop()
-
     elif op == 16:  # GO_TO_FALSE
-        pass
+        left_value, _ = get_raw_value(left, right)
+        left_value = do_cast(int(left), left_value)
+
+        if not left_value:
+            class_stack[-1].pc[-1] = int(dest) - 1
     elif op == 17:  # GO_TO_TRUE
-        pass
+        left_value, _ = get_raw_value(left, right)
+        left_value = do_cast(int(left), left_value)
+
+        if left_value:
+            class_stack[-1].pc[-1] = int(dest) - 1
     elif op == 18:  # GO_TO
-        pass
+        class_stack[-1].pc[-1] = int(dest) - 1
     elif op == 19:  # RETURN
         class_stack[-1].pc.pop()
         class_stack[-1].method_stack.pop()
         if len(class_stack[-1].pc) == 0:
-            if main_called:
-                exit(22)
-            else:
-                class_stack.pop()
+            class_stack.pop()
+
+        if len(class_stack) == 0:
+            exit(22)
     elif op == 20:  # ERA
         pass
     elif op == 21:  # PARAM
+        # print("PARAM = " + str(class_stack[-1].method_stack[-1].local_memory[0]))
         params.append(int(left))
     elif op == 22:  # GO_SUB
         if ":" in left:  # composition call
@@ -502,6 +519,7 @@ def operation(op: int, left, right, dest):
                     mi.temporal_memory[j - 5].append(-1)
 
         if len(params) > 0:
+            print(params)
             c_i = c_r = c_t = c_b = 0
             for param_dir in params:
                 dir_type = get_type(param_dir)
@@ -510,9 +528,9 @@ def operation(op: int, left, right, dest):
                 elif is_global(int(param_dir)):
                     left_value = get_global(class_stack[-1], int(param_dir))
                 elif is_local(int(param_dir)):
-                    left_value = get_local(class_stack[-1].method_stack[-1], int(param_dir))
+                    left_value = get_local(class_stack[-1].method_stack[-2], int(param_dir))
                 elif is_temporal(int(param_dir)):
-                    left_value = get_temporal(class_stack[-1].method_stack[-1], int(param_dir))
+                    left_value = get_temporal(class_stack[-1].method_stack[-2], int(param_dir))
                 else:
                     raise IndexError("No memory location defined.")
 
@@ -530,6 +548,7 @@ def operation(op: int, left, right, dest):
                     c_b += 1
                 else:
                     raise NameError("Object as argument not supported")
+
             params = []
 
     elif op == 23:  # GO_CONSTRUCTOR
@@ -602,10 +621,9 @@ def operation(op: int, left, right, dest):
         value = do_cast(int(dest), str(value))
 
         if type(value) is str:
-            print(value[1:-1])
+            print(value[1:-1], end='')
         else:
-            print(value)
-
+            print(value, end='')
     elif op == 28:  # READ_INT
         new_value = input()
 
@@ -649,7 +667,23 @@ def operation(op: int, left, right, dest):
     elif op == 34:  # VERIFY
         pass
     elif op == 35:  # WRITE_LINE
-        pass
+        if is_constant(int(dest)):
+            value = get_constant(int(dest))
+        elif is_global(int(dest)):
+            value = get_global(class_stack[-1], int(dest))
+        elif is_local(int(dest)):
+            value = get_local(class_stack[-1].method_stack[-1], int(dest))
+        elif is_temporal(int(dest)):
+            value = get_temporal(class_stack[-1].method_stack[-1], int(dest))
+        else:
+            raise TypeError("Type cannot be printed.")
+
+        value = do_cast(int(dest), str(value))
+
+        if type(value) is str:
+            print(value[1:-1])
+        else:
+            print(value)
     elif op == 36:  # GO_MAIN
         main_called = True
 
@@ -673,22 +707,16 @@ def operation(op: int, left, right, dest):
                 raise RuntimeError("No class instance found.")
 
             var = get_global(class_stack[-1].method_stack[-1].classes[class_var], int(left))
-            #l, _ = get_raw_value(var, var)
             set_temporal(class_stack[-1].method_stack[-1], int(dest), var)
         else:
             if class_var not in class_stack[-1].classes:
                 raise RuntimeError("No class instance found.")
 
             raise RuntimeError("SHOULD NEVER BE CALLED")
-
-        # quad = Quadrupole(Operation.RETRIEVE, str(address) + ":" + self.class_reference,
-        #                   self.current_method_instance.name,
-        #                   result)
     else:
         raise NameError("operation " + str(op) + " not recognized.")
 
     class_stack[-1].pc[-1] += 1
-    # print("QUAD: " + str(class_stack[-1].pc[-1]))
     op, left, right, destination = quadrupoles[class_stack[-1].pc[-1]]
     operation(int(op), left, right, destination)
 

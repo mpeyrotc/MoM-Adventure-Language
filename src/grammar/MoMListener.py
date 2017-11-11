@@ -958,6 +958,7 @@ class MoMListener(ParseTreeListener):
     # noinspection PyPep8Naming
     def enterFunction_call(self, ctx: MoMParser.Function_callContext) -> None:
         class_instance = master_tables.classes[self.current_class]
+        self.pending_operators.append(Operator.OPEN_PAREN)
 
         if ctx.THIS() is not None or len(ctx.VARID()) == 1:  # it is a local method, or inherited
             method_name = ctx.VARID()[0].getText()
@@ -995,6 +996,7 @@ class MoMListener(ParseTreeListener):
 
     # noinspection PyPep8Naming,PyUnusedLocal
     def exitFunction_call(self, ctx: MoMParser.Function_callContext) -> None:
+        self.pending_operators.pop()
         if not self.current_counter == self.current_method_instance.num_of_params:
             raise IllegalStateException("Method `" + self.current_method_instance.name +
                                         "` has wrong number of arguments. Should be " +
@@ -1007,7 +1009,7 @@ class MoMListener(ParseTreeListener):
             self.quads.append(quad)
 
             if not self.current_method_instance.return_type == Type.NOTHING:
-                m = master_tables.classes[self.current_class].methods[self.current_method_instance.name]
+                m = master_tables.classes[self.current_class].methods[self.current_method]
                 result = self.get_temp_address_by_type(m, self.current_method_instance.return_type)
                 self.increment_temp_address_by_type(m, self.current_method_instance.return_type)
                 # noinspection SpellCheckingInspection
