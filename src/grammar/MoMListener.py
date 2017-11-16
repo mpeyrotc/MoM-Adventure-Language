@@ -315,7 +315,6 @@ class MoMListener(ParseTreeListener):
                                                                             "Argument should be of type " +
                             str(expected_type["arg_type"]) +
                             ", instead got: " + str(argument_type))
-        print(argument_type)
         quad = Quadrupole(Operation.PARAM, argument, None, self.current_counter)
 
         self.quads.append(quad)
@@ -1384,7 +1383,7 @@ class MoMListener(ParseTreeListener):
         dim_real = []
         self.arguments[-1].mem_size = r
         for d in dim:
-            dim_real.append((d, r / d))
+            dim_real.append((d, int(r / d)))
             r = r / d
         self.arguments[-1].dim = dim_real
 
@@ -1427,7 +1426,7 @@ class MoMListener(ParseTreeListener):
         dim_real = []
         self.arguments[-1].mem_size = r
         for d in dim:
-            dim_real.append((d, r / d))
+            dim_real.append((d, int(r / d)))
             r = r / d
         self.arguments[-1].dim = dim_real
 
