@@ -264,7 +264,7 @@ def do_cast(address: int, value: str):
         if type(value) == bool:
             return value
         else:
-            return value.lower() == "true"
+            return value == "!@#$%^&*()"
 
     return value
 

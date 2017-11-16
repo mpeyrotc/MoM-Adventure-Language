@@ -70,10 +70,10 @@ class Character is_a Complex {
 
     Nothing main() {
         Complex temp = new Complex();
-        Int num = 0;
         Text b = "HAHA";
         Text c = "!!!";
         Boolean d = TRUE && FALSE;
+        Int num = 0;
         Write(a);
         WriteLine(3 + 5);
         WriteLine(3 + 2.3);
@@ -91,6 +91,6 @@ class Character is_a Complex {
         WriteLine(aNumber());
         WriteLine(bNumber());
         WriteLine(temp.funName());
-        WriteLine(temp.sum(2, 3) * temp.sum(6, 0) / (1 * temp.sum(1, 1)));
+        WriteLine(temp.sum(2, 3) * temp.sum(6, 0) / (2 * temp.sum(1, 0)));
     };
 };
