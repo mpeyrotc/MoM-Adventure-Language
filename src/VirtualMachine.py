@@ -1,6 +1,6 @@
 import sys
 
-sys.setrecursionlimit(15000)
+sys.setrecursionlimit(5000)
 in_constants = True
 in_classes = False
 main_called = False

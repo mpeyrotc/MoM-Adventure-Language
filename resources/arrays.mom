@@ -1,16 +1,58 @@
 class Character is_a Component {
+    field<Int[30]> arrA;
     Character() {
 
+    };
+
+    Boolean findArrA(Int x){
+        Int i = 0;
+        while(i < 30){
+            if(arrA[i] == x){
+                return TRUE;
+            };
+            i = i + 1;
+        };
+
+        return FALSE;
     };
 
     Nothing main(){
         Int i = 0;
         Int j = 0;
         Int n = 3;
+        Int contador = 1;
+        while(i < 30){
+            arrA[i] = contador;
+            i = i + 1;
+            contador = contador + 1;
+        };
+
+        Int x = 6;
+        if(findArrA(x)){
+            Write(x);
+            WriteLine(" found on array");
+        }
+        else{
+            Write(x);
+            WriteLine(" not found on array");
+        };
+
+        x = 200;
+        if(findArrA(x)){
+            Write(x);
+            WriteLine(" found on array");
+        }
+        else{
+            Write(x);
+            WriteLine(" not found on array");
+        };
+
+
         Int[3][3] arrB;
         Int[3][3] arrC;
         Int[3][3] ans;
-        Int contador = 1;
+        contador = 1;
+        i = 0;
         while(i < n){
             j = 0;
             while(j < n){
