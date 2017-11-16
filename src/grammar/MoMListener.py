@@ -550,7 +550,7 @@ class MoMListener(ParseTreeListener):
             self.pending_operands.append(address)
             self.pending_types.append(Type.REAL)
         elif ctx.TRUE() is not None:
-            num = True
+            num = "!@#$%^&*()"
             if num in master_tables.constants:
                 address = master_tables.constants[num]
             else:
@@ -561,7 +561,7 @@ class MoMListener(ParseTreeListener):
             self.pending_operands.append(address)
             self.pending_types.append(Type.BOOLEAN)
         elif ctx.FALSE() is not None:
-            num = False
+            num = ")(*&^%$#@!"
             if num in master_tables.constants:
                 address = master_tables.constants[num]
             else:
