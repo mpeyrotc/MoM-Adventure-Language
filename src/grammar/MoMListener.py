@@ -54,6 +54,8 @@ class MoMListener(ParseTreeListener):
     current_counter = 0
     class_reference = ""
     constructor_called = ""
+    destination_type = []
+    source_type = []
     arguments = []
     argument_names = []
     in_signature = False
@@ -416,6 +418,10 @@ class MoMListener(ParseTreeListener):
         if class_name in master_tables.classes:
             raise NameError("Redefinition of class '" + class_name + "' found. This is not supported by the language.")
 
+        if class_name in master_tables.classes:
+            raise NameError("Name collision with interface '" + class_name +
+                            "'. Classes cannot have the same name as interfaces.")
+
         # get the parent of this class
         self.enterComplex_type(ctx.complex_type())
         class_parent = self.current_type
@@ -602,6 +608,7 @@ class MoMListener(ParseTreeListener):
                 self.pending_types.append(get_type(t))
             else:
                 self.pending_types.append(t)
+
         elif ctx.CAPITALID() is not None:
             # it's an enum
             name = ctx.CAPITALID().getText()
@@ -627,6 +634,7 @@ class MoMListener(ParseTreeListener):
             else:
                 raise NameError("Enum not found")
         else:
+            # TODO: Elias checa este caso, no se a que se refiere.
             # See array_var listener
             pass
 
@@ -637,6 +645,7 @@ class MoMListener(ParseTreeListener):
     # noinspection PyPep8Naming
     def enterConstruct_call(self, ctx: MoMParser.Construct_callContext) -> None:
         method_name = ctx.CLASSID().getText()
+        self.source_type.append(method_name)
 
         found = False
         for class_name in master_tables.classes:
@@ -1143,9 +1152,10 @@ class MoMListener(ParseTreeListener):
                 else:
                     c.add_argument(name, t, var.is_array, address, var.mem_size, var.dim)
                 self.increment_global_address_by_type(c, get_type(var.var_type), var.mem_size)
+
             elif self.current_structure == StructureType.SPECIFICATION:
                 master_tables.specifications[self.current_specification].methods[
-                    self.current_method].add_argument(name, var.var_type, var.is_array, -2, var.mem_size, var.dim)
+                    self.current_method].add_argument(name, get_type(var.var_type), var.is_array, -2, var.mem_size, var.dim)
 
     # noinspection PyPep8Naming
     def enterSpec_function(self, ctx: MoMParser.Spec_functionContext) -> None:
@@ -1177,6 +1187,9 @@ class MoMListener(ParseTreeListener):
             raise NameError("Specification '" + spec_name + "' is already defined. Redefinition of specifications"
                                                             " is not supported at language level.")
 
+        if spec_name in master_tables.classes:
+            raise NameError("Specification '" + spec_name + "' cannot have the same name as an existing class.")
+
         master_tables.specifications[spec_name] = Specification(spec_name)
         self.current_specification = spec_name
         self.current_structure = StructureType.SPECIFICATION
@@ -1190,6 +1203,7 @@ class MoMListener(ParseTreeListener):
         self.in_signature = True
         self.arguments = []
         self.argument_names = []
+        self.destination_type.append(ctx.super_type().getText())
 
         var_name = ctx.VARID()
         self.argument_names.append(var_name.getText())
@@ -1197,13 +1211,21 @@ class MoMListener(ParseTreeListener):
     # noinspection PyPep8Naming,PyUnusedLocal
     def exitAssignation_def(self, ctx: MoMParser.Assignation_defContext) -> None:
         self.in_signature = False
+        counter = 0
         for name, var in zip(self.argument_names, self.arguments):
             if self.current_structure == StructureType.CLASS:
                 m = master_tables.classes[self.current_class].methods[self.current_method]
                 address = self.get_address_by_type(m, get_type(var.var_type))
                 t = get_type(var.var_type)
                 if t == Type.CLASS:
-                    m.add_argument(name, t, var.is_array, address, var.mem_size, [], var.var_type)
+                    if not self.source_type[counter] == self.destination_type[counter]:
+                        if not self.destination_type[counter] in \
+                                master_tables.classes[self.current_class].specifications:
+                            raise TypeError("Source and destination types not compatible.")
+
+                    m.add_argument(name, t, var.is_array, address, var.mem_size, [], self.source_type[counter])
+
+                    counter += 1
                 else:
                     m.add_argument(name, t, var.is_array, address, var.mem_size, [])
 
@@ -1217,10 +1239,11 @@ class MoMListener(ParseTreeListener):
                     raise TypeError("Cannot assign value of type " + str(src_type) + " to " + str(dest_type))
 
                 holder = self.pending_operands.pop()
-
                 quad = Quadrupole(Operator.EQUAL, holder, None, destination)
-
                 self.quads.append(quad)
+
+        self.source_type = []
+        self.destination_type = []
 
     # noinspection PyPep8Naming
     def enterStatute(self, ctx: MoMParser.StatuteContext):
