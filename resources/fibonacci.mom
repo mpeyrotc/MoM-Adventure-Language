@@ -3,7 +3,38 @@ class Math is_a Component {
 
     };
 
+    Int fib1(Int limit){
+        if(limit < 0){
+            return -1;
+        };
+
+        if(limit == 0){
+            return 0;
+        }
+        else{
+            if(limit <= 2){
+                return 1;
+            };
+        };
+
+        Int counter = 2;
+        Int left = 1;
+        Int right = 1;
+        Int temp = 0;
+
+        while(counter < limit){
+            temp = right;
+            right = left + right;
+            left = temp;
+            counter = counter + 1;
+        };
+        return right;
+    };
+
     Int fib2(Int limit) {
+        if(limit < 0){
+            return -1;
+        };
         Int temp = 0;
         Int temp2 = 0;
 
@@ -21,6 +52,8 @@ class Math is_a Component {
     };
 
     Nothing main() {
+        Write(fib1(6));
+        WriteLine(" ");
         Write(fib2(6));
     };
 };

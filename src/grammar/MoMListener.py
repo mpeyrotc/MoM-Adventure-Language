@@ -317,7 +317,6 @@ class MoMListener(ParseTreeListener):
                                                                             "Argument should be of type " +
                             str(expected_type["arg_type"]) +
                             ", instead got: " + str(argument_type))
-        print(argument_type)
         quad = Quadrupole(Operation.PARAM, argument, None, self.current_counter)
 
         self.quads.append(quad)
@@ -1407,7 +1406,7 @@ class MoMListener(ParseTreeListener):
         dim_real = []
         self.arguments[-1].mem_size = r
         for d in dim:
-            dim_real.append((d, r / d))
+            dim_real.append((d, int(r / d)))
             r = r / d
         self.arguments[-1].dim = dim_real
 
@@ -1450,7 +1449,7 @@ class MoMListener(ParseTreeListener):
         dim_real = []
         self.arguments[-1].mem_size = r
         for d in dim:
-            dim_real.append((d, r / d))
+            dim_real.append((d, int(r / d)))
             r = r / d
         self.arguments[-1].dim = dim_real
 
@@ -1516,15 +1515,6 @@ class MoMListener(ParseTreeListener):
         self.pending_types.append(type_arr)
         self.pending_dims.pop()
         self.pending_operators.pop()
-
-    # noinspection PyPep8Naming
-    def enterArray_arg(self, ctx: MoMParser.Array_argContext):
-        pass
-
-    # noinspection PyPep8Naming,PyUnusedLocal
-    def exitArray_arg(self, ctx: MoMParser.Array_argContext) -> None:
-        if self.in_signature:
-            self.arguments[-1].is_array = True
 
     # noinspection PyPep8Naming,PyUnusedLocal
     def enterWrite_func(self, ctx: MoMParser.Write_funcContext):

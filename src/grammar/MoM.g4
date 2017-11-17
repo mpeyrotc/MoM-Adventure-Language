@@ -74,7 +74,7 @@ close_paren     :   // nothing
 factor 			:	OPEN_PAREN open_paren ss_exp close_paren CLOSE_PAREN
                 |   (PLUS | MINUS | NOT)? constant
                 ;
-function_args	:	(super_type | array_arg) VARID (COMMA (super_type | array_arg) VARID)*
+function_args	:	super_type VARID (COMMA super_type VARID)*
                 ;
 function_call	:	((THIS | VARID) PERIOD)? VARID OPEN_PAREN (arguments)? CLOSE_PAREN
                 ;
@@ -149,8 +149,6 @@ open_sbracket   :   //nothing
 close_sbracket  :   // nothing
                 ;
 array_var       :   (THIS PERIOD)? VARID open_sbracket OPEN_SBRACKET ss_exp  close_sbracket CLOSE_SBRACKET (open_sbracket OPEN_SBRACKET ss_exp close_sbracket CLOSE_SBRACKET)*
-                ;
-array_arg       :   super_type (OPEN_SBRACKET CLOSE_SBRACKET)+
                 ;
 write_func      :   PRINT OPEN_PAREN (ss_exp) CLOSE_PAREN
                 ;

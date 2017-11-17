@@ -1,5 +1,6 @@
 class Expressions is_a Component {
     field<Int[2]> arr;
+    field<Int> num;
 
     Expressions() {
     };
@@ -12,10 +13,16 @@ class Expressions is_a Component {
     };
 
     Nothing func2(Int a, Int b, Int c) {
-        Write(a + b + c);
+        WriteLine(a + b + c);
     };
 
     Nothing main() {
+        arr[0] = 1;
+        arr[arr[0]] = 2;
+        num = 10;
+        Int x = arr[0] + arr[1] + num;
+        WriteLine(x);
+        WriteLine(arr[0]);
         func2(100, 2, 1218);
         func2(1, 1, 1);
     };

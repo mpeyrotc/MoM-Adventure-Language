@@ -1,0 +1,41 @@
+class Math is_a Component {
+    Math() {
+
+    };
+
+    Int fact1(Int limit){
+        if(limit < 0){
+            return -1;
+        };
+
+        if(limit <= 1){
+            return 1;
+        };
+
+        Int counter = 2;
+        Int ans = 1;
+        while(counter <= limit){
+            ans = ans * counter;
+            counter = counter + 1;
+        };
+        return ans;
+    };
+
+    Int fact2(Int limit) {
+        if(limit <0){
+            return -1;
+        };
+
+        if(limit <= 1){
+            return 1;
+        };
+
+        return limit * fact2(limit - 1);
+    };
+
+    Nothing main() {
+        Write(fact1(6));
+        WriteLine(" ");
+        Write(fact2(6));
+    };
+};

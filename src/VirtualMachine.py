@@ -1,3 +1,6 @@
+import sys
+
+sys.setrecursionlimit(5000)
 in_constants = True
 in_classes = False
 main_called = False
@@ -82,6 +85,15 @@ TEMP_INT_TOP = 18_000
 TEMP_REAL_TOP = 19_000
 TEMP_BOOLEAN_TOP = 20_000
 TEMP_TEXT_TOP = 21_000
+
+
+def is_absolute(address: str) -> bool:
+    address = str(address)
+    return address.find("$") != -1
+
+
+def is_indirect(address: str) -> bool:
+    return address.find("&") != -1
 
 
 def is_temporal(address: int) -> bool:
@@ -251,7 +263,7 @@ def do_cast(address: int, value: str):
                             LOCAL_INT_TOP <= address <= LOCAL_INT_BOTTOM or \
                             GLOBAL_INT_TOP <= address <= GLOBAL_INT_BOTTOM or \
                             TEMP_INT_TOP <= address <= TEMP_INT_BOTTOM:
-        return int(float(value))
+        return int(value)
 
     if CONST_REAL_TOP <= address <= CONST_REAL_BOTTOM or LOCAL_REAL_TOP <= address <= LOCAL_REAL_BOTTOM or \
                             GLOBAL_REAL_TOP <= address <= GLOBAL_REAL_BOTTOM or \
@@ -269,10 +281,7 @@ def do_cast(address: int, value: str):
     return value
 
 
-def get_raw_value(left_arg: str, right_arg: str):
-    left_value = None
-    right_value = None
-
+def get_raw_value_one(left_arg: str):
     if not left_arg == "":
         if is_constant(int(left_arg)):
             left_value = get_constant(int(left_arg))
@@ -285,8 +294,35 @@ def get_raw_value(left_arg: str, right_arg: str):
         else:
             raise IndexError("No memory location defined.")
 
+        return left_value
+
+
+def get_raw_value(left_arg: str, right_arg: str):
+    left_arg = str(left_arg)
+    right_arg = str(right_arg)
+    left_value = None
+    right_value = None
+    left_is_absolute = left_arg.find("$")
+    right_is_absolute = right_arg.find("$")
+
+    if not left_arg == "":
+        if not left_is_absolute == -1:
+            left_value = left_arg[left_is_absolute + 1:].strip()
+        elif is_constant(int(left_arg)):
+            left_value = get_constant(int(left_arg))
+        elif is_global(int(left_arg)):
+            left_value = get_global(class_stack[-1], int(left_arg))
+        elif is_local(int(left_arg)):
+            left_value = get_local(class_stack[-1].method_stack[-1], int(left_arg))
+        elif is_temporal(int(left_arg)):
+            left_value = get_temporal(class_stack[-1].method_stack[-1], int(left_arg))
+        else:
+            raise IndexError("No memory location defined.")
+
     if not right_arg == "":
-        if is_constant(int(right_arg)):
+        if not right_is_absolute == -1:
+            right_value = right_arg[right_is_absolute + 1:].strip()
+        elif is_constant(int(right_arg)):
             right_value = get_constant(int(right_arg))
         elif is_global(int(right_arg)):
             right_value = get_global(class_stack[-1], int(right_arg))
@@ -305,9 +341,19 @@ def operation(op: int, left, right, dest):
     global main_called, new_class, params
 
     if op == 1:  # PLUS
+        if is_indirect(left):
+            left = get_raw_value_one(left[left.find("&") + 1:].strip())
+        if is_indirect(right):
+            right = get_raw_value_one(right[right.find("&") + 1:].strip())
         left_value, right_value = get_raw_value(left, right)
-        left_value = do_cast(int(left), left_value)
-        right_value = do_cast(int(right), right_value)
+        if not is_absolute(left):
+            left_value = do_cast(int(left), left_value)
+        else:
+            left_value = int(left[left.find("$") + 1:].strip())
+        if not is_absolute(right):
+            right_value = do_cast(int(right), right_value)
+        else:
+            right_value = int(right[right.find("$") + 1:].strip())
 
         if type(left_value) is str:
             left_value = left_value[1:-1]
@@ -322,9 +368,19 @@ def operation(op: int, left, right, dest):
         elif is_temporal(int(dest)):
             set_temporal(class_stack[-1].method_stack[-1], int(dest), left_value + right_value)
     elif op == 2:  # MINUS
+        if is_indirect(left):
+            left = get_raw_value_one(left[left.find("&") + 1:].strip())
+        if is_indirect(right):
+            right = get_raw_value_one(right[right.find("&") + 1:].strip())
         left_value, right_value = get_raw_value(left, right)
-        left_value = do_cast(int(left), left_value)
-        right_value = do_cast(int(right), right_value)
+        if not is_absolute(left):
+            left_value = do_cast(int(left), left_value)
+        else:
+            left_value = int(left[left.find("$") + 1:].strip())
+        if not is_absolute(right):
+            right_value = do_cast(int(right), right_value)
+        else:
+            right_value = int(right[right.find("$") + 1:].strip())
 
         if is_global(int(dest)):
             set_global(class_stack[-1], int(dest), left_value - right_value)
@@ -333,9 +389,19 @@ def operation(op: int, left, right, dest):
         elif is_temporal(int(dest)):
             set_temporal(class_stack[-1].method_stack[-1], int(dest), left_value - right_value)
     elif op == 3:  # TIMES
+        if is_indirect(left):
+            left = get_raw_value_one(left[left.find("&") + 1:].strip())
+        if is_indirect(right):
+            right = get_raw_value_one(right[right.find("&") + 1:].strip())
         left_value, right_value = get_raw_value(left, right)
-        left_value = do_cast(int(left), left_value)
-        right_value = do_cast(int(right), right_value)
+        if not is_absolute(left):
+            left_value = do_cast(int(left), left_value)
+        else:
+            left_value = int(left[left.find("$") + 1:].strip())
+        if not is_absolute(right):
+            right_value = do_cast(int(right), right_value)
+        else:
+            right_value = int(right[right.find("$") + 1:].strip())
 
         if is_global(int(dest)):
             set_global(class_stack[-1], int(dest), left_value * right_value)
@@ -344,9 +410,19 @@ def operation(op: int, left, right, dest):
         elif is_temporal(int(dest)):
             set_temporal(class_stack[-1].method_stack[-1], int(dest), left_value * right_value)
     elif op == 4:  # DIVIDES
+        if is_indirect(left):
+            left = get_raw_value_one(left[left.find("&") + 1:].strip())
+        if is_indirect(right):
+            right = get_raw_value_one(right[right.find("&") + 1:].strip())
         left_value, right_value = get_raw_value(left, right)
-        left_value = do_cast(int(left), left_value)
-        right_value = do_cast(int(right), right_value)
+        if not is_absolute(left):
+            left_value = do_cast(int(left), left_value)
+        else:
+            left_value = int(left[left.find("$") + 1:].strip())
+        if not is_absolute(right):
+            right_value = do_cast(int(right), right_value)
+        else:
+            right_value = int(right[right.find("$") + 1:].strip())
 
         if is_global(int(dest)):
             set_global(class_stack[-1], int(dest), left_value / right_value)
@@ -355,9 +431,19 @@ def operation(op: int, left, right, dest):
         elif is_temporal(int(dest)):
             set_temporal(class_stack[-1].method_stack[-1], int(dest), left_value / right_value)
     elif op == 5:  # AND
+        if is_indirect(left):
+            left = get_raw_value_one(left[left.find("&") + 1:].strip())
+        if is_indirect(right):
+            right = get_raw_value_one(right[right.find("&") + 1:].strip())
         left_value, right_value = get_raw_value(left, right)
-        left_value = do_cast(int(left), left_value)
-        right_value = do_cast(int(right), right_value)
+        if not is_absolute(left):
+            left_value = do_cast(int(left), left_value)
+        else:
+            left_value = int(left[left.find("$") + 1:].strip())
+        if not is_absolute(right):
+            right_value = do_cast(int(right), right_value)
+        else:
+            right_value = int(right[right.find("$") + 1:].strip())
 
         if is_global(int(dest)):
             set_global(class_stack[-1], int(dest), left_value and right_value)
@@ -366,9 +452,19 @@ def operation(op: int, left, right, dest):
         elif is_temporal(int(dest)):
             set_temporal(class_stack[-1].method_stack[-1], int(dest), left_value and right_value)
     elif op == 6:  # OR
+        if is_indirect(left):
+            left = get_raw_value_one(left[left.find("&") + 1:].strip())
+        if is_indirect(right):
+            right = get_raw_value_one(right[right.find("&") + 1:].strip())
         left_value, right_value = get_raw_value(left, right)
-        left_value = do_cast(int(left), left_value)
-        right_value = do_cast(int(right), right_value)
+        if not is_absolute(left):
+            left_value = do_cast(int(left), left_value)
+        else:
+            left_value = int(left[left.find("$") + 1:].strip())
+        if not is_absolute(right):
+            right_value = do_cast(int(right), right_value)
+        else:
+            right_value = int(right[right.find("$") + 1:].strip())
 
         if is_global(int(dest)):
             set_global(class_stack[-1], int(dest), left_value or right_value)
@@ -380,9 +476,19 @@ def operation(op: int, left, right, dest):
         # TODO: implement in listener and here.
         pass
     elif op == 8:  # LESS_THAN
+        if is_indirect(left):
+            left = get_raw_value_one(left[left.find("&") + 1:].strip())
+        if is_indirect(right):
+            right = get_raw_value_one(right[right.find("&") + 1:].strip())
         left_value, right_value = get_raw_value(left, right)
-        left_value = do_cast(int(left), left_value)
-        right_value = do_cast(int(right), right_value)
+        if not is_absolute(left):
+            left_value = do_cast(int(left), left_value)
+        else:
+            left_value = int(left[left.find("$") + 1:].strip())
+        if not is_absolute(right):
+            right_value = do_cast(int(right), right_value)
+        else:
+            right_value = int(right[right.find("$") + 1:].strip())
 
         if is_global(int(dest)):
             set_global(class_stack[-1], int(dest), left_value < right_value)
@@ -391,9 +497,19 @@ def operation(op: int, left, right, dest):
         elif is_temporal(int(dest)):
             set_temporal(class_stack[-1].method_stack[-1], int(dest), left_value < right_value)
     elif op == 9:  # LESS_EQUAL
+        if is_indirect(left):
+            left = get_raw_value_one(left[left.find("&") + 1:].strip())
+        if is_indirect(right):
+            right = get_raw_value_one(right[right.find("&") + 1:].strip())
         left_value, right_value = get_raw_value(left, right)
-        left_value = do_cast(int(left), left_value)
-        right_value = do_cast(int(right), right_value)
+        if not is_absolute(left):
+            left_value = do_cast(int(left), left_value)
+        else:
+            left_value = int(left[left.find("$") + 1:].strip())
+        if not is_absolute(right):
+            right_value = do_cast(int(right), right_value)
+        else:
+            right_value = int(right[right.find("$") + 1:].strip())
 
         if is_global(int(dest)):
             set_global(class_stack[-1], int(dest), left_value <= right_value)
@@ -402,9 +518,19 @@ def operation(op: int, left, right, dest):
         elif is_temporal(int(dest)):
             set_temporal(class_stack[-1].method_stack[-1], int(dest), left_value <= right_value)
     elif op == 10:  # GREATER_THAN
+        if is_indirect(left):
+            left = get_raw_value_one(left[left.find("&") + 1:].strip())
+        if is_indirect(right):
+            right = get_raw_value_one(right[right.find("&") + 1:].strip())
         left_value, right_value = get_raw_value(left, right)
-        left_value = do_cast(int(left), left_value)
-        right_value = do_cast(int(right), right_value)
+        if not is_absolute(left):
+            left_value = do_cast(int(left), left_value)
+        else:
+            left_value = int(left[left.find("$") + 1:].strip())
+        if not is_absolute(right):
+            right_value = do_cast(int(right), right_value)
+        else:
+            right_value = int(right[right.find("$") + 1:].strip())
 
         if is_global(int(dest)):
             set_global(class_stack[-1], int(dest), left_value > right_value)
@@ -413,9 +539,19 @@ def operation(op: int, left, right, dest):
         elif is_temporal(int(dest)):
             set_temporal(class_stack[-1].method_stack[-1], int(dest), left_value > right_value)
     elif op == 11:  # GREATER_EQUAL
+        if is_indirect(left):
+            left = get_raw_value_one(left[left.find("&") + 1:].strip())
+        if is_indirect(right):
+            right = get_raw_value_one(right[right.find("&") + 1:].strip())
         left_value, right_value = get_raw_value(left, right)
-        left_value = do_cast(int(left), left_value)
-        right_value = do_cast(int(right), right_value)
+        if not is_absolute(left):
+            left_value = do_cast(int(left), left_value)
+        else:
+            left_value = int(left[left.find("$") + 1:].strip())
+        if not is_absolute(right):
+            right_value = do_cast(int(right), right_value)
+        else:
+            right_value = int(right[right.find("$") + 1:].strip())
 
         if is_global(int(dest)):
             set_global(class_stack[-1], int(dest), left_value >= right_value)
@@ -424,9 +560,19 @@ def operation(op: int, left, right, dest):
         elif is_temporal(int(dest)):
             set_temporal(class_stack[-1].method_stack[-1], int(dest), left_value >= right_value)
     elif op == 12:  # EQUAL_EQUAL
+        if is_indirect(left):
+            left = get_raw_value_one(left[left.find("&") + 1:].strip())
+        if is_indirect(right):
+            right = get_raw_value_one(right[right.find("&") + 1:].strip())
         left_value, right_value = get_raw_value(left, right)
-        left_value = do_cast(int(left), left_value)
-        right_value = do_cast(int(right), right_value)
+        if not is_absolute(left):
+            left_value = do_cast(int(left), left_value)
+        else:
+            left_value = int(left[left.find("$") + 1:].strip())
+        if not is_absolute(right):
+            right_value = do_cast(int(right), right_value)
+        else:
+            right_value = int(right[right.find("$") + 1:].strip())
 
         if is_global(int(dest)):
             set_global(class_stack[-1], int(dest), left_value == right_value)
@@ -439,7 +585,10 @@ def operation(op: int, left, right, dest):
     elif op == 14:  # CLOSE_PAREN
         pass
     elif op == 15:  # EQUAL
-        # print(left, dest)
+        if is_indirect(left):
+            left = get_raw_value_one(left[left.find("&") + 1:].strip())
+        if is_indirect(dest):
+            dest = get_raw_value_one(dest[dest.find("&") + 1:].strip())
         if len(new_class) == 0 or (not LOCAL_OBJECT_TOP <= int(dest) <= LOCAL_OBJECT_BOTTOM or GLOBAL_OBJECT_TOP <= int(
                 dest) <= GLOBAL_OBJECT_BOTTOM):
             if is_constant(int(left)):
@@ -606,6 +755,8 @@ def operation(op: int, left, right, dest):
     elif op == 26:  # END_CLASS
         pass
     elif op == 27:  # WRITE
+        if is_indirect(dest):
+            dest = get_raw_value_one(dest[dest.find("&") + 1:].strip())
         if is_constant(int(dest)):
             value = get_constant(int(dest))
         elif is_global(int(dest)):
@@ -664,8 +815,28 @@ def operation(op: int, left, right, dest):
     elif op == 33:  # CLOSE_SPAREN
         pass
     elif op == 34:  # VERIFY
-        pass
+        if is_indirect(left):
+            left = get_raw_value_one(left[left.find("&") + 1:].strip())
+
+        if is_constant(int(left)):
+            value = get_constant(int(left))
+        elif is_global(int(left)):
+            value = get_global(class_stack[-1], int(left))
+        elif is_local(int(left)):
+            value = get_local(class_stack[-1].method_stack[-1], int(left))
+        elif is_temporal(int(left)):
+            value = get_temporal(class_stack[-1].method_stack[-1], int(left))
+        else:
+            raise TypeError("Type cannot be verified.")
+
+        if int(right) <= int(value) < int(dest):
+            pass
+        else:
+            raise TypeError("Error, Out of bounds")
+
     elif op == 35:  # WRITE_LINE
+        if is_indirect(dest):
+            dest = get_raw_value_one(dest[dest.find("&") + 1:].strip())
         if is_constant(int(dest)):
             value = get_constant(int(dest))
         elif is_global(int(dest)):
