@@ -1493,15 +1493,6 @@ class MoMListener(ParseTreeListener):
         self.pending_dims.pop()
         self.pending_operators.pop()
 
-    # noinspection PyPep8Naming
-    def enterArray_arg(self, ctx: MoMParser.Array_argContext):
-        pass
-
-    # noinspection PyPep8Naming,PyUnusedLocal
-    def exitArray_arg(self, ctx: MoMParser.Array_argContext) -> None:
-        if self.in_signature:
-            self.arguments[-1].is_array = True
-
     # noinspection PyPep8Naming,PyUnusedLocal
     def enterWrite_func(self, ctx: MoMParser.Write_funcContext):
         self.pending_operators.append(Operator.WRITE)
