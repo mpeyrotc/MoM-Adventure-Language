@@ -66,7 +66,7 @@ class Method:
         :return: None.
         """
         if arg_name in self._variables:
-            raise NameError("Method name already defined within scope.")
+            raise NameError("Method " + arg_name + " already defined within scope.")
 
         self._variables[arg_name] = {'type': arg_type,
                                      'is_array': is_array,
