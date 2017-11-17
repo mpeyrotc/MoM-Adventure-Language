@@ -263,7 +263,7 @@ def do_cast(address: int, value: str):
                             LOCAL_INT_TOP <= address <= LOCAL_INT_BOTTOM or \
                             GLOBAL_INT_TOP <= address <= GLOBAL_INT_BOTTOM or \
                             TEMP_INT_TOP <= address <= TEMP_INT_BOTTOM:
-        return int(value)
+        return int(float(value))
 
     if CONST_REAL_TOP <= address <= CONST_REAL_BOTTOM or LOCAL_REAL_TOP <= address <= LOCAL_REAL_BOTTOM or \
                             GLOBAL_REAL_TOP <= address <= GLOBAL_REAL_BOTTOM or \
@@ -589,8 +589,8 @@ def operation(op: int, left, right, dest):
             left = get_raw_value_one(left[left.find("&") + 1:].strip())
         if is_indirect(dest):
             dest = get_raw_value_one(dest[dest.find("&") + 1:].strip())
-        if len(new_class) == 0 or (not LOCAL_OBJECT_TOP <= int(dest) <= LOCAL_OBJECT_BOTTOM or GLOBAL_OBJECT_TOP <= int(
-                dest) <= GLOBAL_OBJECT_BOTTOM):
+        if len(new_class) == 0 or (not (LOCAL_OBJECT_TOP <= int(dest) <= LOCAL_OBJECT_BOTTOM
+                                   or GLOBAL_OBJECT_TOP <= int(dest) <= GLOBAL_OBJECT_BOTTOM)):
             if is_constant(int(left)):
                 left_value = get_constant(int(left))
             elif is_global(int(left)):
@@ -613,6 +613,7 @@ def operation(op: int, left, right, dest):
                 class_stack[-1].method_stack[-1].classes[int(dest)] = new_class.pop()
             else:
                 class_stack[-1].classes[int(dest)] = new_class.pop()
+
     elif op == 16:  # GO_TO_FALSE
         left_value, _ = get_raw_value(left, right)
         left_value = do_cast(int(left), left_value)
@@ -881,7 +882,8 @@ def operation(op: int, left, right, dest):
             if class_var not in class_stack[-1].classes:
                 raise RuntimeError("No class instance found.")
 
-            raise RuntimeError("SHOULD NEVER BE CALLED")
+            var = get_global(class_stack[-1].classes[class_var], int(left))
+            set_temporal(class_stack[-1].method_stack[-1], int(dest), var)
     else:
         raise NameError("operation " + str(op) + " not recognized.")
 

@@ -1199,6 +1199,8 @@ class MoMListener(ParseTreeListener):
 
     # noinspection PyPep8Naming
     def enterAssignation_def(self, ctx: MoMParser.Assignation_defContext) -> None:
+        self.destination_type = []
+        self.source_type = []
         self.in_signature = True
         self.arguments = []
         self.argument_names = []
@@ -1220,7 +1222,7 @@ class MoMListener(ParseTreeListener):
                     if not self.source_type[counter] == self.destination_type[counter]:
                         if not self.destination_type[counter] in \
                                 master_tables.classes[self.current_class].specifications:
-                            raise TypeError("Source and destination types not compatible.")
+                            raise TypeError("Source '" + self.source_type[counter] + "' and destination '" + self.destination_type[counter] + "' types not compatible.")
 
                     m.add_argument(name, t, var.is_array, address, var.mem_size, [], self.source_type[counter])
 
