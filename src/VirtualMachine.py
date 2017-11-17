@@ -202,7 +202,6 @@ def get_local(mi, address: int):
     if LOCAL_BOOLEAN_TOP <= address <= LOCAL_BOOLEAN_BOTTOM:
         return mi.local_memory[3][address - LOCAL_BOOLEAN_TOP]
     else:
-        print(address)
         return mi.local_memory[4][address - LOCAL_OBJECT_TOP]
 
 
@@ -669,7 +668,7 @@ def operation(op: int, left, right, dest):
                     mi.temporal_memory[j - 5].append(-1)
 
         if len(params) > 0:
-            c_i = c_r = c_t = c_b = 0
+            c_i = c_r = c_t = c_b = c_o = 0
             for param_dir in params:
                 dir_type = get_type(param_dir)
                 if is_constant(int(param_dir)):
@@ -696,7 +695,9 @@ def operation(op: int, left, right, dest):
                     class_stack[-1].method_stack[-1].local_memory[3][c_b] = left_value
                     c_b += 1
                 else:
-                    raise NameError("Object as argument not supported")
+                    class_stack[-1].method_stack[-1].classes[c_o + LOCAL_OBJECT_TOP] = class_stack[-1].method_stack[-2].classes[int(param_dir)]
+                    class_stack[-1].method_stack[-1].local_memory[4][c_o] = left_value
+                    c_o += 1
 
             params = []
 
