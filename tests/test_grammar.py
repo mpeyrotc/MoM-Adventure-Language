@@ -26,6 +26,8 @@ def general_function(file):
 
         walker = ParseTreeWalker()
         walker.walk(MoMListener(), tree)
+
+        print("HERE")
         return True
     except Exception as e:
         print(e)
@@ -272,3 +274,15 @@ class TestGrammar(object):
 
     def test_12(self):
         assert general_function("resources/complex_class.mom")
+
+    def test_13(self):
+        assert general_function("resources/fibonacci.mom")
+
+    def test_14(self):
+        assert general_function("resources/arrays.mom")
+
+    def test_15(self):
+        assert general_function("resources/factorial.mom")
+
+    def test_16(self):
+        assert general_function("resources/test_interfaces.mom")

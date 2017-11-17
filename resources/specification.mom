@@ -2,7 +2,7 @@ specification ComplexNumber {
     Int real();
     Int imaginary();
     Nothing convert(Int angle);
-    Real summary(Component[] c, Real r);
+    Real summary(Int c, Real r);
 };
 
 class Class is_a Component {
