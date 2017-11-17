@@ -14,11 +14,11 @@ class Card is_a Component {
 
 class Face is_a Component {
 
-    field<Card> card;
-
     Face() {
-        Int y = 0;
-        Int x = card.test();
+    };
+
+    Nothing print(){
+        WriteLine("Hey");
     };
 };
 
@@ -31,33 +31,17 @@ class Character is_a Component of_type Player {
 
 
     Character() {
-        WriteLine("Hello World.");
-        arrNums[4] = 2;
-        Int[4][5][4] arr;
-        arr[arrNums[2]][2][3] = 3;
-        Int a = 2;
-        Text[20] arr2;
-        Real x = 3.4;
-        Text y = "hola";
-        Boolean z = TRUE;
-        Write("hey");
-        Write(1 + 2);
-        physicalLife = 0 + 99;
-        ReadInt(a);
-        ReadReal(x);
-        ReadText(y);
-        ReadBoolean(z);
-        Write(physicalLife);
-        ints = 4;
-        ints = physicalLife;
-        this.physicalLife = physicalLife;
+
     };
 
     Int a() {
     };
 
+    Nothing test(){
+
+    };
+
     Int setCommonCard(Card card) {
-        Face i = new Face();
 
         if(TRUE || FALSE) {
             physicalLife = 100;
@@ -78,17 +62,20 @@ class Character is_a Component of_type Player {
         };
     };
 
-    Nothing doAction() {
+    Nothing doAction(Face x) {
+        x.print();
+        WriteLine("que onda");
     };
 
     Text name() {
         while(TRUE && FALSE) {
-            doAction();
         };
 
         return "Father Mateo" + "!!!";
     };
 
     Nothing main() {
+        Face object = new Face();
+        doAction(object);
     };
 };
