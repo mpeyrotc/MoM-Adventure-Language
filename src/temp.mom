@@ -149,100 +149,34 @@ class Player is_a Component {
 
 };
 
-class Number is_a Component {
-    field<Int> aaa;
-
-    Number() {
-        aaa = 111;
-    };
-
-    Nothing f3() {
-        WriteLine("NUMBER");
-    };
-
-    Real funName3() {
-        return 0.5;
-    };
-};
-
-class Complex is_a Number {
-    field<Int> bbb;
-
-    Complex() {
-        bbb = 222;
-    };
-
-    Nothing f() {
-        Number n = new Number();
-        WriteLine("IN COMPLEX");
-        n.f3();
-    };
-
-    Text funName() {
-        return "Alice";
-    };
-
-    Real funName2() {
-        Int b = 30;
-        Number n = new Number();
-        WriteLine(b);
-        Real d = n.funName3();
-
-        return b * d;
-    };
-
-    Int sum(Int a, Int b) {
-        return a + b;
-    };
-};
-
-class Character is_a Complex {
-    field<Int> a;
-    field<Int> ccc;
-
+class Character is_a Component {
     Character() {
-        a = 2;
-        ccc = 333;
     };
 
-    Nothing f2() {
-        Write(a);
+    Nothing a() {
+        Int b = 2 + 2;
+        return;
     };
 
-    Int aNumber() {
-        Int result = 1200 * 10;
-        result = result + 345;
-        return result;
+    Int b() {
+        Int b = 2 * 2;
+        return b;
     };
 
-    Int bNumber() {
-        return 1200 * 10;
+    Text c(Int length) {
+        if(length >= 3) {
+            return "THREE";
+        } else {
+            return "MORE THAN THREE";
+        };
     };
 
     Nothing main() {
-        Creature x = new Creature();
-        x.attack();
-        Complex temp = new Complex();
-        Text b = "HAHA";
-        Text c = "!!!";
-        Boolean d = TRUE && FALSE;
-        Int num = 0;
-        Write(a);
-        WriteLine(3 + 5);
-        WriteLine(3 + 2.3);
-        WriteLine(b + c);
-        WriteLine("HOHOHO");
-        WriteLine(d);
-        WriteLine(num + 3.3);
-        temp.f();
-        WriteLine(aaa);
-        WriteLine(bbb);
-        WriteLine(ccc);
-        Int z = aNumber();
-        WriteLine(z);
-        WriteLine(aNumber());
-        WriteLine(bNumber());
-        WriteLine(temp.funName());
-        WriteLine(temp.sum(2, 3) * temp.sum(6, 0) / (2 * temp.sum(1, 0)));
+        if(!FALSE && TRUE){
+            WriteLine("True");
+        }
+        else{
+            WriteLine("False");
+        };
     };
 };
