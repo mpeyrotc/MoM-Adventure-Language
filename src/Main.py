@@ -1,6 +1,7 @@
 import sys
 
 import ErrorListener
+import subprocess
 from antlr4 import *
 from grammar import MoMLexer
 from grammar import MoMParser
@@ -85,3 +86,5 @@ if __name__ == "__main__":
         exit(1)
 
     print("OK")
+    print("***********************************")
+    subprocess.call(["python", "../src/VirtualMachine.py"])

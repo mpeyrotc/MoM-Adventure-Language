@@ -1,0 +1,68 @@
+class Math is_a Component {
+    field<Int[10]> arrS;
+
+    Math() {
+
+    };
+
+    Int partition(Int lo, Int hi){
+        Int pivot = arrS[hi];
+        Int i = (lo - 1);
+        Int j = lo;
+        Int temp = 0;
+        while(j < hi){
+            if(arrS[j] <= pivot){
+                i = i + 1;
+                temp = arrS[i];
+                arrS[i] = arrS[j];
+                arrS[j] = temp;
+            };
+            j = j + 1;
+        };
+        temp = arrS[i + 1];
+        arrS[i + 1] = arrS[hi];
+        arrS[hi] = temp;
+        return i + 1;
+    };
+
+    Nothing sortArrS(Int lo, Int hi){
+        if(lo < hi){
+            Int pi = partition(lo, hi);
+            sortArrS(lo, pi - 1);
+            sortArrS(pi + 1, hi);
+        };
+    };
+
+    Nothing main(){
+        arrS[0] = 34;
+        arrS[1] = 0;
+        arrS[2] = 10;
+        arrS[3] = 4;
+        arrS[4] = 12;
+        arrS[5] = 0;
+        arrS[6] = 99;
+        arrS[7] = 48;
+        arrS[8] = 1;
+        arrS[9] = 28;
+
+        Int i = 0;
+        WriteLine("Unsorted array:");
+        while(i < 10){
+            Write(arrS[i]);
+            Write(" ");
+            i = i + 1;
+        };
+        WriteLine(" ");
+        sortArrS(0, 9);
+        WriteLine("Sorted array: ");
+        i = 0;
+        while(i < 10){
+            Write(arrS[i]);
+            Write(" ");
+            i = i + 1;
+        };
+        WriteLine(" ");
+    };
+};
+
+

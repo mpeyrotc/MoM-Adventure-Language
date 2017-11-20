@@ -21,7 +21,7 @@ class Face is_a Component {
     };
 
     Nothing print() {
-        Write("Hey");
+        WriteLine("Hey");
     };
 };
 

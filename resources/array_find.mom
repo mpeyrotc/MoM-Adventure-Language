@@ -1,0 +1,55 @@
+class Math is_a Component {
+    field<Int[30]> arrA;
+
+    Math() {
+
+    };
+
+    Boolean findArrA(Int x){
+        Int i = 0;
+        while(i < 30){
+            if(arrA[i] == x){
+                return TRUE;
+            };
+            i = i + 1;
+        };
+        return FALSE;
+    };
+
+    Nothing main(){
+        Int i = 0;
+        Int j = 0;
+        Int counter = 1;
+        WriteLine("Array: ");
+        while(i < 30){
+            arrA[i] = counter;
+            Write(arrA[i]);
+            Write(" ");
+            i = i + 1;
+            counter = counter + 1;
+        };
+        WriteLine(" ");
+
+        Int x = 6;
+        if(findArrA(x)){
+            Write(x);
+            WriteLine(" found on array");
+        }
+        else{
+            Write(x);
+            WriteLine(" not found on array");
+        };
+
+        x = 200;
+        if(findArrA(x)){
+            Write(x);
+            WriteLine(" found on array");
+        }
+        else{
+            Write(x);
+            WriteLine(" not found on array");
+        };
+    };
+};
+
+
