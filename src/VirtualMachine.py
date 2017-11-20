@@ -472,8 +472,19 @@ def operation(op: int, left, right, dest):
         elif is_temporal(int(dest)):
             set_temporal(class_stack[-1].method_stack[-1], int(dest), left_value or right_value)
     elif op == 7:  # NOT
-        # TODO: implement in listener and here.
-        pass
+        dest = int(dest)
+        g_type = get_type(dest)
+        val = get_temporal(class_stack[-1].method_stack[-1], dest)
+
+        if g_type == "Bool":
+            if val == "!@#$%^&*()":
+                val = ")(*&^%$#@!"
+                set_temporal(class_stack[-1].method_stack[-1], dest, val)
+            else:
+                val = "!@#$%^&*()"
+                set_temporal(class_stack[-1].method_stack[-1], dest, val)
+        else:
+            raise NameError("Cannot apply unary NOT to non-bool element")
     elif op == 8:  # LESS_THAN
         if is_indirect(left):
             left = get_raw_value_one(left[left.find("&") + 1:].strip())
@@ -885,6 +896,20 @@ def operation(op: int, left, right, dest):
 
             var = get_global(class_stack[-1].classes[class_var], int(left))
             set_temporal(class_stack[-1].method_stack[-1], int(dest), var)
+    elif op == 38: # Unary plus
+        pass
+    elif op == 39: # Unary minus
+        dest = int(dest)
+        g_type = get_type(dest)
+        val = get_temporal(class_stack[-1].method_stack[-1], dest)
+
+        if g_type == "Int":
+            set_temporal(class_stack[-1].method_stack[-1], dest, -int(val))
+        elif g_type == "Real":
+            set_temporal(class_stack[-1].method_stack[-1], dest, -float(val))
+        else:
+            raise NameError("Cannot apply unary (-) to non-numerial element")
+
     else:
         raise NameError("operation " + str(op) + " not recognized.")
 

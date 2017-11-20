@@ -59,6 +59,8 @@ class Operator(IntEnum):
     CLOSE_SPAREN = 33
     VERIFY = 34
     WRITE_LINE = 35
+    UNARY_PLUS = 38
+    UNARY_MINUS = 39
 
 
 class Operation(IntEnum):

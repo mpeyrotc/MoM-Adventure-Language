@@ -71,10 +71,15 @@ open_paren      :   // nothing
                 ;
 close_paren     :   // nothing
                 ;
-factor 			:	OPEN_PAREN open_paren ss_exp close_paren CLOSE_PAREN
-                |   (PLUS | MINUS | NOT not_op)? constant
+factor 			:	(PLUS unary_plus | MINUS unary_minus | NOT not_op)?
+                    OPEN_PAREN open_paren ss_exp close_paren CLOSE_PAREN
+                |   (PLUS unary_plus | MINUS unary_minus | NOT not_op)? constant
                 ;
 not_op          :   // nothing
+                ;
+unary_plus      :   // nothing
+                ;
+unary_minus     :   // nothing
                 ;
 function_args	:	super_type VARID (COMMA super_type VARID)*
                 ;

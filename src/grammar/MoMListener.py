@@ -532,37 +532,95 @@ class MoMListener(ParseTreeListener):
 
     # noinspection PyPep8Naming
     def enterConstant(self, ctx: MoMParser.ConstantContext) -> None:
+        if ctx.INTEGER() is not None:
+            num = int(ctx.getText())
 
-        if self.pending_operators and self.pending_operators[-1] == Operator.NOT:
-            op = self.pending_operators.pop()
-            if ctx.FALSE() is not None:
-                num = "!@#$%^&*()"
-                if num in master_tables.constants:
-                    address = master_tables.constants[num]
-                else:
-                    address = self.get_const_address_by_type(Type.BOOLEAN)
-                    self.increment_const_address_by_type(Type.BOOLEAN)
-                    master_tables.constants[num] = address
-
-                self.pending_operands.append(address)
-                self.pending_types.append(Type.BOOLEAN)
-            elif ctx.TRUE() is not None:
-                num = ")(*&^%$#@!"
-                if num in master_tables.constants:
-                    address = master_tables.constants[num]
-                else:
-                    address = self.get_const_address_by_type(Type.BOOLEAN)
-                    self.increment_const_address_by_type(Type.BOOLEAN)
-                    master_tables.constants[num] = address
-
-                self.pending_operands.append(address)
-                self.pending_types.append(Type.BOOLEAN)
+            if num in master_tables.constants:
+                address = master_tables.constants[num]
             else:
-                raise NameError("Error, unary operator NOT can be used only to Boolean elements")
-        else:
-            if ctx.INTEGER() is not None:
-                num = int(ctx.getText())
+                address = self.get_const_address_by_type(Type.INT)
+                self.increment_const_address_by_type(Type.INT)
+                master_tables.constants[num] = address
 
+            self.pending_operands.append(address)
+            self.pending_types.append(Type.INT)
+        elif ctx.REAL() is not None:
+            num = float(ctx.getText())
+            if num in master_tables.constants:
+                address = master_tables.constants[num]
+            else:
+                address = self.get_const_address_by_type(Type.REAL)
+                self.increment_const_address_by_type(Type.REAL)
+                master_tables.constants[num] = address
+
+            self.pending_operands.append(address)
+            self.pending_types.append(Type.REAL)
+        elif ctx.TRUE() is not None:
+            num = "!@#$%^&*()"
+            if num in master_tables.constants:
+                address = master_tables.constants[num]
+            else:
+                address = self.get_const_address_by_type(Type.BOOLEAN)
+                self.increment_const_address_by_type(Type.BOOLEAN)
+                master_tables.constants[num] = address
+
+            self.pending_operands.append(address)
+            self.pending_types.append(Type.BOOLEAN)
+        elif ctx.FALSE() is not None:
+            num = ")(*&^%$#@!"
+            if num in master_tables.constants:
+                address = master_tables.constants[num]
+            else:
+                address = self.get_const_address_by_type(Type.BOOLEAN)
+                self.increment_const_address_by_type(Type.BOOLEAN)
+                master_tables.constants[num] = address
+
+            self.pending_operands.append(address)
+            self.pending_types.append(Type.BOOLEAN)
+        elif ctx.STRING() is not None:
+            num = ctx.getText()
+            if num in master_tables.constants:
+                address = master_tables.constants[num]
+            else:
+                address = self.get_const_address_by_type(Type.TEXT)
+                self.increment_const_address_by_type(Type.TEXT)
+                master_tables.constants[num] = address
+
+            self.pending_operands.append(address)
+            self.pending_types.append(Type.TEXT)
+        elif ctx.VARID() is not None:
+            var = ctx.VARID().getText()
+            c = master_tables.classes[self.current_class]
+            m = c.methods[self.current_method]
+
+            # Look in local variables, if not, look in global variables
+            if var in m.variables:
+                t = m.variables[var]["type"]
+                self.pending_operands.append(m.variables[var]["address"])
+            elif var in c.variables:
+                t = c.variables[var]["type"]
+                self.pending_operands.append(c.variables[var]["address"])
+            else:
+                raise NameError("Variable ' " + var + " is undefined.")
+
+            if type(t) == str:
+                self.pending_types.append(get_type(t))
+            else:
+                self.pending_types.append(t)
+
+        elif ctx.CAPITALID() is not None:
+            # it's an enum
+            name = ctx.CAPITALID().getText()
+            was_found = False
+            for enum in master_tables.enumerations:
+                if name in master_tables.enumerations[enum].values:
+                    was_found = True
+                    pos = master_tables.enumerations[enum].values.get(name)
+                    break
+
+            if was_found:
+                # creates a constant variable for that enum
+                num = int(pos)
                 if num in master_tables.constants:
                     address = master_tables.constants[num]
                 else:
@@ -572,97 +630,11 @@ class MoMListener(ParseTreeListener):
 
                 self.pending_operands.append(address)
                 self.pending_types.append(Type.INT)
-            elif ctx.REAL() is not None:
-                num = float(ctx.getText())
-                if num in master_tables.constants:
-                    address = master_tables.constants[num]
-                else:
-                    address = self.get_const_address_by_type(Type.REAL)
-                    self.increment_const_address_by_type(Type.REAL)
-                    master_tables.constants[num] = address
-
-                self.pending_operands.append(address)
-                self.pending_types.append(Type.REAL)
-            elif ctx.TRUE() is not None:
-                num = "!@#$%^&*()"
-                if num in master_tables.constants:
-                    address = master_tables.constants[num]
-                else:
-                    address = self.get_const_address_by_type(Type.BOOLEAN)
-                    self.increment_const_address_by_type(Type.BOOLEAN)
-                    master_tables.constants[num] = address
-
-                self.pending_operands.append(address)
-                self.pending_types.append(Type.BOOLEAN)
-            elif ctx.FALSE() is not None:
-                num = ")(*&^%$#@!"
-                if num in master_tables.constants:
-                    address = master_tables.constants[num]
-                else:
-                    address = self.get_const_address_by_type(Type.BOOLEAN)
-                    self.increment_const_address_by_type(Type.BOOLEAN)
-                    master_tables.constants[num] = address
-
-                self.pending_operands.append(address)
-                self.pending_types.append(Type.BOOLEAN)
-            elif ctx.STRING() is not None:
-                num = ctx.getText()
-                if num in master_tables.constants:
-                    address = master_tables.constants[num]
-                else:
-                    address = self.get_const_address_by_type(Type.TEXT)
-                    self.increment_const_address_by_type(Type.TEXT)
-                    master_tables.constants[num] = address
-
-                self.pending_operands.append(address)
-                self.pending_types.append(Type.TEXT)
-            elif ctx.VARID() is not None:
-                var = ctx.VARID().getText()
-                c = master_tables.classes[self.current_class]
-                m = c.methods[self.current_method]
-
-                # Look in local variables, if not, look in global variables
-                if var in m.variables:
-                    t = m.variables[var]["type"]
-                    self.pending_operands.append(m.variables[var]["address"])
-                elif var in c.variables:
-                    t = c.variables[var]["type"]
-                    self.pending_operands.append(c.variables[var]["address"])
-                else:
-                    raise NameError("Variable ' " + var + " is undefined.")
-
-                if type(t) == str:
-                    self.pending_types.append(get_type(t))
-                else:
-                    self.pending_types.append(t)
-
-            elif ctx.CAPITALID() is not None:
-                # it's an enum
-                name = ctx.CAPITALID().getText()
-                was_found = False
-                for enum in master_tables.enumerations:
-                    if name in master_tables.enumerations[enum].values:
-                        was_found = True
-                        pos = master_tables.enumerations[enum].values.get(name)
-                        break
-
-                if was_found:
-                    # creates a constant variable for that enum
-                    num = int(pos)
-                    if num in master_tables.constants:
-                        address = master_tables.constants[num]
-                    else:
-                        address = self.get_const_address_by_type(Type.INT)
-                        self.increment_const_address_by_type(Type.INT)
-                        master_tables.constants[num] = address
-
-                    self.pending_operands.append(address)
-                    self.pending_types.append(Type.INT)
-                else:
-                    raise NameError("Enum not found")
             else:
-                # See array_var listener
-                pass
+                raise NameError("Enum not found")
+        else:
+            # See array_var listener
+            pass
 
     # noinspection PyPep8Naming
     def exitConstant(self, ctx: MoMParser.ConstantContext):
@@ -959,7 +931,38 @@ class MoMListener(ParseTreeListener):
 
     # noinspection PyPep8Naming
     def exitFactor(self, ctx: MoMParser.FactorContext):
-        pass
+        m = master_tables.classes[self.current_class].methods[self.current_method]
+        if self.pending_operators and self.pending_operators[-1] == Operator.NOT:
+            type = self.pending_types.pop()
+            holder = self.pending_operands.pop()
+            dest = self.get_temp_address_by_type(m, type)
+            self.pending_operands.append(dest)
+            self.pending_types.append(type)
+            quad = Quadrupole(Operator.EQUAL, holder, None, dest)
+            self.quads.append(quad)
+            self.increment_temp_address_by_type(m, type)
+            self.pending_operators.pop()
+            quad = Quadrupole(Operator.NOT, None, None, dest)
+            self.quads.append(quad)
+        elif self.pending_operators and self.pending_operators[-1] == Operator.UNARY_MINUS:
+            type = self.pending_types.pop()
+            holder = self.pending_operands.pop()
+            dest = self.get_temp_address_by_type(m, type)
+            self.pending_operands.append(dest)
+            self.pending_types.append(type)
+            quad = Quadrupole(Operator.EQUAL, holder, None, dest)
+            self.quads.append(quad)
+            self.increment_temp_address_by_type(m, type)
+            self.pending_operators.pop()
+            quad = Quadrupole(Operator.UNARY_MINUS, None, None, dest)
+            self.quads.append(quad)
+        elif self.pending_operators and  self.pending_operators[-1] == Operator.UNARY_PLUS:
+            type = self.pending_types.pop()
+            holder = self.pending_operands.pop()
+            dest = self.get_temp_address_by_type(m, type)
+            self.pending_operators.pop()
+            quad = Quadrupole(Operator.UNARY_PLUS, None, None, dest)
+            self.quads.append(quad)
 
     # noinspection PyPep8Naming
     def enterFunction_args(self, ctx: MoMParser.Function_argsContext) -> None:
@@ -1707,4 +1710,21 @@ class MoMListener(ParseTreeListener):
 
     # Exit a parse tree produced by MoMParser#not_op.
     def exitNot_op(self, ctx:MoMParser.Not_opContext):
+        pass
+
+    # Enter a parse tree produced by MoMParser#unary_plus.
+    def enterUnary_plus(self, ctx:MoMParser.Unary_plusContext):
+        self.pending_operators.append(Operator.UNARY_PLUS)
+
+    # Exit a parse tree produced by MoMParser#unary_plus.
+    def exitUnary_plus(self, ctx:MoMParser.Unary_plusContext):
+        pass
+
+
+    # Enter a parse tree produced by MoMParser#unary_minus.
+    def enterUnary_minus(self, ctx:MoMParser.Unary_minusContext):
+        self.pending_operators.append(Operator.UNARY_MINUS)
+
+    # Exit a parse tree produced by MoMParser#unary_minus.
+    def exitUnary_minus(self, ctx:MoMParser.Unary_minusContext):
         pass

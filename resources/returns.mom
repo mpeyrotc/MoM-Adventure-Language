@@ -27,5 +27,8 @@ class Character is_a Component {
         else{
             WriteLine("False");
         };
+
+        Int x = 3 * 2 + -(-5 - 2);
+        WriteLine(x);
     };
 };
