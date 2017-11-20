@@ -9,9 +9,20 @@ import src.MasterTables as master_tables
 
 from src.grammar.MoMListener import MoMListener
 
+defaultFiles = ["..\\resources\Creature.mom", "..\\resources\Message.mom",
+                "..\\resources\Token.mom", "..\\resources\Face.mom",
+                "..\\resources\Card.mom", "..\\resources\Player.mom"]
+
 if __name__ == "__main__":
     try:
-        file = sys.argv[1]
+        k = open("temp.mom", "w")
+        defaultFiles.append(sys.argv[1])
+        for tempFile in defaultFiles:
+            with open(tempFile, 'r') as fi: k.write(fi.read())
+            fi.close()
+        k.close()
+
+        file = "..\\src\\temp.mom"
         file_stream = FileStream(file)
         input_stream = InputStream(str(file_stream))
         lexer = MoMLexer.MoMLexer(input_stream)

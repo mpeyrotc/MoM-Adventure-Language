@@ -1,0 +1,59 @@
+class Player is_a Component {
+    field<Int> mentalHealthMax;
+    field<Int> physicalHealthMax;
+    field<Int> currentMentalHealth;
+    field<Int> currentPhysicalHealth;
+    field<Card[5]> commonItems;
+    field<Token[5]> tokens;
+
+    Player() {
+    };
+
+    Nothing spendToken(Int count){
+        Write("Spending ");
+        Write(count);
+        WriteLine(" tokens");
+    };
+
+    Nothing addToken(Token newToken){
+        WriteLine("Adding Token");
+    };
+
+    Nothing discardCommonItem(Int index){
+        WriteLine("Discarding common item");
+    };
+
+    Nothing dropCommonItem(Int index){
+        WriteLine("Dropping common item");
+    };
+
+    Nothing increaseHealth(Int amount){
+        currentPhysicalHealth = currentPhysicalHealth + amount;
+        if(currentPhysicalHealth > physicalHealthMax){
+            currentPhysicalHealth = physicalHealthMax;
+        };
+    };
+
+    Nothing decreaseHealth(Int amount){
+        currentPhysicalHealth = currentPhysicalHealth - amount;
+        if(currentPhysicalHealth < 0){
+            WriteLine("You died");
+        };
+    };
+
+    Nothing increaseSanity(Int amount){
+        currentMentalHealth = currentMentalHealth + amount;
+        if(currentMentalHealth > mentalHealthMax){
+            currentMentalHealth = mentalHealthMax;
+        };
+    };
+
+    Nothing decreaseSanity(Int amount){
+        currentMentalHealth = currentMentalHealth - amount;
+        if(currentMentalHealth < 0){
+            WriteLine("You died");
+        };
+    };
+
+};
+

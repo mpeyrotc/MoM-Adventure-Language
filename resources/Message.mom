@@ -1,0 +1,17 @@
+class Message is_a Component {
+    field<Text> title;
+    field<Text> message;
+    field<Text[5]> options;
+
+    Message() {
+    };
+
+    Nothing showMessage(){
+        WriteLine(message);
+    };
+
+    Int askQuestion(){
+        return 1;
+    };
+};
+

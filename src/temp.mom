@@ -1,0 +1,248 @@
+class Creature is_a Component {
+    field<Int> lifeMax;
+    field<Int> currentLife;
+    field<Int> horror;
+    field<Text[3]> abilities;
+    field<Int> observation;
+
+    Creature() {
+    };
+
+    Nothing move(){
+        WriteLine("Moving");
+    };
+
+    Nothing attack(){
+        WriteLine("Attacking");
+    };
+
+    Nothing evade(){
+        WriteLine("Evading");
+    };
+
+    Nothing takeDamage(Int damage){
+        currentLife = currentLife - damage;
+        if(currentLife <= 0){
+            WriteLine("You are dead");
+        };
+    };
+};
+
+class Message is_a Component {
+    field<Text> title;
+    field<Text> message;
+    field<Text[5]> options;
+
+    Message() {
+    };
+
+    Nothing showMessage(){
+        WriteLine(message);
+    };
+
+    Int askQuestion(){
+        return 1;
+    };
+};
+
+class Token is_a Component {
+    field<Text> description;
+
+    Token() {
+    };
+};
+
+class Face is_a Component {
+    Face() {
+    };
+
+    Nothing showContent(){
+        WriteLine("Showing Content");
+    };
+};
+
+class Card is_a Component {
+    field<Face> front;
+    field<Face> back;
+
+    Card() {
+    };
+
+    Nothing showFront(){
+        WriteLine("Showing front");
+    };
+
+    Nothing showBack(){
+        WriteLine("Showing back");
+    };
+
+    Nothing display(){
+        WriteLine("Displaying");
+    };
+
+    Nothing setFrontFace(Face newFront){
+        front = newFront;
+    };
+
+    Nothing setBackFace(Face newBack){
+        back = newBack;
+    };
+
+};
+
+class Player is_a Component {
+    field<Int> mentalHealthMax;
+    field<Int> physicalHealthMax;
+    field<Int> currentMentalHealth;
+    field<Int> currentPhysicalHealth;
+    field<Card[5]> commonItems;
+    field<Token[5]> tokens;
+
+    Player() {
+    };
+
+    Nothing spendToken(Int count){
+        Write("Spending ");
+        Write(count);
+        WriteLine(" tokens");
+    };
+
+    Nothing addToken(Token newToken){
+        WriteLine("Adding Token");
+    };
+
+    Nothing discardCommonItem(Int index){
+        WriteLine("Discarding common item");
+    };
+
+    Nothing dropCommonItem(Int index){
+        WriteLine("Dropping common item");
+    };
+
+    Nothing increaseHealth(Int amount){
+        currentPhysicalHealth = currentPhysicalHealth + amount;
+        if(currentPhysicalHealth > physicalHealthMax){
+            currentPhysicalHealth = physicalHealthMax;
+        };
+    };
+
+    Nothing decreaseHealth(Int amount){
+        currentPhysicalHealth = currentPhysicalHealth - amount;
+        if(currentPhysicalHealth < 0){
+            WriteLine("You died");
+        };
+    };
+
+    Nothing increaseSanity(Int amount){
+        currentMentalHealth = currentMentalHealth + amount;
+        if(currentMentalHealth > mentalHealthMax){
+            currentMentalHealth = mentalHealthMax;
+        };
+    };
+
+    Nothing decreaseSanity(Int amount){
+        currentMentalHealth = currentMentalHealth - amount;
+        if(currentMentalHealth < 0){
+            WriteLine("You died");
+        };
+    };
+
+};
+
+class Number is_a Component {
+    field<Int> aaa;
+
+    Number() {
+        aaa = 111;
+    };
+
+    Nothing f3() {
+        WriteLine("NUMBER");
+    };
+
+    Real funName3() {
+        return 0.5;
+    };
+};
+
+class Complex is_a Number {
+    field<Int> bbb;
+
+    Complex() {
+        bbb = 222;
+    };
+
+    Nothing f() {
+        Number n = new Number();
+        WriteLine("IN COMPLEX");
+        n.f3();
+    };
+
+    Text funName() {
+        return "Alice";
+    };
+
+    Real funName2() {
+        Int b = 30;
+        Number n = new Number();
+        WriteLine(b);
+        Real d = n.funName3();
+
+        return b * d;
+    };
+
+    Int sum(Int a, Int b) {
+        return a + b;
+    };
+};
+
+class Character is_a Complex {
+    field<Int> a;
+    field<Int> ccc;
+
+    Character() {
+        a = 2;
+        ccc = 333;
+    };
+
+    Nothing f2() {
+        Write(a);
+    };
+
+    Int aNumber() {
+        Int result = 1200 * 10;
+        result = result + 345;
+        return result;
+    };
+
+    Int bNumber() {
+        return 1200 * 10;
+    };
+
+    Nothing main() {
+        Creature x = new Creature();
+        x.attack();
+        Complex temp = new Complex();
+        Text b = "HAHA";
+        Text c = "!!!";
+        Boolean d = TRUE && FALSE;
+        Int num = 0;
+        Write(a);
+        WriteLine(3 + 5);
+        WriteLine(3 + 2.3);
+        WriteLine(b + c);
+        WriteLine("HOHOHO");
+        WriteLine(d);
+        WriteLine(num + 3.3);
+        temp.f();
+        WriteLine(aaa);
+        WriteLine(bbb);
+        WriteLine(ccc);
+        Int z = aNumber();
+        WriteLine(z);
+        WriteLine(aNumber());
+        WriteLine(bNumber());
+        WriteLine(temp.funName());
+        WriteLine(temp.sum(2, 3) * temp.sum(6, 0) / (2 * temp.sum(1, 0)));
+    };
+};

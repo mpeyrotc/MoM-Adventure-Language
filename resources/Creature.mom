@@ -1,0 +1,30 @@
+class Creature is_a Component {
+    field<Int> lifeMax;
+    field<Int> currentLife;
+    field<Int> horror;
+    field<Text[3]> abilities;
+    field<Int> observation;
+
+    Creature() {
+    };
+
+    Nothing move(){
+        WriteLine("Moving");
+    };
+
+    Nothing attack(){
+        WriteLine("Attacking");
+    };
+
+    Nothing evade(){
+        WriteLine("Evading");
+    };
+
+    Nothing takeDamage(Int damage){
+        currentLife = currentLife - damage;
+        if(currentLife <= 0){
+            WriteLine("You are dead");
+        };
+    };
+};
+

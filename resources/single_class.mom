@@ -69,6 +69,8 @@ class Character is_a Complex {
     };
 
     Nothing main() {
+        Creature x = new Creature();
+        x.attack();
         Complex temp = new Complex();
         Text b = "HAHA";
         Text c = "!!!";
@@ -80,7 +82,6 @@ class Character is_a Complex {
         WriteLine(b + c);
         WriteLine("HOHOHO");
         WriteLine(d);
-        ReadInt(num);
         WriteLine(num + 3.3);
         temp.f();
         WriteLine(aaa);

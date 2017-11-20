@@ -1,0 +1,29 @@
+class Card is_a Component {
+    field<Face> front;
+    field<Face> back;
+
+    Card() {
+    };
+
+    Nothing showFront(){
+        WriteLine("Showing front");
+    };
+
+    Nothing showBack(){
+        WriteLine("Showing back");
+    };
+
+    Nothing display(){
+        WriteLine("Displaying");
+    };
+
+    Nothing setFrontFace(Face newFront){
+        front = newFront;
+    };
+
+    Nothing setBackFace(Face newBack){
+        back = newBack;
+    };
+
+};
+

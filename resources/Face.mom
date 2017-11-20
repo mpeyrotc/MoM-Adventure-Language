@@ -1,0 +1,9 @@
+class Face is_a Component {
+    Face() {
+    };
+
+    Nothing showContent(){
+        WriteLine("Showing Content");
+    };
+};
+

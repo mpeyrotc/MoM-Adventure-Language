@@ -1,0 +1,7 @@
+class Token is_a Component {
+    field<Text> description;
+
+    Token() {
+    };
+};
+
