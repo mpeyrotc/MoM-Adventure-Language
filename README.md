@@ -472,5 +472,5 @@ class Math is_a Component {
 For more information, please visit the tutorial video.
 
 <a href="https://www.youtube.com/watch?v=9TGBTczCE54&feature=youtu.be" target="_blank">
-   <img src="https://www.youtube.com/watch?v=9TGBTczCE54&feature=youtu.be/0.jpg" 
-alt="IMAGE ALT TEXT HERE" width="240" height="180" border="10" /></a>
+   <img src="https://www.youtube.com/watch?v=9TGBTczCE54/0.jpg" 
+alt="Video Link" width="240" height="180" border="10" /></a>
