@@ -4,7 +4,6 @@ specification Player2 {
 
 class Face2 is_a Component {
     field<Card> card;
-    field<Int> aaaa;
 
     Face2() {
         card = new Card();
@@ -26,11 +25,8 @@ class Character is_a Component of_type Player2 {
     Character() {
     };
 
-    Int a() {
-    };
-
-    Nothing test(){
-
+    Int a(){
+        WriteLine("Implementing specifications method");
     };
 
     Int setCommonCard(Card card) {
@@ -56,7 +52,7 @@ class Character is_a Component of_type Player2 {
 
     Nothing doAction(Face2 x) {
         x.print();
-        WriteLine("que onda");
+        WriteLine("Doing an action");
     };
 
     Text name() {
@@ -69,7 +65,7 @@ class Character is_a Component of_type Player2 {
     Nothing main() {
         Face2 f = new Face2();
         Face2 object = new Face2();
-
+        a();
         f.print();
         doAction(object);
     };

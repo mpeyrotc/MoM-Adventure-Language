@@ -149,79 +149,75 @@ class Player is_a Component {
 
 };
 
-class Math is_a Component {
+specification Player2 {
+    Int a();
+};
 
-    Math() {
+class Face2 is_a Component {
+    field<Card> card;
 
+    Face2() {
+        card = new Card();
     };
 
-    Nothing main(){
-        Int i = 0;
-        Int j = 0;
-        Int n = 3;
-        Int counter = 1;
-        Int[3][3] arrB;
-        Int[3][3] arrC;
-        Int[3][3] ans;
-
-        while(i < n){
-            j = 0;
-            while(j < n){
-                arrB[i][j] = counter;
-                Write(arrB[i][j]);
-                Write(" ");
-                j = j + 1;
-                counter = counter + 1;
-            };
-            WriteLine(" ");
-            i = i + 1;
-        };
-
-        WriteLine(" * ");
-        counter = 1;
-        i = 0;
-        while(i < n){
-            j = 0;
-            while(j < n){
-                arrC[i][j] = counter;
-                ans[i][j] = 0;
-                Write(arrC[i][j]);
-                Write(" ");
-                j = j + 1;
-                counter = counter + 1;
-            };
-            WriteLine(" ");
-            i = i + 1;
-        };
-
-        WriteLine(" = ");
-        i = 0; j = 0;
-        Int k = 0;
-        while(i < n){
-            j = 0;
-            while(j < n){
-                k = 0;
-                while(k < n){
-                    ans[i][j] = ans[i][j] + arrB[i][k] * arrC[k][j];
-                    k = k + 1;
-                };
-                j = j + 1;
-            };
-            i = i + 1;
-        };
-
-        i = 0;
-        while(i < n){
-            j = 0;
-            while(j < n){
-                Write(ans[i][j]);
-                Write(" ");
-                j = j + 1;
-            };
-            WriteLine(" ");
-            i = i + 1;
-        };
+    Nothing print() {
+        WriteLine("Hey");
     };
 };
 
+class Character is_a Component of_type Player2 {
+    field<Card> card;
+    field<Int> ints;
+    field<Int> physicalLife;
+    field<Int[30]> arrNums;
+    field<Int> numberOfItems;
 
+
+    Character() {
+    };
+
+    Int a(){
+        WriteLine("Implementing specifications method");
+    };
+
+    Int setCommonCard(Card card) {
+
+        if(TRUE || FALSE) {
+            physicalLife = 100;
+        };
+
+        return 3;
+    };
+
+    Boolean addCommonCard(Real cards, Int ints) {
+        if(numberOfItems <  -1) {
+            physicalLife = physicalLife;
+        } else {
+            if(numberOfItems <  -1) {
+                physicalLife = physicalLife;
+            } else {
+
+            };
+        };
+    };
+
+    Nothing doAction(Face2 x) {
+        x.print();
+        WriteLine("Doing an action");
+    };
+
+    Text name() {
+        while(TRUE && FALSE) {
+        };
+
+        return "Father Mateo" + "!!!";
+    };
+
+    Nothing main() {
+        Face2 f = new Face2();
+        Face2 object = new Face2();
+        a();
+        f.print();
+        doAction(object);
+    };
+};

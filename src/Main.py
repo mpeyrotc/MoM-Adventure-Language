@@ -96,6 +96,6 @@ if __name__ == "__main__":
         print(e.with_traceback())
         exit(1)
 
-    print("OK")
-    print("***********************************")
+    # print("OK")
+    # print("***********************************")
     subprocess.call(["python", "../src/VirtualMachine.py"])

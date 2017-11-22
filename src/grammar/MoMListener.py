@@ -301,9 +301,9 @@ class MoMListener(ParseTreeListener):
         if not self.main_found:
             raise RuntimeError("Main method not found, please define program entry point.")
 
-        for index, quad in enumerate(MoMListener.quads):
-            print(str(index) + ") " + str(quad.operator) + ", " + str(quad.left_operand) + ", "
-            + str(quad.right_operand) + ", " + str(quad.result))
+        #for index, quad in enumerate(MoMListener.quads):
+        #    print(str(index) + ") " + str(quad.operator) + ", " + str(quad.left_operand) + ", "
+        #    + str(quad.right_operand) + ", " + str(quad.result))
 
     # noinspection PyPep8Naming,PyUnusedLocal
     def enterAfter_argument(self, ctx: MoMParser.After_argumentContext) -> None:
@@ -716,7 +716,6 @@ class MoMListener(ParseTreeListener):
 
         quad = Quadrupole(Operation.GO_CONSTRUCTOR, self.constructor_called, self.current_method_instance.name,
                           self.current_method_instance.start)
-        self.debug(quad)
         c = master_tables.classes[self.constructor_called]
 
         self.quads.append(quad)
