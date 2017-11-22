@@ -149,43 +149,27 @@ class Player is_a Component {
 
 };
 
-class Test is_a Component {
-    Test(){
-    };
-
-    Nothing print(){
-        WriteLine("Hey que onda");
-    };
-
-};
-
 class Character is_a Component {
     Character() {
+        WriteLine("We are on class 2");
     };
 
-    Nothing a() {
-        Int b = 2 + 2;
-        return;
+    Nothing func1() {
+    };
+};
+
+class Card2 is_a Component {
+    Card2() {
     };
 
-    Int b() {
-        Int b = 2 * 2;
-        return b;
-    };
-
-    Text c(Int length) {
-        if(length >= 3) {
-            return "THREE";
-        } else {
-            return "MORE THAN THREE";
-        };
+    Int cardCost() {
+        Int a = 2 * 3;
+        return a;
     };
 
     Nothing main() {
-        Test[5] arr;
-        arr[0] = new Test();
-        Test a = new Test();
-        a = arr[0];
-        a.print();
+        WriteLine("We are on class 1");
+        Character x = new Character();
+        x.func1();
     };
 };

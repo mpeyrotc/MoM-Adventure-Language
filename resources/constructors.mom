@@ -1,9 +1,9 @@
 class ComplexNumber is_a Component {
     ComplexNumber() {
-
     };
 
     Int real() {
+        WriteLine("Hey Im a complex number");
         return 1;
     };
 
@@ -19,10 +19,6 @@ class Expressions is_a Component {
         this.integer = 2;
     };
 
-    Nothing main() {
-
-    };
-
     Nothing exp1() {
         Int b = 2;
         Int c = 3;
@@ -30,5 +26,9 @@ class Expressions is_a Component {
         ComplexNumber num = new ComplexNumber();
         Expressions e = new Expressions();
         num.real();
+    };
+
+    Nothing main() {
+        exp1();
     };
 };

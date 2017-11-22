@@ -1,13 +1,3 @@
-class Test is_a Component {
-    Test(){
-    };
-
-    Nothing print(){
-        WriteLine("Hey que onda");
-    };
-
-};
-
 class Character is_a Component {
     Character() {
     };
@@ -23,7 +13,7 @@ class Character is_a Component {
     };
 
     Text c(Int length) {
-        if(length >= 3) {
+        if(length <= 3) {
             return "THREE";
         } else {
             return "MORE THAN THREE";
@@ -31,10 +21,11 @@ class Character is_a Component {
     };
 
     Nothing main() {
-        Test[5] arr;
-        arr[0] = new Test();
-        Test a = new Test();
-        a = arr[0];
-        a.print();
+        Int x = b();
+        Text y = c(5);
+        WriteLine("b() returned:");
+        WriteLine(x);
+        WriteLine("c() returned:");
+        WriteLine(y);
     };
 };

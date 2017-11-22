@@ -34,8 +34,9 @@ class Math is_a Component {
     };
 
     Nothing main() {
-        Write(fact1(6));
-        WriteLine(" ");
-        Write(fact2(6));
+        WriteLine("Iterative factorial of 7");
+        WriteLine(fact1(7));
+        WriteLine("Recursive factorial of 7");
+        WriteLine(fact2(7));
     };
 };

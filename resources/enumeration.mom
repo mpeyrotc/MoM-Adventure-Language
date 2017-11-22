@@ -8,6 +8,7 @@ class Class is_a Component {
     };
 
     Nothing main() {
+        WriteLine("MONDAY + FRIDAY = ");
         WriteLine(MONDAY + FRIDAY);
     };
 };

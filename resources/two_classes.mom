@@ -1,5 +1,14 @@
-class Card is_a Component {
-    Card() {
+class Character is_a Component {
+    Character() {
+        WriteLine("We are on class 2");
+    };
+
+    Nothing func1() {
+    };
+};
+
+class Card2 is_a Component {
+    Card2() {
     };
 
     Int cardCost() {
@@ -8,17 +17,8 @@ class Card is_a Component {
     };
 
     Nothing main() {
-
-    };
-};
-
-class Character is_a Component {
-    field<Card> c;
-
-    Character() {
-    };
-
-    Nothing func1() {
-        Int res = c.cardCost() + 3;
+        WriteLine("We are on class 1");
+        Character x = new Character();
+        x.func1();
     };
 };

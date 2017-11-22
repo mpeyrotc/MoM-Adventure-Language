@@ -4,25 +4,33 @@ class Expressions is_a Component {
     Expressions() {
     };
 
-    Nothing main() {
-
-    };
-
     Nothing exp1() {
         Int b = 2;
         Int c = 3;
         Int a = b + c;
+        WriteLine("b + c = ");
+        WriteLine(a);
     };
 
     Nothing exp2() {
         Real a = 3.14;
         Int b = 3;
         Real result = a - b;
+        WriteLine("a - b = ");
+        WriteLine(result);
     };
 
     Nothing exp3() {
         Real a = 3.14;
         Int b = 2;
         Real result = a * b;
+        WriteLine("a * b = ");
+        WriteLine(result);
+    };
+
+    Nothing main() {
+        exp1();
+        exp2();
+        exp3();
     };
 };

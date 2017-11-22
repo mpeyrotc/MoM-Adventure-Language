@@ -1,22 +1,12 @@
-specification Player {
+specification Player2 {
     Int a();
 };
 
-class Card is_a Component {
-    Card() {
-    };
-
-    Int test(){
-
-        return 5;
-    };
-};
-
-class Face is_a Component {
+class Face2 is_a Component {
     field<Card> card;
     field<Int> aaaa;
 
-    Face() {
+    Face2() {
         card = new Card();
     };
 
@@ -25,7 +15,7 @@ class Face is_a Component {
     };
 };
 
-class Character is_a Component of_type Player {
+class Character is_a Component of_type Player2 {
     field<Card> card;
     field<Int> ints;
     field<Int> physicalLife;
@@ -64,7 +54,7 @@ class Character is_a Component of_type Player {
         };
     };
 
-    Nothing doAction(Face x) {
+    Nothing doAction(Face2 x) {
         x.print();
         WriteLine("que onda");
     };
@@ -77,8 +67,8 @@ class Character is_a Component of_type Player {
     };
 
     Nothing main() {
-        Face f = new Face();
-        Face object = new Face();
+        Face2 f = new Face2();
+        Face2 object = new Face2();
 
         f.print();
         doAction(object);

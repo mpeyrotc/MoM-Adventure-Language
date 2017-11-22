@@ -21,17 +21,21 @@ class Condition is_a Component {
 
     Nothing test1() {
         if(1 < 5) {
+            WriteLine("1 is less than 5");
         };
     };
 
     Nothing test2() {
         if(1 + 5 > 2) {
+            WriteLine("6 is greater than 2");
         } else {
+            WriteLine("6 is not greater than 2");
         };
     };
 
     Nothing main() {
-
+        test1();
+        test2();
     };
 
     Nothing test3() {

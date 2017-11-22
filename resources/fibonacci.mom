@@ -52,8 +52,9 @@ class Math is_a Component {
     };
 
     Nothing main() {
-        Write(fib1(6));
-        WriteLine(" ");
-        Write(fib2(6));
+        WriteLine("Iterative 7th fibonacci number");
+        WriteLine(fib1(7));
+        WriteLine("Recursive 7th fibonacci number");
+        WriteLine(fib2(7));
     };
 };

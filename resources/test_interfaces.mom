@@ -32,6 +32,7 @@ class AClass is_a Component of_type ComplexNumber {
 
     Int real() {
         ComplexNumber numberTwo = new AClass();
+        WriteLine("Created a complex number with interface AClass");
         BClass b = new BClass();
         return numberTwo.imaginary();
     };

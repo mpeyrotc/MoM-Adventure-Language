@@ -5,7 +5,7 @@ specification ComplexNumber {
     Real summary(Int c, Real r);
 };
 
-specification Card {
+specification CardG {
     Int face();
 };
 
@@ -19,13 +19,9 @@ class Entity is_a Component {
     Int lifeValue() {
 
     };
-
-    Nothing main() {
-
-    };
 };
 
-class Character is_a Entity of_type Card, ComplexNumber {
+class Character is_a Entity of_type CardG, ComplexNumber {
     field<Text> properName;
     field<Int> health;
 
@@ -57,5 +53,9 @@ class Character is_a Entity of_type Card, ComplexNumber {
 
     Nothing addCommonCard() {
         getWidth();
+    };
+
+    Nothing main() {
+        WriteLine("Im a Character of type Card and ComplexNumber");
     };
 };

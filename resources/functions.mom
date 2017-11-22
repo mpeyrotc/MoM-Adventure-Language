@@ -16,14 +16,8 @@ class Expressions is_a Component {
         WriteLine(a + b + c);
     };
 
-    Nothing main() {
-        func4();
-        func2(100, 2, 1218);
-        func2(1, 1, 1);
-    };
-
     Nothing func4() {
-        Write("This is function 4.");
+        WriteLine("This is function 4.");
     };
 
     Int func3(Real a) {
@@ -34,4 +28,9 @@ class Expressions is_a Component {
         this.func4();
     };
 
+    Nothing main() {
+        func4();
+        func2(100, 2, 1218);
+        func2(1, 1, 1);
+    };
 };
