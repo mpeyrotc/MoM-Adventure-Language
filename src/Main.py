@@ -1,5 +1,5 @@
 import sys
-import os.path
+import os
 sys.path.append(os.path.join(os.path.dirname("src"), '..'))
 import ErrorListener
 import subprocess
@@ -99,4 +99,5 @@ if __name__ == "__main__":
 
     # print("OK")
     # print("***********************************")
+    os.remove("temp.mom")
     subprocess.call(["python", "../src/VirtualMachine.py"])
