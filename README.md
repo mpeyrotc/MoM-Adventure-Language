@@ -123,3 +123,64 @@ Type name, Type name, ... , Type Name
 4. Methods in MoM can receive both primitive and object arguments. However, array arguments are not suported.
 5. If the return type is `Nothing` the method should not have a `return` with a value after it.
 6. If the return type is different from `Nothing` it is mandatory to have a `return` statement at every posible execution branch. Notice that this is not enforced by the compiler.
+
+# Specifications
+
+Specifications are much like [Java Interfaces](https://docs.oracle.com/javase/tutorial/java/concepts/interface.html), and are a key feature of the MoM language.
+
+## Purpose
+
+A Specification is used to define a set of methods that are relevant to a specific type. For example, we could have a Monster Specification that establishes that Monster types have to have the methods attack, and defend as shown below:
+
+```java
+specification Monster {
+   Int attack();
+   Nothing defend(Int value);
+};
+```
+
+## Structure
+
+Specifications, as classes, hare identified with a name that starts with an uppercase letter. They do not define the implementation of the methods they expose, they only specify the signature of the methods. There is no specification inheritance.
+
+## Use
+
+A class is just a user defined type, specifications let these classes have more than one type by conforming themselves to the specification's requirements. These requirements involve two things:
+
+1. Add the spacification to the list of specifications implemented by the class by putting its name after the `of_type` keyword in the class definition.
+2. Implement all the methods defined by the specification. If this is not done, a compilation error will occur.
+
+Name conflicts between interfaces are not validated at compile time and could lead to errors if their arguments differ from one another.
+
+Example:
+
+```java
+class Witch is_a Component of_type Monster {
+   Witch() {
+      ...
+   };
+   
+   ...
+   
+   Int attack() {
+      ...
+      return attackValue;
+   };
+   
+   Nothing defend(Int value){
+      ...
+   };
+   
+   ...
+}
+```
+
+Because the Witch class implements the Monster specification, it can me added to the monster array for example,
+
+```java
+Monster[10] monsters;
+monster[0] = new Witch();
+```
+
+which adds a lot of flexibility and power to the language.
+
