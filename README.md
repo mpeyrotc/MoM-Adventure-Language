@@ -33,6 +33,7 @@ This tutorial gives the user the necessary tools to make efficient use of the la
    2. Running a program
    3. Considerations
 6. Data types
+   1. Special classes
 7. Language Statements
    1. Input/Output
    2. if
@@ -41,6 +42,7 @@ This tutorial gives the user the necessary tools to make efficient use of the la
    5. Operations
 8. Data Structures
    1. Arrays
+9. Real World Example
    
 # File Structure
 
@@ -251,3 +253,224 @@ $
 ## Considerations
 
 A temporal file called __temp.mom__ is created to store intermediate code. This file is then run by the virtual machine provided with the language. As a result, please avoid naming your programs as __temp.mom__.
+
+# Data types
+
+TThe language comes with four basic primitive types and a special type which represents the `void` keyword in the C programming language, these are: 
+
+* Text : represents a sequence of characters. It is the name for the string type in languages like Java and C.
+* Int : represents an integer number.
+* Real : represents a real number. More specifically, the double or float types common
+to C-like languages.
+* Boolean : represents the conditional values TRUE and FALSE.
+* Nothing : represents no return value, equivalent to the void type in C-like languages.
+
+(please refer to documentation to see which types are compatible with each other and by what operations).
+
+## Special classes
+
+In addition to the creative liberty the language provides to the user, it will provide some classes by default. These classes will serve as the base for further development and aid the programmer to start making as soon as possible new stories and scenarios for the game. As the user of the language gains more experience, he/she will be able to develop new game mechanics, rules, or physical components through more complicated programs and objects. As a result, the language should be able to support the creation of any type of text-based game.
+
+* Component: this is the base class for the MoM Adventure Language. It represents a game component (like a card, mat, or token). All other objects in the language inherit from this class. Its fields are width and height.
+* Face: represents the side of a component. It is a container for several sections.
+* Card: represents a physical game card, it has two faces and each one is divided into
+sections such as title, image, description, cost, etc..
+* Token: represents a physical game token or carton piece.
+* Message: it is a simple container that comes with a title, message, and two types of input: via a numeric or text entry, or a series of options which the player can select.
+* Player: it is a special instance of component since it can have several other compo- nents attached. Its base members and fields are those found on the player sheet in the real board game.
+* Creature: it is a kind of special component since it has several additional actions related to it. These actions are move, attack, and evade.
+
+# Language Statements
+
+This section presents the different structures and statements supported by the language.
+
+## Input/Output
+
+The language provides two functions for output, one writes over the same line (`Write`), while the other appends a _newline_ character at the end of its argument (`WriteLine`).
+
+* `Write`: this special function is used to print into the standard output a stream of characters which are not followed by a default newline character.
+
+```java
+Nothing Write(Text text); 
+Nothing Write(Int number); 
+Nothing Write(Real number);
+Nothing Write(Boolean value); 
+Nothing Write();
+```
+
+* `WriteLine`: this special function does the same as the adds the newline character at the end of the stream. It has two versions, one with arguments and one without.
+
+```java
+Nothing WriteLine(Text text); 
+Nothing WriteLine(Int number);
+Nothing WriteLine(Real number); 
+Nothing WriteLine(Boolean value); 
+Nothing WriteLine();
+```
+
+There are also default methods to get input from the user, these are:
+
+* `ReadText`: this function reads from the standard input a stream of characters and stores them in a Text variable.
+
+```java
+Nothing ReadText(Text variable);
+```
+
+* `ReadInt`: this function reads from the standard input a stream of numeric characters and stores them in an Int variable.
+
+```java
+Nothing ReadInt(Int variable);
+```
+
+* `ReadReal`: this function reads from the standard input a stream of numeric charac- ters (and the ‘.’ character) and stores them in a Real variable.
+
+```java
+Nothing ReadReal(Real variable);
+```
+
+* `ReadBoolean`: this function reads from the standard input a stream of alphanumeric characters that form the words True or False and stores them in a Boolean variable.
+
+```java
+Nothing ReadBoolean(Boolean variable);
+```
+
+The input functions store the value they receive in the variable passed as an argument.
+
+## if
+
+`if` statements are the same as any other imperative programming language:
+
+```java
+if(condition) {
+   ...
+};
+```
+
+## if else
+
+The same occurs with the `if else` statement:
+
+```java
+if(condition) {
+   ...
+} else {
+
+};
+```
+
+## while
+
+The language supports just one kind of loop, the while statement.
+
+```java
+while(condition) {
+   ...
+};
+```
+
+## Operations
+
+The MoM language supports the unary operators `+` `-` and `!` (not) and the binary operators `+`, `-`, `*` (times) and `/` (divides) for arithmetic operations. There are also relational operators like `<`, `<=`, `>`, `>=`, and `==`. Finally, users can also make use of the logical operators `&&` (and) and `||` (or).
+
+# Data Structures
+
+The language comes with just one type of structuref or multidimensional type: the array. 
+
+## Arrays
+
+This structure can contain arguments of any type that is not also an array.It can be used anywhere inside the code, except as a function argument.
+
+To declare an array (which can have any number of dimensions) you must specify its max size, because this value will not change during the whole program execution:
+
+```java
+Type[dimensionA][dimensionB]...; 
+```
+
+dimensions can only be integer values.
+
+To use it, just specify the index values for each dimension. If the array indeces are out of range, an error occurs. For example:
+
+```java
+arrS[i + 1] = arrS[hi];
+```
+
+where `i` and `hi` are integers.
+
+# Real World Example
+
+This section presents a working implementation of Quick Sort done in the MoM language.
+
+```java
+class Math is_a Component {
+    field<Int[10]> arrS;
+
+    Math() {
+
+    };
+
+    Int partition(Int lo, Int hi){
+        Int pivot = arrS[hi];
+        Int i = (lo - 1);
+        Int j = lo;
+        Int temp = 0;
+        while(j < hi){
+            if(arrS[j] <= pivot){
+                i = i + 1;
+                temp = arrS[i];
+                arrS[i] = arrS[j];
+                arrS[j] = temp;
+            };
+            j = j + 1;
+        };
+        temp = arrS[i + 1];
+        arrS[i + 1] = arrS[hi];
+        arrS[hi] = temp;
+        return i + 1;
+    };
+
+    Nothing sortArrS(Int lo, Int hi){
+        if(lo < hi){
+            Int pi = partition(lo, hi);
+            sortArrS(lo, pi - 1);
+            sortArrS(pi + 1, hi);
+        };
+    };
+
+    Nothing main(){
+        arrS[0] = 34;
+        arrS[1] = 0;
+        arrS[2] = 10;
+        arrS[3] = 4;
+        arrS[4] = 12;
+        arrS[5] = 0;
+        arrS[6] = 99;
+        arrS[7] = 48;
+        arrS[8] = 1;
+        arrS[9] = 28;
+
+        Int i = 0;
+        WriteLine("Unsorted array:");
+        while(i < 10){
+            Write(arrS[i]);
+            Write(" ");
+            i = i + 1;
+        };
+        WriteLine(" ");
+        sortArrS(0, 9);
+        WriteLine("Sorted array: ");
+        i = 0;
+        while(i < 10){
+            Write(arrS[i]);
+            Write(" ");
+            i = i + 1;
+        };
+        WriteLine(" ");
+    };
+};
+```
+
+For more information, please visit the tutorial video.
+
+<a href="https://www.youtube.com/watch?v=9TGBTczCE54&feature=youtu.be" target="_blank">
+   <img src="https://www.youtube.com/watch?v=9TGBTczCE54&feature=youtu.be/0.jpg" 
+alt="IMAGE ALT TEXT HERE" width="240" height="180" border="10" /></a>
