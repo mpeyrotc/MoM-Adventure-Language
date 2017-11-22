@@ -172,7 +172,7 @@ class Witch is_a Component of_type Monster {
    };
    
    ...
-}
+};
 ```
 
 Because the Witch class implements the Monster specification, it can me added to the monster array for example,
@@ -184,3 +184,47 @@ monster[0] = new Witch();
 
 which adds a lot of flexibility and power to the language.
 
+# Enumerations
+
+Enumerations are simpler and more elegant way of using [_magic numbers_](https://en.wikipedia.org/wiki/Magic_number_(programming)) in MoM code. They are entirely based on C enums, therefore they are equivalent to integers and can be used in any expressions that supports integer values. Enumerations are defined as follows:
+
+```java
+enumerate NameOfEnum {
+   VALUEA, VALUEB, VALUEC, ...;
+};
+```
+
+## Purpose
+
+When the code is glittered with a bunch of numbers, it is often difficult to rememeber the purpose they have in the code or what they represent. Enumerations give names to integers. However, the values given to the names defined in an enumeration are automatically assigned. There is no guarantee about what the value of a enumeration might be, so make sure to not make code that depends on the specific value of an enumeration element.
+
+## Structure
+
+As seen in the example above, enumerations are identified by a name that starts with a capital letter (in the same fashion as classes and specifications). The values contained within the collection __must__ be all in uppercase and separated by commas.
+
+## Use
+
+A classic use of the enumerations in programming languages is the use enumerable elements like cards, days of the week or months. In MoM we could define a `Days` enumeration and use it in our code as as shown below:
+
+```java
+enumerate Days {
+    MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY;
+};
+```
+
+inside a method...
+
+```java
+...
+Int day = ...
+if(day == Days.MONDAY) {
+   ...
+} else {
+   if(day == Days.TUESDAY) {
+      ...
+   } else {
+      ...
+   };
+};
+...
+```
