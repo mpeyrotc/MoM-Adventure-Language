@@ -1,3 +1,13 @@
+class Test is_a Component {
+    Test(){
+    };
+
+    Nothing print(){
+        WriteLine("Hey que onda");
+    };
+
+};
+
 class Character is_a Component {
     Character() {
     };
@@ -21,14 +31,10 @@ class Character is_a Component {
     };
 
     Nothing main() {
-        if(!FALSE && TRUE){
-            WriteLine("True");
-        }
-        else{
-            WriteLine("False");
-        };
-
-        Int x = 3 * 2 + -(-5 - 2);
-        WriteLine(x);
+        Test[5] arr;
+        arr[0] = new Test();
+        Test a = new Test();
+        a = arr[0];
+        a.print();
     };
 };

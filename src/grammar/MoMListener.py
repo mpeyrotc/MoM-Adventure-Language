@@ -642,6 +642,7 @@ class MoMListener(ParseTreeListener):
 
     # noinspection PyPep8Naming
     def enterConstruct_call(self, ctx: MoMParser.Construct_callContext) -> None:
+        print("method call", ctx.CLASSID().getText())
         method_name = ctx.CLASSID().getText()
         self.source_type.append(method_name)
 
@@ -667,9 +668,11 @@ class MoMListener(ParseTreeListener):
 
         quad = Quadrupole(Operation.GO_CONSTRUCTOR, self.constructor_called, self.current_method_instance.name,
                           self.current_method_instance.start)
+        self.debug(quad)
         c = master_tables.classes[self.constructor_called]
 
         self.quads.append(quad)
+
         var = self.current_method_instance.name
         t = c.variables[var]["type"]
         self.pending_operands.append(c.variables[var]["address"])
@@ -1235,7 +1238,6 @@ class MoMListener(ParseTreeListener):
         self.arguments = []
         self.argument_names = []
         self.destination_type.append(ctx.super_type().getText())
-
         var_name = ctx.VARID()
         self.argument_names.append(var_name.getText())
 
