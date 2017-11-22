@@ -1,5 +1,6 @@
 import sys
-
+import os.path
+sys.path.append(os.path.join(os.path.dirname("src"), '..'))
 import ErrorListener
 import subprocess
 from antlr4 import *
