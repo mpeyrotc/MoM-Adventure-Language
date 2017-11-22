@@ -228,3 +228,26 @@ if(day == Days.MONDAY) {
 };
 ...
 ```
+
+# Running a program
+
+A MoM program is typically run from the terminal using the Python 3 interpreter. As of today, the MoM language only supports input and output from the console.
+
+## Saving a file
+
+A MoM program is contained in a text file that must end with the __.mom__ extension. No other restrictions apply.
+
+## Running a program
+
+Locate the file to be run, in our case __test.mom__, and put it in the directoy you want. For simplicity, we will move the file to the same place as the Main.py file is. Run the following command to compile and execute:
+
+```shell
+$ python3 Main.py test.mom
+
+printed something out with execution...
+
+$
+```
+## Considerations
+
+A temporal file called __temp.mom__ is created to store intermediate code. This file is then run by the virtual machine provided with the language. As a result, please avoid naming your programs as __temp.mom__.
